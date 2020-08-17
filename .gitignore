@@ -10,3 +10,7 @@ propositions.pdf
 *.acn
 *.ist
 *.gz
+*.acr
+*.alg
+*.fdb_latexmk
+*.fls
