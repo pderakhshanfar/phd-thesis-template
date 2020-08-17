@@ -5,3 +5,8 @@
 *.out
 *.toc
 dissertation.pdf
+dissertation_print.pdf
+propositions.pdf
+*.acn
+*.ist
+*.gz
