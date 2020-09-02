@@ -2,52 +2,98 @@
 \label{introduction}
 
 \begin{abstract}
-Sample Abstract.
+Sample Abstract. 
 \end{abstract}
 
-\blfootnote{This chapter is partly based on \faFileTextO~\emph{M. Beller. Toward an
-    Empirical Theory of Feedback-Driven Development, ICSE'18 (Student Research Competition)}~\cite{BellerSRC2018}.
-}
+\blfootnote{This chapter is partly based on \faFileTextO~\emph{}~\cite{}.
+ }
 
 
 \newpage
 
-\dropcap{T}his is a introductory page.
+\dropcap{T}his is a introductory page: use ICST
 
 \section{Background \& Context}
-In this thesis \cite{Derakhshanfar2020}, you can reference pictures~\Cref{fig:devmodel} using Cleverref and circles \circled{5}.
+\subsection{Search-based Sofrware Test Generation}
 
-\begin{figure}[htb]
-	\centering
-	\includegraphics[width=0.65\columnwidth]{development_model_without_papers}
-	\caption{The stages of the FDD model and their relationship to other
-          Software Engineering concepts.}
-	\label{fig:devmodel}
-\end{figure}
+\subsection{Automated Crash Reproduction}
 
-We also have lists:
-
-\begin{enumerate}
-  \item Static Analysis~\circled{3} examines program artifacts or
-    their source code without executing them~\cite{wichmann1995industrial}, while
- \item Dynamic Analysis~\circled{4} relies on information gathered from their
-   execution~\cite{cornelissen2009systematic}.
-\end{enumerate}
-
-Or boxes:
-
-\begin{framed}
-This thesis is concerned with the empirical assessment of the state of the art of how developers
-drive software development with the help of feedback loops.
-\end{framed}
-
-Or code:
-\begin{lstlisting}[caption={\textsc{TrinityCore}},label={lst:e1}]
- x += other.x;
- y += other.y;
- z += other.y;
-\end{lstlisting}
+\section{Research Goals \& Questions}
+Research questions:
 
 
-I hope this helps you get started!
-Moritz
+\textbf{RQ$_1$: } \textit{What are the challenges in \sing?}
+
+\textbf{RQ$_2$: } \textit{How to design a search-based approach for \sing?}
+
+\textbf{RQ$_3$: } \textit{How to laverage contextual information to improve \sing?}
+
+
+\section{Research Outline}
+
+Chapters:
+
+\textbf{Chapter 2: } JCrashPack paper (adressing $RQ_1$)
+
+\textbf{Chapter 3: } CLING paper (adressing $RQ_2$)
+
+\textbf{Chapter 4: } MOHO paper (adressing $RQ_2$)
+
+\textbf{Chapter 5: } Basic Block Coverage paper (adressing $RQ_2$)
+
+\textbf{Chapter ?: } Multi-objectivization paper (adressing $RQ_2$)
+
+\textbf{Chapter ?: } Common behavior (adressing $RQ_2$)
+
+\textbf{Chapter 6: } Model seeding (adressing $RQ_3$)
+
+\textbf{Chapter 7: } Conclusion
+
+
+\section{Research Methodology}
+
+Design science \cite{Hevner2004}
+
+\section{Open Science}
+
+% In this thesis \cite{Derakhshanfar2020}, you can reference pictures~\Cref{fig:devmodel} using Cleverref and circles \circled{5}.
+
+% \begin{figure}[htb]
+% 	\centering
+% 	\includegraphics[width=0.65\columnwidth]{development_model_without_papers}
+% 	\caption{The stages of the FDD model and their relationship to other
+%           Software Engineering concepts.}
+% 	\label{fig:devmodel}
+% \end{figure}
+
+% We also have lists:
+
+% \begin{enumerate}
+%   \item Static Analysis~\circled{3} examines program artifacts or
+%     their source code without executing them~\cite{wichmann1995industrial}, while
+%  \item Dynamic Analysis~\circled{4} relies on information gathered from their
+%    execution~\cite{cornelissen2009systematic}.
+% \end{enumerate}
+
+% Or boxes:
+
+% \begin{framed}
+% This thesis is concerned with the empirical assessment of the state of the art of how developers
+% drive software development with the help of feedback loops.
+% \end{framed}
+
+% Or code:
+% \begin{lstlisting}[caption={\textsc{TrinityCore}},label={lst:e1}]
+%  x += other.x;
+%  y += other.y;
+%  z += other.y;
+% \end{lstlisting}
+
+
+
+
+% Long: \acrlong{fdd}
+
+% Short: \acrshort{fdd}
+
+% Full: \acrfull{fdd}
