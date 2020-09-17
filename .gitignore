@@ -14,3 +14,5 @@ propositions.pdf
 *.alg
 *.fdb_latexmk
 *.fls
+
+.DS_Store
