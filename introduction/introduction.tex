@@ -44,24 +44,67 @@ Research questions:
 
 \section{Research Outline}
 
-Chapters:
+This section briefly presents the various chapters in this thesis.
+Table \ref{tab:chaptersvsRQs} outlines the connections between each defined research question and chapters in this thesis.
 
-\textbf{Chapter 2: } JCrashPack paper (adressing $RQ_1$)
+
+\begin{table}[!t]
+\caption{Connection of chapters with research questions}
+\label{tab:chaptersvsRQs}
+\begin{tabular}{|p{0.8\textwidth}||c|}
+\textbf{Research Question} & \textbf{Chapters}\\
+\hline
+\hline
+$RQ_1$: What are the challenges in search-based crash reproduction? & 2\\
+$RQ_2$: Based on the identified challenges, how can we leverage the existing knowledge, carved from information sources, to steer the crash reproduction search process? & 3 to 5\\
+$RQ_3$: How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other criteria? & 6 \& 7\\
+\hline
+\end{tabular}
+\end{table}
 
 
-\textbf{Chapter 3: } Model seeding (adressing $RQ_2$)
+\paragraph{Chapter 2:}%JCrashPack paper (adressing $RQ_1$)
+Crash reproduction approaches help developers during debugging by generating a test case that reproduces a given crash. 
+Several solutions have been proposed to automate this task.
+However, the proposed solutions have been evaluated on a limited number of projects, making comparison difficult.
+In this chapter, we enhance this line of research by proposing \crashpack, an extensible benchmark for Java crash reproduction, together with \exrunner, a tool to simply and systematically run evaluations.
+\crashpack contains 200 stack traces from various Java projects, including industrial open source ones, on which we run an extensive evaluation of \evocrash, the state-of-the-art approach for search-based crash reproduction.
+Our results include a detailed manual analysis of \evocrash outputs, from which we derive 14 current challenges for crash reproduction. 
+Finally, based on those challenges, we discuss future research directions for search-based crash reproduction for Java.
 
-\textbf{Chapter ?: } Multi-objectivization paper (adressing $RQ_2$)
+\paragraph{Chapter 3:}%Model seeding (adressing $RQ_2$)
+According to the results of Chapter 2, one of the fundamental challenges of search-based crash reproduction is creating objects needed to trigger the crash. One way to overcome this limitation is seeding: using information about the application during the search process. With seeding, the existing usages of classes can be used in the search process to produce realistic sequences of method calls which create the required objects. In this chapter, we introduce behavioral model seeding: a new seeding method which learns class usages from both the system under test and existing test cases.  Learned usages are then synthesized in a behavioral model (state machine). Then, this model serves to guide the evolutionary process. To assess behavioral model-seeding, we evaluate it against test-seeding (the state-of-the-art technique for seeding realistic objects) and no-seeding (without seeding any class usage). 
+Our results indicate that behavioral model-seeding outperforms both test seeding and no-seeding by a minimum of 6\% without any notable negative impact on efficiency.
 
-\textbf{Chapter 4: } MOHO paper (adressing $RQ_2$)
+%\textbf{Chapter ?: } Multi-objectivization paper (adressing $RQ_2$)
 
-\textbf{Chapter 5: } Basic Block Coverage paper (adressing $RQ_2$)
+\paragraph{Chapter 4:}% MOHO paper (adressing $RQ_2$)
+The state-of-the-art search-based crash reproduction approaches use a single fitness function called \CrashFunction to guide the search process toward reproducing a target crash. Despite the reported achievements, these approaches do not always successfully reproduce some crashes due to a lack of test diversity (premature convergence). In this study, we introduce a new approach, called \moho, that addresses this issue via multi-objectivization. In particular, we introduce two new Helper-Objectives for crash reproduction, namely \textit{test length} (to minimize) and \textit{method sequence diversity} (to maximize), in addition to \CrashFunction.
+We assessed \moho using five multi-objective evolutionary algorithms (NSGA-II, SPEA2, PESA-II, MOEA/D, FEMO) on crashes selected from \crashpack. Our results indicate that SPEA2 is the best-performing multi-objective algorithm for \moho.
+We evaluated this best-performing algorithm for \moho against the state-of-the-art: single-objective approach (\SGGA) and decomposition-based multi-objectivization approach (\decomposition). Our results show that \moho reproduces five crashes that cannot be reproduced by the current state-of-the-art. Besides, \moho improves the effectiveness (+10\% and +8\% in reproduction ratio) and the efficiency in 34.6\% and 36\% of crashes (i.e., significantly lower running time) compared to  \SGGA and \decomposition, respectively. For some crashes, the improvements are very large, being up to +93.3\% for reproduction ratio and -92\% for the required running time. 
 
-\textbf{Chapter 6: } CLING paper (adressing $RQ_3$)
+\paragraph{Chapter 5:}%Basic Block Coverage paper (adressing $RQ_2$)
+Search-based crash reproduction approaches rely on the \emph{approach level} and \emph{branch distance} heuristics to guide the search process and generate test cases covering the lines, which are appeared in the given stack trace.
+Despite the positive results achieved by these two heuristics, they only use the information related to the coverage of explicit branches (\eg indicated by conditional and loop statements), but ignore potential implicit branchings within basic blocks of code. 
+If such implicit branching happens at runtime (\eg if an exception is thrown in a branchless-method), the existing fitness functions cannot guide the search process. 
+To address this issue, we introduce a new secondary objective, called Basic Block Coverage (\bbc), which takes into account the coverage level of relevant basic blocks in the control flow graph. We evaluated the impact of \bbc on \emph{search-based crash reproduction} because the implicit branches commonly occur when trying to reproduce a crash, and the search process needs to cover only a few basic blocks (\ie blocks that are executed before crash happening). We combined \bbc with existing fitness functions (namely \integ and \WS) and ran our evaluation on \crashpack crashes.
+Our results show that \bbc, in combination with \integ and \WS, reproduces 6 and 1 new crashes, respectively.
+\bbc significantly decreases the time required to reproduce 26.6\% and 13.7\% of the crashes using \integ and \WS, respectively. For these crashes, \bbc reduces the consumed time by 44.3\% (for \integ) and 40.6\% (for \WS) on average.
 
-\textbf{Chapter ?: } Common behavior (adressing $RQ_3$)
+\paragraph{Chapter 6:}%CLING paper (adressing $RQ_3$)
+Search-based approaches have been used in the literature to automate the process of creating unit test cases. However, related work has shown that generated unit-tests with high code coverage could be ineffective, i.e., they may not detect all faults or kill all injected mutants. 
+In this chapter, we propose \cling, an integration-level test case generation approach that exploits how a pair of classes, the caller and the callee, interact with each other through method calls. In particular, \cling generates integration-level test cases that maximize the Coupled Branches Criterion (CBC). CBC is a novel integration-level coverage criterion, measuring the degree to which a test suite exercises the interactions between a caller and its callee classes. 
+We implemented \cling and evaluated the approach on 140 pairs of classes from five different open-source Java projects. Our results show that (1) \cling generates test suites with high CBC coverage; (2) such generated suites can kill 
+on average 7.7\% (with a maximum of 50\%) of mutants that are not detected by tests generated at the unit level; (3) \cling can detect integration faults (32 for our subject systems) that remain undetected when using automatically generated unit-level test suites. 
 
-\textbf{Chapter 7: } Conclusion
+\paragraph{Chapter 7:}%Common behavior (adressing $RQ_3$)
+Various search-based test generation techniques have been proposed to automate the generation of unit tests fulfilling different criteria (\eg line coverage, branch coverage, mutation score, \etc). Despite several advances made over the years, search-based unit test generation still suffers from a lack of guidance due to the limited amount of information available in the source code that, for instance, hampers the generation of complex objects. Previous studies introduced many strategies to address this issue, \eg dynamic symbolic execution or seeding, but do not take the internal execution of the methods into account.  
+This chapter introduces a novel secondary objective called \emph{commonality score}, measuring how close the execution path of a test case is from reproducing a \emph{common} or \emph{uncommon} execution pattern observed during the operation of the software.
+To assess the commonality score, we implemented it in \evosuite and evaluated its application on 150 classes from \jabref, an open-source software for managing bibliography references. 
+Our results are mixed. Our approach leads to test cases that indeed follow \emph{common} or \emph{uncommon} execution patterns. However, if the commonality score can have a positive impact on the structural coverage and mutation score of the generated test suites, it can also be detrimental in some cases. 
+
+\paragraph{Chapter 8:} 
+Finally, we summarize our findings and conclusions in this thesis. This chapter also elaborates on the potential future works that can, first, improve the search-based crash reproduction, and second, investigate novel search-based algorithms for covering other software specific behaviors that can be interesting for developers.
 
 
 \section{Research Methodology}
