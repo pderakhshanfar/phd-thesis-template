@@ -37,6 +37,11 @@ Finally, we investigate a novel search objective for search-based unit testing t
 \section{Background \& Context}
 \input{introduction/background}
 
+\section{Challenges in search-based crash reproduction and test generation}
+Since the search-based crash reproduction approaches are evaluated by a limited number of crashes, the limits and challenges of these techniques stayed unrecognized.
+In this thesis, we want to detect search-based crash reproduction challenges. Hence, we empirically evaluate search-based crash reproduction by a new Java crash benchmark called \jcrashpack and identify the challenges by performing an extensive manual analysis. Some of the identified challenges are dedicated only to the crash reproduction problem, but some other challenges are general search-based test generation issues.
+
+After identifying the challenges, we want to address them by introducing novel solutions to improve the effectiveness and efficiency of the crash reproduction search process. For this goal, we investigate the application of contextual information collected from different sources such as source code, manually-written test cases. While some identified challenges in search-based crash reproduction are due to the existing general search-based test generation limitations, we can go beyond crash reproduction and introduce new search-based techniques to cover other specific software behaviors.
 
 \section{Research Goals \& Questions}
 Research questions:
