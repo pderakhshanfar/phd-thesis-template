@@ -44,14 +44,34 @@ In this thesis, we want to detect search-based crash reproduction challenges. He
 After identifying the challenges, we want to address them by introducing novel solutions to improve the effectiveness and efficiency of the crash reproduction search process. For this goal, we investigate the application of contextual information collected from different sources such as source code, manually-written test cases. While some identified challenges in search-based crash reproduction are due to the existing general search-based test generation limitations, we can go beyond crash reproduction and introduce new search-based techniques to cover other specific software behaviors.
 
 \section{Research Goals \& Questions}
-Research questions:
+To present indications towards this thesis, we seek to answer the following research questions:
+
+Since our initial goal is improving the effectiveness and efficiency of the search-based crash reproduction, first, we need to understand its challenges. Hence, the first research question tries to address this goal.
+\begin{framed}
+\quad\textbf{RQ$_1$: } \textit{What are the challenges in search-based crash reproduction?}
+\end{framed}
+
+After identifying the challenges, we study novel ways to tackle them by enhancing the search process from different aspects. This enhancement is done by utilizing the contextual information collected from source code and existing tests. The second research question investigates the new techniques addressing the detected challenges using the observed contextual information.
 
 
-\textbf{RQ$_1$: } \textit{What are the challenges in search-based crash reproduction?}
+\begin{framed}
+    
+    \textbf{RQ$_2$: } \textit{Based on the identified challenges, how can we leverage the existing knowledge, carved from information sources, to steer the crash reproduction search process?}
 
-\textbf{RQ$_2$: } \textit{Based on the identified challenges, how can we leverage the existing knowledge, carved from information sources, to steer the crash reproduction search process?}
+\end{framed}
 
-\textbf{RQ$_3$: } \textit{How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other criteria?}
+Since some of the detected challenges in search-based crash reproduction are observable in other search-based test generation techniques for specific software behaviors, the observed contextual information can guide the search process to generate tests for these behaviors. Hence, the last question concentrates on novel search-based techniques for generating tests to cover other specific software behaviors using contextual information.
+
+\begin{framed}
+    \textbf{RQ$_3$: } \textit{How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other specific software behaviors?}
+\end{framed}
+
+This thesis answers $RQ_3$ by (i) introducing a whole new search-algorithm for class integration testing using the collected information about the method calls from one class (\textit{caller class}) to the other one (\textit{callee class}), and (ii) introducing a new search objective for search-based unit testing considering the common and uncommon execution paths in the class under test.
+
+After answering these research questions, we will be able to understand the challenges in search-based software test generation better. Besides, We can confirm that (i) automated test generation for specific software behaviors can cover, and reveal, faults that are not detectable by other search-based test generation techniques, using only the classical structural coverage search objectives; and (ii) using other contextual information collected from various sources (such as source code, existing test cases, and execution logs) guides the search process to achieve higher fault detection.
+
+
+
 
 
 \section{Research Outline}
@@ -69,7 +89,7 @@ Table \ref{tab:chaptersvsRQs} outlines the connections between each defined rese
 \hline
 $RQ_1$: What are the challenges in search-based crash reproduction? & 2\\
 $RQ_2$: Based on the identified challenges, how can we leverage the existing knowledge, carved from information sources, to steer the crash reproduction search process? & 3 to 5\\
-$RQ_3$: How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other criteria? & 6 \& 7\\
+$RQ_3$: How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other specific software behaviors? & 6 \& 7\\
 \hline
 \end{tabular}
 \end{table}
