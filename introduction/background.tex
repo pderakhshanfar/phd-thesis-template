@@ -177,7 +177,7 @@ If the generated test by crossover does not contain the failing method, the algo
 Also, if the resulting test does not contain the failing method after a mutation, the algorithm redoes the mutation until the failing method is added to the test again.
 The search process continues until either the search budget is over or a crash reproducing test case is found.
 
-To evaluate the generated tests, \evocrash applies the following weighted sum fitness function \cite{Soltani2018a} to a generated test $t$:
+To evaluate the generated tests, \evocrash applies the following weighted sum fitness function \cite{Soltani2018a} (called \CrashFunction, hereafter) to a generated test $t$:
 %
 \rowcolors{1}{}{}
 \begin{equation} \label{eq:fitnessfunction}

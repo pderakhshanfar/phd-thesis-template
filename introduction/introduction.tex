@@ -10,7 +10,7 @@ Sample Abstract.
 
 
 \newpage
-\dropcap{S}oftware testing is an indispensable part of software engineering, widely studied from various aspects by researchers in this field. As mentioned by Bertolino~\cite{bertolino2007software}, one of the biggest dreams in software testing research is building a 100\% automatic testing, and one of the research paths towards reaching this dream is the automated test generation.
+\dropcap{S}oftware testing is an indispensable part of software engineering, widely studied from various aspects by researchers in this field. As mentioned by Bertolino~\cite{bertolino2007software}, one of the biggest dreams in software testing research is 100\% automatic testing, and one of the research paths towards reaching this dream is the automated test generation.
 
 A survey by McMinn \cite{McMinn2004} shows that search-based software test generation techniques are applicable to a vast range of automated software testing problems, including automated test generation. The application of metaheuristic search-based approaches for automating the process of software test generation has been an interesting research path in recent years. The introduced approaches model the software testing goals, which should be achieved by manually-written test cases, into optimization problems and solve them using search algorithms. 
 
@@ -28,7 +28,7 @@ As an outcome, they suggest using classical branch and line coverage as primary 
 In this thesis, we go beyond classical search objectives based on structural coverage. In particular, we investigate how information collected from different sources (\ie source code, manually-written tests, \etc) can reinforce search objectives. In doing so, we hypothesize that we can exercise specific behaviors, and thus trigger specific kinds of faults.
 
 
-First, we focus on \textbf{search-based crash reproduction}. Crash reproduction approaches \cite{Soltani2018a, BPT17concrash, Chen2015, Nayrolles2017, Rossler2013, Xuan2015} accept a crash as input and generate a test that reproduces this given crash. Our studies on crash reproduction focus on leveraging the collected contextual information to improve the effectiveness (\ie the number of reproduced crashes and how often they can be reproduced) and efficiency (\ie the time required to reproduce a crash) of the search process, trying to reproduce the given crash.
+First, we focus on \textbf{search-based crash reproduction}. These approaches~\cite{Soltani2018a, BPT17concrash, Chen2015, Nayrolles2017, Rossler2013, Xuan2015} accept a crash as input and generate a test that reproduces this given crash. Our studies on crash reproduction focus on leveraging the collected contextual information to improve the effectiveness (\ie the number of reproduced crashes and how often they can be reproduced) and efficiency (\ie the time required to reproduce a crash) of the search process, trying to reproduce the given crash.
 
 Second, we concentrate on generating tests for \textbf{exercising integration points between two classes}. We consider the execution of different scenarios in the interaction between two coupled classes as test objectives for the test generation process. We introduce a new test criterion for class integration testing, which is suitable for defining search objectives. Then, we design a search-based test generation algorithm according to this newly defined criterion. We investigate if this algorithm can reveal integration level faults which are not detectable with search-based unit testing.
 
@@ -37,9 +37,9 @@ Finally, we investigate a novel search objective for search-based unit testing t
 \section{Background \& Context}
 \input{introduction/background}
 
-\section{Challenges in search-based crash reproduction and test generation}
-Since the search-based crash reproduction approaches are evaluated by a limited number of crashes, the limits and challenges of these techniques stayed unrecognized.
-In this thesis, we want to detect search-based crash reproduction challenges. Hence, we empirically evaluate search-based crash reproduction by a new Java crash benchmark called \jcrashpack and identify the challenges by performing an extensive manual analysis. Some of the identified challenges are dedicated only to the crash reproduction problem, but some other challenges are general search-based test generation issues.
+\section{Challenges In Search-based Crash Reproduction And Test Generation}
+Since the search-based crash reproduction approaches are evaluated by a limited number of crashes, the limits and challenges of these techniques remained unrecognized.
+In this thesis, we want to identify search-based crash reproduction challenges. Hence, we empirically evaluate search-based crash reproduction by a new Java crash benchmark called \jcrashpack and identify the challenges by performing an extensive manual analysis. Some of the identified challenges are dedicated only to the crash reproduction problem, but some other challenges are general search-based test generation issues.
 
 After identifying the challenges, we want to address them by introducing novel solutions to improve the effectiveness and efficiency of the crash reproduction search process. For this goal, we investigate the application of contextual information collected from different sources such as source code, manually-written test cases. While some identified challenges in search-based crash reproduction are due to the existing general search-based test generation limitations, we can go beyond crash reproduction and introduce new search-based techniques to cover other specific software behaviors.
 
@@ -60,7 +60,7 @@ After identifying the challenges, we study novel ways to tackle them by enhancin
 
 \end{framed}
 
-Since some of the detected challenges in search-based crash reproduction are observable in other search-based test generation techniques for specific software behaviors, the observed contextual information can guide the search process to generate tests for these behaviors. Hence, the last question concentrates on novel search-based techniques for generating tests to cover other specific software behaviors using contextual information.
+Since some of the detected challenges in search-based crash reproduction are observable in other search-based test generation techniques, the observed contextual information can guide the search process to generate tests for specific software behaviors, as well. Hence, the last question concentrates on novel search-based techniques for generating tests to cover other specific software behaviors using contextual information.
 
 \begin{framed}
     \textbf{RQ$_3$: } \textit{How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other specific software behaviors?}
