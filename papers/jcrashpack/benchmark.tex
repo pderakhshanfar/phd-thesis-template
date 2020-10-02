@@ -1,0 +1,47 @@
+
+The result of our selection protocol is a benchmark with 200 stack traces called \emph{\crashpack}. 
+For each stack trace, based on the information from the issue tracker and the Defects4J data, we collected: the \emph{Java project} in which the crash happened, the \emph{version} of the project where the crash happened and (when available) the \emph{fixed version}  or the fixing commit reference of the project; the \emph{buggy frame} (i.e., the frame in the stack trace targeting the method where the bug lays); and the \emph{Cyclomatic Complexity Number (CCN)} and the \emph{Non-Com\-men\-ting Sources Statements (NCSS)} of the project, presented in Figure \ref{fig:ccnncssperapp}. 
+Due to the manual effort involved in filtering, verifying and cleaning up stack traces, issues, the collection of stack traces and binaries (including the project's dependencies binaries) took about 4.5 person-months in total.
+
+\begin{figure}[t]
+  \centering
+  \subfloat[Average methods Cyclomatic Complexity Number (CCN)]{%
+  \includegraphics[width=0.98\textwidth]{papers/jcrashpack/benchmark-ccn-per-app-histogram}
+  \label{fig:ccnperapp}
+  }
+  \subfloat[Thousands of Non-Com\-men\-ting Sources Statements (KNCSS)]{
+%    	\includegraphics[width=0.80\textwidth]{benchmark-ncss-per-app-boxplot}
+    	\includegraphics[width=0.98\textwidth]{papers/jcrashpack/benchmark-ncss-per-app-histogram}
+    \label{fig:ncssperapp}
+  }
+  \caption{Complexity and size of the different projects}
+  \label{fig:ccnncssperapp}
+\end{figure}
+
+Figure \ref{fig:ccnncssperapp} presents the average Cyclomatic Complexity Number (CCN) per method for each project and the Non-Com\-men\-ting Sources Statements (NCSS) per project, ordered by version number, to give an idea of the complexity of a project. Also, Table \ref{tab:benchmark:complexity} gives the number of versions and the average number of non-commenting source statement for each project in \crashpack.
+As illustrated in the table and figure, \crashpack contains projects of diverse complexities (the CCN for the least complex project is 1.77, and for the most complex is 3.38) and sizes (the largest project has 177,840 statements, and the smallest one holds 6,060 statements on average), distributed among different versions.
+
+\begin{table*}[t]
+	\centering
+	\caption{The number of versions and average number of statements ($\overline{NCSS}$) for each project.}
+	\label{tab:benchmark:complexity}
+	\input{papers/jcrashpack/benchmark-complexity-table.tex}
+\end{table*}
+
+\begin{table*}[t]
+	\centering
+	\caption{Number of stack traces (\textit{st}), total number of frames (\textit{fr}), and average number of frames ($\overline{fr}$) and standard deviation ($\sigma$) per stack trace for the different exceptions: NullPointerException (NPE), IllegalArgumentException (IAE), ArrayIndexOutOfBoundsException (AIOOBE), ClassCastException (CCE), StringIndexOutOfBoundsException (SIOOBE), IllegalStateException (ISE), and other exceptions types (Other). }
+	\label{tab:benchmark}
+%	\input{benchmark-exceptionsapps-table.tex}
+    \begin{scriptsize}
+	\input{papers/jcrashpack/benchmark-exceptionsapps-table-vertical.tex} 
+    \end{scriptsize}
+\end{table*}
+
+Table \ref{tab:benchmark} shows the distribution of stack traces per exception type for the six most 
+common ones, the \textit{Other} category denoting remaining exception types. According to this table, the included stack traces in \crashpack covers different types of the exceptions. Also, they are varied in the size (number of frames): the smallest stack traces have one frame and the largest, a user-defined exception in \textit{Other}, has 175 frames.
+
+\crashpack is extensible and publicly available on GitHub.\footnote{At \url{https://github.com/STAMP-project/JCrashPack}} We provide guidelines to add new crashes to the benchmark and make a pull request to include them in \crashpack master branch.
+%
+The detailed numbers for each stack trace and its project are available on the \crashpack website.
+

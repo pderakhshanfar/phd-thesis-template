@@ -1,0 +1,63 @@
+
+Having \crashpack available allowed us to perform an extensive evaluation of \evocrash, a state-of-the-art tool in search-based crash replication~\cite{Soltani2018a}.
+Naturally, our first research question deals with the capability of \evocrash to reproduce crashes from \crashpack: 
+%
+\begin{itemize}
+    \item[\textbf{RQ$_{1.1}$}] \textit{To what extent can \evocrash reproduce crashes from \crashpack?}
+\end{itemize}
+%
+Since the primary goal of our evaluation is to identify current limitations, we refine the previous research question to examine which frames of the different crashes \evocrash is able to reproduce:
+%
+\begin{itemize}
+    \item[\textbf{RQ$_{1.2}$}] \textit{To what extent can \evocrash reproduce the different frames of the crashes from \crashpack?}
+\end{itemize}
+%
+The diversity of crashes in \crashpack also allows us to investigate how certain types of crashes affect reproducibility.
+Thus, we investigate whether the exception type and  the project nature have an influence on the reproduction rate:
+\begin{itemize}
+   \item[\textbf{RQ$_{2.1}$}] \textit{How does project type influence performance of \evocrash for crash reproduction?}
+\end{itemize}
+In addition, different types of projects might have impact on how costly it is to reproduce the reported crashes for them.
+The second research question studies the influence of the exception and project type on the performance of \evocrash:
+%
+\begin{itemize}
+   \item[\textbf{RQ$_{2.2}$}] \textit{How does exception type influence performance of \evocrash for crash reproduction?}
+\end{itemize}
+%
+Finally, we seek to understand why crashes could \emph{not} be reproduced:
+%
+\begin{itemize}
+    \item[\textbf{RQ$_3$}] \textit{What are the main challenges that impede successful search-based crash reproduction?}
+\end{itemize}
+
+\subsection{Evaluation setup}
+\label{se:evalsetup}
+
+\paragraph{Number of executions.}
+
+Due to the randomness of Guided Genetic Algorithm in \evocrash, we executed the tool multiple times on each frame. 
+The number of executions has to strike a balance between the threats to external validity (i.e., the number of stack traces considered) and the statistical power (i.e., number of runs) \cite{Fraser2014b, Arcuri2014}. 
+In our case, we do not compare \evocrash to other tools (see for instance Soltani \etal \cite{soltani2017, Soltani2018a}), but rather seek to identify challenges for crash reproduction. 
+Hence we favor external validity by considering a larger amount of crashes compared to previous studies \cite{Soltani2018a} and ran \evocrash 10 times on each frame. In total, we executed 18,590 \evocrash runs.
+
+\paragraph{Search parameters.}
+
+We used the default parameter values \cite{Arcuri2011a, Fraser2014b} with the following additional configuration options: 
+we chose to keep the reflection mechanisms, used to call private methods, deactivated.
+The rationale behind this decision is that using reflection can lead to generating invalid objects that break the class invariant \cite{Liskov2000} during the search, which results in test cases helplessly trying to reproduce a given crash \cite{Chen2015}.
+
+After a few trials, we also decided to activate the implementation of functional mocking available from \evosuite \cite{arcuri2017private} in order to minimize possible risks of environmental interactions on crash reproduction.
+Functional mocking works as follows: when, in a test case, a statement that requires new specific objects to be created (as parameters of a method call for instance) is inserted, either a plain object is instantiated by invoking its constructor, or (with a defined probability, left to its default value in our case) a mock object is created. This mock object is then refined using \texttt{when}-\texttt{thenReturn} statements, based on the methods called during the execution of the generated test case. Functional mocking is particularly useful in the cases where the required object cannot be successfully initialized (for instance, if it relies on environmental interactions or if the constructor is accessible only trough a factory). 
+
+Investigating the impact of those parameters and other parameters (e.g., cross\-over rate, mutation rate, etc. to overcome the challenges as identified in \textbf{RQ$_3$}) is part of our future work. 
+
+\paragraph{Search budget.}
+
+Since our evaluation is executed in parallel on different machines, we choose to express the budget time in terms of number of fitness evaluations: i.e., the number of times the fitness function is called to evaluate a generated test case during the execution of the guided generic algorithm. We set this number to 62,328, which corresponds to the average number of fitness evaluations performed by \evocrash when running it during 15 minutes on each frame of a subset of 4 randomly selected stack traces on one out of our two machines. Both of the machines have the same configuration: A cluster running Linux Ubuntu 14.04.4 LTS with 20 CPU-cores, 384 GB memory, and a 482 GB hard drive.
+
+We partitioned the evaluation into two, one per available machine: all the stack traces with the same kind of exception have been run on one machine for 10 rounds.
+%
+For each run, we measure the number of fitness evaluations needed to achieve reproduction (or the exhaustion of the budget if \evocrash fails to reproduce the crash) and the best fitness value achieved by \evocrash (0 if the crash is reproduced and higher otherwise).
+%
+The whole process is managed using \exrunner.
+The evaluation itself was executed during 10 days on our 2 machines.

@@ -1,0 +1,23 @@
+% Threats to Validity
+
+Evaluations of crash reproduction approaches, such as the one we conducted for \evocrash, come with threats to internal validity, external validity, and reliability.
+The overarching goal of \crashpack is to reduce such threats for all evaluations of any crash reproduction tool, by offering a curated set of crashes to conduct such evaluations.
+
+Concerning \emph{external validity}, we carefully designed \crashpack so that it offers a mix of small and large systems, as well as of different types of exceptions. Furthermore, it includes open source systems directly developed by industry.
+%
+Nevertheless, any set is incomplete, which is why we keep \crashpack open for extension, as discussed in Section~\ref{sec:jcrashpack:discussion}.  For example, there still remain several other domains, such as gaming or financial applications, for which there is no representative project in the benchmark. 
+
+With respect to \emph{internal validity}, implementation faults can be a source of confounding factors. These can occur in the tools themselves, such as \evocrash or \evosuite, but also in the infrastructure used to actually conduct the experiment. To address the latter, \crashpack comes with \exrunner, which automates the process of scheduling, executing, monitoring, and reporting crash reproduction attempts.
+
+Concerning \emph{reliability}, \crashpack and \exrunner make it easy to repeat experiments, thus making it possible for researchers to independently replicate each others crash reproduction findings.
+
+Besides these threats partially mitigated by \crashpack, our evaluation of \evocrash comes with additional threats to (internal and external) validity. This particularly relates to the randomized nature of genetic algorithms, which we addressed by running the evaluations 10 times, and following the guidelines by Arcuri and Briand \cite{Arcuri2014} for analyzing the results. 
+%
+Furthermore, such threats concern the risk of bias during the manual analysis, which we mitigated by using cross-checking: the result of each manual analysis has been validated by at least one other person. 
+In case of disagreement, we asked for a third opinion.
+%
+Finally, our evaluation includes only one tool: \evocrash. Previous work showed that \evocrash performs better than other state-of-the-art crash reproduction tools. 
+Unfortunately, since to the best of our knowledge, no other tool was publicly available, we were not able to confirm that conclusion on the crashes in \crashpack. 
+We believe that \crashpack enhances the current state-of-the-practice in crash reproduction research by offering a publicly available benchmark for which other tool providers can report their results. 
+
+

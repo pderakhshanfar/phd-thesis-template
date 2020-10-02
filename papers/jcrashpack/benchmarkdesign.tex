@@ -1,0 +1,100 @@
+
+Benchmarking is a common practice to assess a new technique and compare it to the state of the art \cite{Sim2003}.
+For instance, SF110 \cite{Fraser2014b} is a sample of 100 Java projects from SourceForge, and 10 popular Java projects from GitHub, that may be used to assess (search based) test case selection techniques.
+In the same way, Defects4J \cite{just2014defects4j} is a collection of bugs coming from popular open-source projects: for each bug, a buggy and a fixed version of the projects, as well as bug revealing test case, are provided. Defects4J is aimed to assess various testing techniques like test case selection or fault localization.
+
+In their previous work, Soltani et al. \cite{soltani2017}, Xuan et al. \cite{Xuan2015}, and Chen and Kim \cite{Chen2015} used Apache Commons Collections~\cite{commonscollections}, Apache Ant~\cite{ant}, and Apache Log4j~\cite{log4j} libraries.
+In addition to  Apache Ant and Apache Log4j, Nayrolles et al. \cite{Nayrolles2017} used bug reports from 8 other open-source software.
+
+In this paper we enhance previous efforts to build a benchmark dedicated to crash reproduction by collecting cases coming from both state of the art literature and actively maintained industrial open-source projects with well documented bug trackers.
+
+\subsection{Projects selection protocol}
+
+As Table \ref{tab:background:represults} clearly shows, current crash reproduction tools are not evaluated using a common benchmark.
+This hampers progress in the field as it makes it hard to compare approaches.
+To be able to perform analysis of the results of a crash reproduction attempt, we define the following \emph{benchmark requirements} for our benchmark:
+\begin{itemize}
+\item[ \textbf{BR1},] to be part of the benchmark, the projects should have openly accessible binaries, source code, and crash stack traces (in an issue tracker for instance);
+\item[ \textbf{BR2},] they should be under active maintenance to be representative of current software engineering practices and ease communication with developers;
+\item[ \textbf{BR3},] each stack trace should indicate the version of the project that generated the stack trace; and
+\item[ \textbf{BR4},] the benchmark should include projects of varying size.
+\end{itemize}
+
+To best of our knowledge, there is no benchmark fulfilling those requirements. The closest benchmark is Defects4j. However, only 25\% of the defects manifest trough a crash stack trace (\textbf{BR1}) and the projects are relatively small (\textbf{BR4}). To address those limitations, we built a new benchmark dedicated to the crash reproduction tools.
+
+%We have no restriction on the stack traces to consider, but want some diversity in the kinds of projects: APIs, web-applications, etc.
+%We favor quality over quantity: a small set of projects with many stack traces representing different types of crashes, as the effort of manual analysis and setting up the test environment can be substantial.
+
+To build our benchmark, we took the following approach.
+First, we investigated projects collected in SF1\-10~\cite{Fraser2014b} and Defects4J~\cite{just2014defects4j} as state of the art benchmarks.
+However, as most projects in SF110 have not been updated since 2010 or earlier, we discarded them from our analysis (\textbf{BR2}).
+%
+From Defects4J, we collected 73 cases where bugs correspond to actual crashes: i.e., the execution of the test case highlighting the bug in a given buggy version of a project generates a stack trace that is not a test case assertion failure. 
+
+As also discussed by Fraser and Arcuri \cite{Fraser2014b}, to increase the representativeness of a benchmark, it is important to include projects that are popular and attractive to end-users.
+Additionally to Defects4J, we selected two industrial open-source projects: XWiki~\cite{xwiki} and Elasticsearch \cite{elasticsearch}.
+XWiki is a popular enterprise wiki management system.
+Elasticsearch, a distributed RESTful search and analytic engine, is one of the ten most popular projects on GitHub\footnote{This selection was performed on 26/10/2017.}.
+To identify the top ten popular projects from Github, we took the following approach:
+%
+\begin{inparaenum}[(i)]
+\item we queried the top ten projects that had the highest number of forks;
+\item we queried the top ten projects that had the highest number of stars;
+\item we queried the top ten trending projects; and
+\item took the intersection of the three.
+\end{inparaenum}
+
+Four projects were shared among the above top-ten projects, namely: Java-design-patterns~\cite{jdp}, Dubbo\cite{dubbo}, RxJava~\cite{rxjava}, and Elasticsearch.
+To narrow down the scope of the study, we selected Elasticsearch, which ranked the highest among the four shared projects.
+
+
+\subsection{Stack trace collection and preprocessing}
+
+For each project, we collected stack traces to be reproduced as well as the project binaries, with specific versions on which the exceptions happened.
+
+\paragraph{Defects4J.}
+%
+From the 395 buggy versions of the Defects4J projects, we kept only the bugs relevant to our crash reproduction context (73 cases), i.e., the bugs that manifest as crashes. We manually inspected the stack traces generated by the failing tests and collected those which are not JUnit assertion failures (i.e., those which are due to an exception thrown by the code under test and not by the JUnit framework).
+For instance, for one stack trace from the Joda-Time project:
+%
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,breaklines=true,numbers=left,firstnumber=0]
+java.lang.IllegalArgumentException:
+  at org.joda.time.Partial.<init>(Partial.java:224)
+  at org.joda.time.Partial.with(Partial.java:466)
+  at org.joda.time.TestPartial_Basics.testWith_baseAndArgHaveNoRange(...)
+\end{lstlisting}
+%
+We only consider the first and second frames (lines 1 and 2).
+The third and following lines concern testing classes of the project, which are irrelevant for crash reproduction.
+They are removed from the benchmark, resulting in the following stack trace with two frames:
+%
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily,breaklines=true,numbers=left,firstnumber=0]
+java.lang.IllegalArgumentException:
+  at org.joda.time.Partial.<init>(Partial.java:224)
+  at org.joda.time.Partial.with(Partial.java:466)
+\end{lstlisting}
+%
+We proceeded in the same way for each Defects4J project and collected a total of 73 stack traces coming from five (out of the six) projects: JFreeChart, Commons-lang, Commons-math, Mockito, and Joda-Time. All the stack traces generated by the Closure compiler test cases are JUnit assertion failures.
+
+\paragraph{Elasticsearch.}
+%
+Crashes for Elasticsearch are publicly reported to the issue tracker of the project on GitHub\footnote{\url{https://github.com/elastic/elasticsearch/issues}}.
+Therefore, we queried the reported crashes, which were labelled as bugs, using the following string \texttt{"exception is:issue label:bug"}.
+From the resulting issues ($600$ approx.), we manually collected the most recent ones (reported since 2016), which addressed the following:
+\begin{inparaenum}[(i)]
+\item the version which crashed was reported,
+\item the issue was discussed by the developers and approved as a valid crash to be fixed.
+\end{inparaenum}
+The above manual process resulted in 76 crash stack traces.
+
+\paragraph{XWiki.}
+%
+XWiki is an open source project which has a public issue tracker\footnote{\url{https://jira.xwiki.org/browse/XWIKI/}}.
+We investigated first 1000 issues which are reported for XWIK-7.2 (released in September 2015) to XWIK-9.6 (released in July 2017).
+We selected the issues where:
+\begin{inparaenum}[(i)]
+\item the stack trace of the crash was included in the reported issue, and
+\item the reported issue was approved by developers as a valid crash to be fixed.
+\end{inparaenum}
+Eventually, we selected a total of 51 crashes for XWIKI.
+

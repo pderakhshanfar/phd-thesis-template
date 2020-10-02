@@ -1,0 +1,51 @@
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{papers/jcrashpack/crashpack-Scheduler}
+\caption{\exrunner overview}
+\label{fig:exrunner}
+\end{figure}
+
+We combine \crashpack with \exrunner, a tool that can be used for running experiments with a given stack trace-based crash reproduction tool. This tool
+\begin{inparaenum}[(i)]
+\item facilitates the automatic parallel execution of the crash reproduction instances, 
+\item ensures robustness in the presence of failures during the crash reproduction failure, and
+\item allows to plug different crash reproduction tools to allow a comparison of their capabilities.
+\end{inparaenum}
+
+Figure \ref{fig:exrunner} gives an overview of \exrunner architecture.
+The \emph{job generator} takes as input the stack traces to reproduce, the path to the Jar files associated to each stack trace, and the configurations to use for the stack trace reproduction tool under study. 
+%
+For each stack trace, the job generator analyzes the stack frames and discards those with a target method that does not belong to the target system, based on the package name. 
+For instance, frames with a target method belonging to the Java SDK or other external dependencies are discarded from the evaluation.
+For each configuration and stack trace, the job generator creates a new job description (i.e., a JSON object with all the information needed to run the tool under study) and adds it to a queue. 
+
+To speed-up the evaluation, \exrunner multithreads the execution of the jobs.
+The number of threads is provided by the user in the configuration of \exrunner and depends on the resources available on the machine and required by one job execution.
+Each thread picks a job from the waiting queue and executes it. 
+\exrunner users may activate an observer that monitors the jobs and takes care of killing (and reporting) those that do not show any sign of activity (by monitoring the job outputs) for a user-defined amount of time.
+The outputs of every job are written to separate files, with the generated test case (if any) and the results of the job execution (output results from the tool under study).
+
+For instance, when used with \evocrash, the log files contain data about the target method, progress of the fitness function value during the execution, and branches covered by the execution of the current test case (in order to see if the line where the exception is thrown is reached). 
+In addition, the results contain information about the progress of search (best fitness function, best line coverage, and if the target exception is thrown), and number of fitness evaluations performed by \evocrash in an output CSV file. 
+If \evocrash succeeds to replicate the crash, the generated test is stored separately.
+
+As mentioned by Fraser et al. \cite{FA13challenges}, any research tool developed to generate test cases may face specific challenges. 
+One of these is long (or infinite) execution time of the test during the generation process. 
+To manage this problem, \evosuite uses a timeout for each test execution, but sometimes it fails to kill sub-processes spawned during the search \cite{FA13challenges}.
+We also experienced \evocrash freezing during our evaluation. 
+%
+In order to handle this problem, \exrunner creates an observer to check the status of each thread executing an \evocrash instance.
+If one \evocrash execution does not respond for $10$ minutes (66\% of the expected execution time), the Python script kills the \evocrash process and all of its spawned threads. 
+
+Another challenge relates to garbage collection: we noticed that, at some point of the execution, one job (i.e., one JVM instance) allocated all the CPU cores for the execution of the garbage collector, preventing other jobs to run normally. 
+Moreover, since \evocrash allocates a large amount of heap space to each sub-process responsible to generate a new test case (since the execution of the target application may require a large amount of memory) \cite{FA13challenges}, the garbage collection process could not retrieve enough memory and got stuck, stopping all jobs on the machine.
+To prevent this behaviour, we set \emph{-XX:ParallelGCThreads} JVM parameter to 1, enabling only one thread for garbage collection, and limited the number of parallel threads per machine, depending on the maximal amount of allocated memory space. 
+We set the number of active threads to 5 for running on virtual machines, and 25 for running on two powerful machines. 
+Using the logging mechanism in \evocrash, we are able to see when individual executions ran out of memory.
+
+\exrunner is available together with \crashpack.\footnote{See \url{https://github.com/STAMP-project/ExRunner}.}
+It presently has only been used to perform \evocrash benchmarking, yet it has been designed to be extensible to other available stack trace reproduction tools using a plugin mechanism. 
+Integrating another crash reproduction tool requires the definition of two handlers, called by \exrunner: one to run the tool with the inputs provided by \exrunner (i.e. the stack trace, the target frame, and the classpath of the software under test); and one to parse the output produced by the tool to pick up relevant data (e.g., the final status of the crash reproduction, progress of the tool during the execution, \textit{etc}.). 
+Relevant data are stored in a CSV file, readily available for analysis.\footnote{ The \exrunner documentation includes a detailed tutorial describing how to proceed, available at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application\#run-other-crash-replication-tools-with-exrunner}.}
+

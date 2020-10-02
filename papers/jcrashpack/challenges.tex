@@ -1,0 +1,336 @@
+
+\begin{table}[t]
+    \centering
+	\caption{Challenges with the number and percentage of frames identified for this challenge.}
+	\label{tab:challenges}
+	\input{papers/jcrashpack/challenges-table.tex}
+\end{table}
+
+To identify open problems and future research directions, we manually analyzed the execution logs of 1,653 frames that could not be reproduced in any of the 10 executions.
+This analysis includes a description of the reason why a frame could not be reproduced.\footnote{Available at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/tree/master/results/manual-analysis}.}
+Based on those descriptions, we grouped the reason of the different failures into 13 categories and identified future research directions.
+%This manual process took 9 person-weeks in total.
+%
+Table \ref{tab:challenges} provides the number and frequency of frames classified in each category.\footnote{For each category, we provide illustrative examples from \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/tree/master/results/examples}.} The complete categorization table is available in our replication package.\footnote{The full table is available at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/manual-analysis/categorisation.csv}.} 
+
+%We divide the categories into two groups. The first group present categories previously identified in related search-based software testing literature. For each category of this group, we discuss how they impede search-based crash reproduction in particular. The second group presents newly identified categories and, for each category, discuss how they impact search-based crash reproduction, but also how they could affect search-based software testing in general. 
+
+For each challenge, we discuss to what extent it is crash-reproduction-specific and its relation to search-based software testing in general. In particular, for challenges previously identified by the related literature in search-based test case generation, we highlight the differences originating from the crash reproduction context.
+%\subsection{Challenges previously identified in search-based software testing}
+
+%Seven of the thirteen challenges directly relate to challenges previously identified for search-based testing in general. We confirm their relevance and highlight the differences originating from the crash reproduction context.
+
+
+\subsection{Input data generation}
+
+Generating complex input objects is a challenge faced by many automated test generation approaches, including search-based software testing and symbolic execution \cite{braione2017tardis}.
+Usually, the input space of each input is large and generating proper data enabling the search process to cover its goals is difficult.
+
+As we can see from Table \ref{tab:challenges}, this challenge is substantial in search-based crash reproduction.
+Trying to replicate a crash for a target frame requires to set the input arguments of the target method and all the other calls in the sequence properly such that when calling the target method, the crash happens.
+Since the input space of a method is usually large, this can be challenging.
+\evocrash uses randomly generated \emph{input arguments} and mock objects as inputs for the target method.
+As we described in Section~\ref{sec:jcrashpack:evocrashevalresults}, we observe that a widespread problem when reproducing a \textit{ClassCastException} (CCE) is to identify which types to use as input parameters such that a CCE is thrown.
+In the case of a CCE, this information can be obtained from the error message of the exception. Our future work includes harvesting additional information, like error messages, to help the search process. 
+
+We also noticed that some stack traces involving Java \emph{generic types} make \evocrash abort the search after failing to inject the target method in every generated test during the guided initialization phase.
+Generating \emph{generic type} parameters is also a recognized challenge for automated testing tools for Java \cite{fraser2014automated}.
+To handle these parameters, \evocrash, based on \evosuite's implementation \cite{fraser2014automated}, collects candidate types from \texttt{castclass} and \texttt{in\-stance\-of} operators in Java bytecode, and randomly assign them to the type parameter.
+Since the candidate types may themselves have generic type parameters, a threshold is used to avoid large recursive calls to generic types.
+One possible explanation for the crashes in these cases could be that the threshold is not correctly tuned for the kind of classes involved in the recruited projects.
+Thus, the tool fails to set up the target method to inject to the tests.
+Based on the results of our evaluation, handling Java generics in \evocrash needs further investigation to identify the root cause(s) of the crashes and devise effective strategies to address them.
+
+\begin{lstlisting}[frame=tb,
+  caption={Excerpt of the stack trace for the crash XWIKI-13708},
+  label=list:XWIKI13708,
+  captionpos=t,
+  numbers=left,
+  float=t,
+  firstnumber=0]
+java.lang.NullPointerException: null
+  at com.xpn.xwiki.internal.template.TemplateListener.onEvent(TemplateListener.java:79)
+  at org.xwiki.observation.internal.DefaultObservationManager.notify(DefaultObservationManager.java:307)
+  at org.xwiki.observation.internal.DefaultObservationManager.notify(DefaultObservationManager.java:269)
+  [...]
+\end{lstlisting}
+
+\begin{lstlisting}[frame=tb,
+  caption={Code excerpt from method \texttt{onEvent} in \texttt{TemplateListener.java}},
+  label=list:input-generation:example,
+  captionpos=t,
+  language=Java,
+  numbers=left,
+  firstnumber=72,
+  float=t,
+  stepnumber=1]
+public void onEvent(Event event, Object source, Object data) {
+  XWikiDocument document = (XWikiDocument) source;
+
+  if (document.getXObject(WikiSkinUtils.SKINCLASS_REFERENCE) != null) {
+    if (event instanceof AbstractAttachmentEvent) {
+      XWikiAttachment attachment = document.getAttachment(((AbstractAttachmentEvent) event).getName());
+      String id = this.referenceSerializer.serialize(attachment.getReference()); // target line (*@\label{line:input-generation:target}@*)
+      [...]
+    }
+  }
+}
+\end{lstlisting}
+
+For instance, \evocrash cannot reproduce the first frame of crash XWIKI-13708\footnote{\url{https://jira.xwiki.org/browse/XWIKI-13708}}, presented in Listing \ref{list:XWIKI13708}. The target method \texttt{onEvent} (detailed in Listing \ref{list:input-generation:example}) has three parameters.
+\evocrash could not reach the target line (line \ref{line:input-generation:target} in Listing \ref{list:input-generation:example}) as it failed to generate a fitted value for the second parameter (\texttt{source}). This (\texttt{Object}) parameter should be castable to \texttt{XWikiDocument} and should return values for \texttt{getXObject()} or \texttt{getAttachment()} (using mocking for instance).
+
+\paragraph{Chosen examples:} 
+XWIKI-13708, frame 1;
+ES-22922, frame 5;
+ES-20479, frame 10.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/InputDataGeneration.md}.}
+
+
+\subsection{Complex code}
+
+Generating tests for complex methods is hard for any search-based software testing tool \cite{MarkFlag}. In this study, we indicate a method as complex if 
+\begin{inparaenum}[(i)]
+\item it contains more than 100 lines of code and high cyclomatic complexity; 
+\item it holds nested predicates ~\cite{GordonFlag, MarkFlag}; or
+\item it has the \textit{flag problem}~\cite{GordonFlag,McMinn2011}, which include (at least one) branch predicate with a binary (boolean) value, making the landscape of the fitness function flat and turning the search into a random search \cite{MarkFlag}.
+\end{inparaenum}
+
+As presented in Section~\ref{sec:background:evocrash:guidedalg}, the first component of the fitness function that is used in \evocrash encodes how close the algorithm is to reach the line where the exception is thrown.
+Therefore, frames of a given stack trace pointing to methods with a high code complexity\footnote{In some cases for Elasticsearch, the failing methods have nearly 300 lines of source code.} are more costly to reproduce, since reaching the target line is more difficult.  
+
+Handling complex methods in search-based crash reproduction is harder than in general search-based testing. 
+The search process in crash reproduction should cover (in most cases) only one specific path in the software under test to achieve the reproduction. 
+If there is a complex method on this path, the search process cannot achieve reproduction without covering it. 
+Unlike the more general coverage driven search-based testing approach (with line coverage for instance), where the are usually multiple possible executions paths to cover a goal.
+
+\paragraph{Chosen examples:} 
+XWIKI-13096, frame 3;
+ES-22373, frame 10.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/ComplexCode.md}.}
+
+
+\subsection{Environmental dependencies} 
+
+As discussed by Arcuri et al.~\cite{Arcuri2014b}, generating unit tests for classes which interact with the environment leads to
+\begin{inparaenum}[(i)]
+\item difficulty in covering certain branches which depend on the state of the environment, and
+\item generating flaky tests \cite{Luo2014}, which may sometimes pass, and sometimes fail, depending on the state of the environment. 
+\end{inparaenum}
+%
+Despite the numerous advances made by the search-based testing community in handling environmental dependencies \cite{Arcuri2014b, Fraser2014b}, we noticed that having such dependencies in the target class hampers the search process.
+%
+Since \evocrash builds on top of \evosuite~\cite{fraser2012whole}, which is a search-based \textit{unit} test generation tool, we face the same problem in the crash reproduction problem as well.
+
+\begin{lstlisting}[frame=tb,
+float=t,
+  caption=Stack trace for the crash XWIKI-12584,
+  label=lst:XWIKI12584,
+  captionpos=t,
+  basicstyle={\scriptsize\ttfamily},
+  numbers=left,
+  firstnumber=0,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  ]
+java.lang.ClassCastException: [Ljava.lang.Object; cannot be cast to java.lang.String
+  at [...].XWikiHibernateStore.searchDocumentReferencesInternal([...]:2457)
+  at [...].XWikiHibernateStore.searchDocumentsNamesInternal([...]:2440)
+  at [...].XWikiHibernateStore.searchDocumentsNames([...]:2246)
+  at [...].XWikiHibernateStore.searchDocumentsNames([...]:2230)
+  at [...].XWikiCacheStore.searchDocumentsNames([...]:373)
+  at [...].XWiki.searchDocuments([...]:576)
+\end{lstlisting}	
+
+For instance, Listing~\ref{lst:XWIKI12584} shows the stack trace of the crash XWIKI-12584.\footnote{Reported at \url{https://jira.xwiki.org/browse/XWIKI-12584} and analyzed at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/manual-analysis/Xwiki/XWIKI-12584.md}.} 
+During the evaluation, \evocrash could not reproduce any of the frames of this stack trace. 
+During our manual analysis, we discovered that, for the four first frames, \evocrash was unable to instantiate an object of class \texttt{XWikiHibernateStore},\footnote{See \url{https://github.com/xwiki/xwiki-platform/blob/xwiki-platform-7.2-milestone-2/xwiki-platform-core/xwiki-platform-oldcore/src/main/java/com/xpn/xwiki/store/XWikiHibernateStore.java}} resulting in an abortion of the search.
+Since the class \texttt{XWikiHibernateStore} relies on a connection to an environmental dependency (here, a database), generating unit test requires substantial mocking code\footnote{See \url{https://github.com/xwiki/xwiki-platform/blob/xwiki-platform-7.2-milestone-2/xwiki-platform-core/xwiki-platform-oldcore/src/test/java/com/xpn/xwiki/store/XWikiHibernateStoreTest.java}} that is hard to generate for \evocrash. 
+As for input data generation, our future work includes harvesting and leveraging additional information from existing tests to identify and use relevant mocking strategies. 
+
+\paragraph{Chosen examples:} 
+ES-21061, frame 4;
+XWIKI-12584, frame 4.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/EnvironmentalDependencies.md}.}
+
+
+\subsection{Static initialization}
+
+In Java, static initializers are invoked only once when the class containing them is loaded.
+As explained by Fraser and Arcuri~\cite{Fraser2014b}, these blocks may depend on static fields from other classes on the classpath that have not been initialized yet, and cause exceptions such as \texttt{NullPointerException} to be thrown.
+In addition, they may involve environmental dependencies that are restricted by the security manager, which may also lead to unchecked exceptions being generated.
+
+In our crash reproduction benchmark, we see that about 9\% (see Table \ref{tab:challenges}) of the cases cannot be reproduced as they point to classes that have static initializers.
+When such frames are used for crash reproduction with \evocrash, the tool currently aborts the search without generating any crash reproducing test.
+%
+As Fraser and Arcuri~\cite{Fraser2014b} discuss, automatically determining and solving all possible kinds of dependencies in static initializers is a non-trivial task that warrants dedicated research.
+
+\paragraph{Chosen examples:} 
+ES-20045, frames 1 and 2.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/StaticInitialisation.md}.}
+
+
+\subsection{Abstract classes and methods}
+\label{sec:categoryabstractclasses}
+
+In Java, abstract classes cannot be instantiated.
+Although generating coverage driven unit tests for abstract classes is possible (one would most likely generate unit tests for concrete classes extending the abstract one or use a parametized test to check that all implementations respect the contract defined by the abstract class), when a class under test is abstract, \evosuite (as the general test generation tool for java) looks for classes on the classpath that extend the abstract class to create object instances of that class. 
+In order to cover (e.g., using line coverage) specific parts of the abstract class, \evosuite needs to instantiate the right concrete class allowing to execute the different lines of the abstract class. 
+
+For crash reproduction, as we can see from Table~\ref{tab:challenges}, it is not uncommon to see abstract classes and methods in a stack trace. 
+In several cases from Elasticsearch, the majority of the frames from a given stack trace point to an abstract class.
+Similarly to coverage-driven unit test generation, \evocrash needs to instantiate the right concrete class: if \evocrash picks the same class that has generated the stack trace in the first place, then it can generate a test for that class that reproduces the stack trace. 
+However, if \evocrash picks a different class, it could still generate a test case that satisfies the first two conditions of the fitness function (section~\ref{sec:background:evocrash:guidedalg}). 
+In this last case, the stack trace generated by the test would match the frames of the original stack trace, as the class names and line numbers would differ.
+The fitness function would yield a value between 0 and 1, but it may never be equal to~0.
+
+\paragraph{Chosen examples:} 
+ES-22119, frames 3 and 4;
+XRENDERING-422, frame 6.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/AbstractClass.md}.}
+
+
+\subsection{Anonymous classes}
+
+As discussed in the study by Fraser \etal~\cite{fraser2012whole}, generating automated tests for covering anonymous classes is more laborious because they are not directly accessible. 
+We observed the same challenge during the manual analysis of crash reproduction results generated by \evocrash.
+When the target frame from a given crash stack trace points to an anonymous object or a lambda expression, guided initialization in \evocrash fails, and \evocrash aborts the search without generating any test.
+
+\paragraph{Chosen examples:} 
+ES-21457, frame 8;
+XWIKI-12855, frames 30 and 31.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/AnonymousClass.md}.}
+
+
+\subsection{Private inner classes}
+
+Since it is not possible to access a private inner class, and therefore, not possible to directly instantiate it, it is difficult for any test generation tool in Java to create an object of this class.
+As for anonymous classes, this challenge is also present for crash reproduction approaches.
+In some crashes, the target frame points to a failing method inside a private inner class.
+Therefore, it is not possible to directly inject the failing method from this class during the guided initialization phase, and \evocrash aborts the search.
+
+\paragraph{Chosen example:} 
+MATH-58b, frame 3.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/PrivateInnerClass.md}.}
+
+
+%\subsection{Crash reproduction related challenges}
+
+%We identified six new challenges (out of thirteen). For each one, we also describe how it can affect search-based software testing in general. 
+
+
+\subsection{Interfaces}
+
+In 6 cases, the target frame points to an interface.
+In Java, similar to abstract classes, interfaces may not be directly instantiated.
+In these cases also, \evocrash randomly selects the classes on the classpath that implement the interface and, depending on the class picked by \evocrash, the fitness function may  not reach $0.0$ during the search if the class is different from the one used when the input stack trace has been generated.
+%
+This category is a special case of \emph{Abstract classes and methods} (described in Section \ref{sec:categoryabstractclasses}), however, since the definition of a default behavior for an interface is a feature introduced by Java~8 \cite{jdk8release} that has, to the best of our knowledge, not been previously discussed for search-based testing, we choose to keep it as a separate category. 
+
+\paragraph{Chosen example:}
+ES-21457, frame 9.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/Interface.md}.}
+
+
+\subsection{Nested private calls}
+
+In multiple cases, the target frame points to a private method. As we mentioned in Section \ref{sec:jcrashpack:evocrashevalsetup}, those private methods are not directly accessible by \evocrash. 
+To reach them, \evocrash detects other public or protected methods which invoke the target method directly or indirectly and randomly choose during the search. 
+If the chain of method calls, from the public caller to the target method, is too long, the likelihood that \evocrash may fail to pick the right method during the search increases.
+
+In general, calling private methods is challenging for any automated test generation approach.
+For instance, Arcuri \etal \cite{arcuri2017private} address this problem by using the Java reflection mechanism to access private methods and private attributes during the search. 
+As mentioned in Section \ref{se:evalsetup}, this can generate invalid objects (with respect to their class invariants) and lead to generating test cases helplessly trying to reproduce a given crash \cite{Chen2015}.
+
+\paragraph{Chosen examples:} 
+XRENDERING-422, frames 7 to 9.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/NestedPrivateCalls.md}.}
+
+
+\subsection{Empty \texttt{enum} type}
+
+In the stack trace of the ES-25849 crash,\footnote{The analysis is available at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/manual-analysis/Elasticsearch/ES-25849.md}.} 
+the 4th frame points to an empty enumeration Java type.\footnote{See \url{https://github.com/jimczi/elasticsearch/blob/0a4b38b60c2752cdc6de819f5bf3414bd01f88c5/core/src/main/java/org/elasticsearch/index/fielddata/ordinals/GlobalOrdinalsBuilder.java}.} 
+Since there are no values in the enumeration, \evocrash was not able to instantiate a value and \emph{aborted} during the initialization of the population.
+Frames pointing to code in an empty enumeration Java type should not be selected as target frames and could be filtered out using a preliminary static analysis.
+
+\paragraph{Chosen example:} 
+ES-25849, frame 4.
+
+\subsection{Frames with \texttt{try}/\texttt{catch}}
+
+Some frames have a line number that designates a call inside a \texttt{try/catch} block.
+When the exception is caught, it is no longer thrown at the specific line given in the trace, rather it is typically handled inside the associated \texttt{catch} blocks.
+From what we observed, often catch blocks either
+\begin{inparaenum}[(i)]
+\item re-throw a checked exception, which yield chained stack traces with information that is not exactly as the input stack trace but can still be used for crash reproduction;
+ or \item log the caught exception.
+\end{inparaenum}
+%
+Since \evocrash only considers uncaught exceptions that are generated as the result of running the generated test cases during the search, the logged stack traces is presently no use for crash reproduction. Also, even if a stack trace is recorded to an error log, this stack trace is not the manifestation of a crash \textit{per se}. Indeed, once the exception logged, the execution of the program continues normally. 
+
+For instance, for the crash ES-20298,\footnote{Reported at \url{https://github.com/elastic/elasticsearch/issues/20298} and analyzed at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/manual-analysis/Elasticsearch/ES-20298.md}} \evocrash cannot reproduce the fourth frame of the crash. This frame points to the following method call in a \texttt{try} and \texttt{catch}:
+%
+\begin{lstlisting}[language=Java]
+try {
+    processResponse(response);
+} catch (Throwable t) {
+    onFailure(t);
+}
+\end{lstlisting}
+%
+Even if an exception is thrown by the \texttt{processResponse} method, this exception is caught and logged, and the execution of the program continues normally. 
+
+Generally, if an exception is caught in one frame, it cannot be reproduced (as it cannot be observed) from higher level frames. For instance, for ES-20298, all frames above level 4 cannot be reproduced since the exception is catch in frame 4 and not propagated to the higher frames. 
+This property of a crash stack trace implies that, for now, depending on where in the trace such frames exist, only a fraction of the input stack traces can actually be used for automated crash reproduction.
+Future development of \evocrash can alleviate this limitation by, additionally to the monitoring of uncaught exceptions, read the error log to affecting the propagation of exceptions during execution. 
+However, unlike other branching instructions relying on boolean values, for which classical coverage driven unit test generation can use the \emph{branch distance} (see Section \ref{sec:background:evocrash:guidedalg}) to guide the search \cite{McMinn2004}, there is little guidance offered for \texttt{try/catch} instructions since the branching condition is implicit in one or more instructions in the \texttt{try}. 
+
+\paragraph{Chosen example:} 
+ES-14457, frame 4.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/TryCatch.md}.}
+
+
+\subsection{Missing line number}
+
+\begin{lstlisting}[frame=tb,
+  float=t,
+  caption=An excerpt of the stack trace from the crash XRENDERING-422  with missing line numbers,
+  label=list:missing,
+  captionpos=t,
+  basicstyle={\scriptsize\ttfamily},
+  numbers=left,
+  breaklines=true,
+  breakatwhitespace=false,
+  tabsize=3]
+at org.apache.xerces.parsers.XMLParser.parse(Unknown Source)
+at org.apache.xerces.parsers.AbstractSAXParser.parse(Unknown Source)
+at org.xml.sax.helpers.XMLFilterImpl.parse(XMLFilterImpl.java:357)
+\end{lstlisting}
+
+31 frames in \crashpack have frames with a missing line number, as shown in Listing~\ref{list:missing}.
+This happens if the Java files have been compiled without any \emph{debug} information (by default, the Java compiler add information about the source files and line numbers, for instance, when printing a stack trace) or if the frame points to a class part of the standard Java library and the program has been run in the Java Runtime Environment (JRE) and not the JDK.
+
+Since \evocrash currently requires a line number to compute the fitness values during the search, those frames have been ignored during our evaluation and do not appear in the results.
+Yet, as frames with missing line number appear in \crashpack (and in other stack traces), we decided to mention this trial here as a search-based crash reproduction challenge.
+A possible solution, as the future work, is to relax the fitness function so that it can still approximate fitness if line numbers are missing.
+
+\paragraph{Chosen example:} 
+XRENDERING-422.\footnote{The stack trace is available at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/evaluation/JarFiles/resources/logs/XWIKI/XRENDERING-422/XRENDERING-422.log}}
+
+
+\subsection{Incorrect line numbers}
+
+In 37 cases, the target frame points to the line in the source code where the target class or method is defined.
+This happens when the previous frame points to an anonymous class or a lambda expression.
+Such frames practically cannot be used for crash reproduction as the location they point to does not reveal where exactly the target exception occurs.
+One possible solution would be to consider the frame as having a missing line number and use the relaxed fitness function to approximate the fitness. 
+
+\paragraph{Chosen examples:} 
+MATH-49b, frames 1 and 4.\footnote{See \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application/blob/master/results/examples/IrrelevantFrames.md}.}
+
+
+\subsection{Unknown}
+
+We were unable to identify why \evocrash failed to reproduce 16 frames (out of 1,653 frames manually analyzed). 
+In these cases, neither the logs nor the source code could help us understand how the exception was propagated. 
+%Therefore, factor which leads \evocrash to fail to reproduce the crash could not be clearly identified.
+
+
+\paragraph{\textbf{Summary (RQ$_3$)} What are the open problems that need to be solved to enhance search-based crash reproduction?}
+
+Based on the manual analysis of the frames that could not be reproduced at least once out of 10 rounds of executions, we identified 13 challenges for search-based crash reproduction.
+We confirmed challenges previously identified in other search-based software testing approaches and specified how they affect search-based crash reproduction. And discovered new challenges, more specific to search-based crash reproduction and explained how the can affect other search-based software testing approaches. 
+
+These challenges are related to the difficulty to generate test cases due to complex input data, environmental dependencies, or complex code; abstraction (static initialization, interfaces, abstract, and anonymous classes); encapsulation mechanisms (private inner classes and nested private calls in the given stack trace) of object-oriented languages; or the selection of the target frame in crash reproduction (in \texttt{try}/\texttt{catch} blocks, in empty enumerations, when the location in the source code is unknown, or when the frame has an incorrect line number).

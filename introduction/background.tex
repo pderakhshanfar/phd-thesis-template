@@ -167,7 +167,7 @@ It then seeks to generate a unit test that replicates the given stack trace from
 For instance, if we pass the stack trace in Table \ref{tab:ant49755} as the given trace and indicate the second frame as the target frame (level 2), the output of \evocrash will be a unit test for the class \texttt{TempFile} which replicates the first two frames of the given stack trace with the same type of the exception (\texttt{NullPointerException}).
 
 \subsubsection{Guided genetic algorithm}
-
+\label{sec:background:evocrash:guidedalg}
 The search process in \evocrash begins by randomly generating unit tests for the target frame.
 In this phase, called \emph{guided initialization}, the target method corresponding to the selected frame (i.e., the \emph{failing method} to which the exception is propagated) is injected in every randomly generated unit test.
 During subsequent phases of the search, \emph{guided crossover} and \emph{guided mutation}, standard evolutionary operations are applied to the unit tests.
@@ -235,22 +235,28 @@ Where $l$ (resp. $l*$) is the line number of the frame $f$ (resp. $f*$).
 
 Each of the three components if the fitness function defined in Equation \ref{eq:fitnessfunction} ranges from $0.0$ to $1.0$, the overall fitness value for a given test case ranges from $0.0$ (crash is fully reproduced) to $6.0$ (no test was generated), depending on the conditions it satisfies. 
 
+
+\begin{table*}[t]
+	\centering
+	\caption{The number of crashes used in each crash reproduction tool experiment, the gained reproduction by them, and the involved projects.}
+	\label{tab:background:represults}
+	\input{papers/jcrashpack/tab-reproduction-results}
+\end{table*}
+
 \subsubsection{Comparison with the state-of-the-art}
 
-\paragraph{Other crash reproduction techniques.}
+
+\paragraph{Crash reproduction tools.}
 %
-A recent study \etal \cite{soltani2017, Soltani2018a} compared \evocrash with other stack-trace based crash reproduction approaches: \textsc{STAR} \cite{Chen2015}, \textsc{JCHARMING} \cite{Nayrolles2017}, and \textsc{MuCrash} \cite{Xuan2015}.
-According to their results, \evocrash outperforms other tools.
-% Only one crash (ACC-104) could be replicated by \textsc{STAR} and \textsc{MuCrash} but not by \evocrash. 
-% After manual analysis, Soltani \etal identified an ``\textit{inheritance problem}'': \evocrash instantiates an object from the wrong subclass during the search process. 
-% This issue has been confirmed in our evaluation and identified as a challenge for crash reproduction and search-based software testing.
-% Unfortunately, as explained by Soltani \etal \cite{soltani2017, Soltani2018a}, other crash reproduction tools are not publicly available, and the reported comparisons in these studies are performed based on results published in \cite{Chen2015, Nayrolles2017, Xuan2015}. 
+Table \ref{tab:background:represults} presents the number of crashes used in the benchmarks used to evaluated stack-trace based post-failure crash reproduction tools as well as their crash reproduction rates. 
+\evocrash has been evaluated on various crashes reported in other studies and has the highest reproduction rate.
+
+%Unfortunately, as explained by Soltani \etal \cite{soltani2017, Soltani2018a}, other crash reproduction tools are not publicly available, and the reported comparisons in these studies are performed based on results published in \cite{Chen2015, Nayrolles2017, Xuan2015}. 
 
 \paragraph{\evosuite{}.}
 %
-Also, it has been shown that \evocrash outperforms \evosuite, with exception coverage as the primary objective \cite{Soltani2018a}. 
-Out of 52 crashes, \evocrash replicated 46 crashes(85\%), while \evosuite replicated only 18 crashes (33\%). 
-All the crashes reproduces by \evosuite could also be reproduced by \evocrash on average 170\% faster, and with a higher reproduction rate. 
+Table \ref{tab:background:represults} also reports the comparison of \evocrash with \evosuite, using exception coverage as the primary objective, applied by Soltani \etal \cite{Soltani2018a}. All the crashes reproduced by \evosuite could also be reproduced by \evocrash on average 170\% faster and with a higher reproduction rate. 
+
 
 \subsubsection{Usefulness for debugging}
 

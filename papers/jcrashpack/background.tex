@@ -1,0 +1,168 @@
+
+\subsection{Crash reproduction}
+
+Crash reproduction approaches can be divided into three categories, based on the kind of data used for crash reproduction: \emph{record-replay approaches} record data from the running program; \emph{post-failure approaches} collect data from the crash, like a memory dump; and \emph{stack-trace based post-failure} use only the stack trace produced by the crash. We briefly describe each category hereafter.
+
+\paragraph{Record-replay approaches.}
+
+These approaches record the program runtime data and use them during crash reproduction. The main limitation is the availability of the required data. Monitoring software execution may violate privacy by collecting sensitive data, the monitoring process can be an expensive task for the large scale software and may induce a significant overhead \cite{Chen2015, Nayrolles2017, Rossler2013}.
+%
+Tools like \textrm{ReCrash} \cite{Artzi2008}, \textrm{ADDA} \cite{Clause2007}, \textrm{Bugnet} \cite{Narayanasamy2005}, \textrm{jRapture} \cite{Steven2000}, \textrm{MoTiF} \cite{Gomez2016}, \textrm{Chronicler} \cite{Bell2013}, and \textrm{SymCrash} \cite{Cao2014} fall in this category.
+
+\paragraph{Post-failure approaches.}
+
+Tools from this category use the software data collected directly after the occurrence of a failure. For instance, \textrm{RECORE} \cite{Rossler2013} applies a search-based approach to reproduce a crash. 
+\textrm{RECORE} requires both a stack trace and a core dump, produced by the system when the crash happened, to guide the search. 
+Although these tools limit the quantity of monitored and recorded data, the availability of such data still represents a challenge. For instance, if the crash is reported trough an issue tracking system or if the core dump contains sensitive data. 
+%
+Other \textit{post-failure approaches} inlcude: \textrm{DESCRY} \cite{YZW17descry}, and other tools by Weeratunge \etal \cite{Weeratunge2010}, Leitner \etal \cite{Leitner2007, Leitner2009}, or Kifetew \etal \cite{Kifetew2013, Kifetew2014}.
+
+\paragraph{Stack-trace based post-failure.}
+
+Recent studies in crash reproduction \cite{BPT17concrash, soltani2017, Nayrolles2017, Xuan2015, Chen2015} focuses on utilizing data only from a given crash stack trace to enhance the practical application of the tools. For instance,  in contrast to the previously introduced approaches, \evocrash only considers the stack trace (usually provided when a bug is reported in an issue tracker) and a distance, similar to the one described by Rossler \etal \cite{Rossler2013}, to guide the search.
+%
+Table~\ref{tab:ant49755} illustrates an example of a crash stack trace from Apache Ant\footnote{ANT-49755: \url{https://bz.apache.org/bugzilla/show_bug.cgi?id=49755} } ~\cite{ant} which is comprised of a crash type (\texttt{java.lang.Null\-Pointer\-Exception}) and a stack of frames pointing to all method calls that were involved in the execution when the crash happened.
+From a crash stack frame, we can retrieve information about: the crashing method, the line number in the method where the crash happened, and the fully qualifying name of the class where the crashing method is declared.
+
+\begin{table*}[t]
+\centering
+\caption{The crash stack trace for Apache Ant-49755.}
+\label{tab:ant49755}
+\begin{tabular}{c|l}
+\multicolumn{2}{l}{java.lang.\textbf{NullPointerException}:}\\
+\hline
+\textbf{Level} & \textbf{Frame} \\
+\hline
+1 & \textbf{at} org.apache.tools.ant.util.FileUtils.\textbf{createTempFile}(FileUtils.java:\textbf{888})\\
+2 & \textbf{at} org.apache.tools.ant.taskdefs.TempFile.\textbf{execute}(TempFile.java:\textbf{158})\\
+3 & \textbf{at} org.apache.tools.ant.UnknownElement.\textbf{execute}(UnknownElement.java:\textbf{291}) \\
+\end{tabular}
+\end{table*}
+
+The state of the research in crash reproduction \cite{Zamfir2010, jin2012bugredux, BPT17concrash, soltani2017, Nayrolles2017, Xuan2015, Chen2015} aims at generating test code that, once executed, produces a stack trace that is as similar to the original one as possible. They, however, differ in their means to achieve this task: for instance, 
+\textrm{ESD} \cite{Zamfir2010} and \textrm{BugRedux} \cite{jin2012bugredux}  use forward symbolic execution; \textrm{STAR} \cite{Chen2015} applies optimized backward symbolic execution and a novel technique for method sequence composition; \textrm{JCHARMING} \cite{Nayrolles2017} applies model checking; \textrm{MuCrash} \cite{Xuan2015} is based on exploiting existing test cases that are written by developers, and mutating them until they trigger the target crash; and \textrm{Concrash} \cite{BPT17concrash} focuses on reproducing \textit{concurrency} failures that violate thread-safety of a class by using search pruning strategies.
+
+%and static analysis to reach reproduction. This tool focuses more on concurrency and memory safety bugs. It has been evaluated on 8 real bugs and compared with an enhanced version of \textrm{Klee} \cite{Cadar2008} which supports multi-threading. %In this experiment, Klee has executed with two different search strategy:  exhaustive search and random search to maximize the global path coverage.
+%Similarly to \textrm{ESD}, \textrm{BugRedux} \cite{jin2012bugredux} uses forward symbolic execution. \textrm{BugRedux} is a crash reproduction tool for C programs. This tool has been applied to 16 crashes from 14 real-world programs.
+
+%Since these two tools rely on forward symbolic execution, they can be applied only on medium size applications. Also, as illustrated by Braione \etal \cite{braione2017tardis}, symbolic execution test generation approaches face limitation when generating complex input data structures.
+%To adress those limitations by identifying the preconditions of a target crash, \textrm{STAR} \cite{Chen2015} applies optimized backward symbolic execution and uses a novel technique for method sequence composition to generate a unit test that satisfies the computed preconditions, and eventually reproduces the target crash. 
+%However, as reported in Ken \etal \cite{Chen2015}, \textrm{STAR} still suffers from the path explosion which stems from utilizing symbolic execution. 
+%It only supports 3 types of exceptions: explicitly thrown exceptions, \texttt{NullPointerException}, and \texttt{ArrayIndexOutOfBoundsException}.  
+%\textrm{STAR} has been evaluated on 50 crashes from various open source projects.
+
+%\textrm{JCHARMING} \cite{Nayrolles2017} applies model checking to reproduce the reported bugs. To prevent state explosion in the model, it utilizes program slicing.
+%Since \textrm{JCHARMING} can be applied to any frame from a given crash stack trace, the approach can reproduce any fraction of the target crash stack trace. The evaluation of the tool includes 20 crashes from various open source projects.
+
+%\textrm{MuCrash} \cite{Xuan2015} is based on exploiting existing test cases that are written by developers, and mutating them until they trigger the target crash.
+%Test case mutation in \textrm{MuCrash} is directed by selecting tests that are for the classes included in the target crash stack trace. 
+%Xuan \etal \cite{Xuan2015} evaluate their tool on 12 crashes from the Apache commons collections library, compared \textrm{MuCrash} with \textrm{STAR} and reported one more reproduced crash.
+
+%Finally, \textrm{Concrash} \cite{BPT17concrash} focuses on reproducing \textit{concurrency} failures that violate thread-safety of a class.
+%\textrm{Concrash} iteratively generates test code and looks for a thread interleaving that triggers a concurrency crash.
+%In order to steer the test generation process and avoid expensive computations, \textrm{Concrash} applies pruning strategies to avoid redundant and irrelevant test code. In contrast with general crash reproduction tools, \textrm{Concrash} can reproduce only the minority of the crashes in the issue tracking systems. As reported by Yuan \etal \cite{Yuan2014}, inter-leaving crashes cause only 10\% of failures in the distributed data-intensive systems. Besides, Coelho \etal \cite{Coelho2015} state that this number is even lower in the Android applications (2.9\%).
+%\textrm{Concrash} is compared with existing concurrent test generator tools by running an experiment on ten failures.
+
+\subsection{Search-based crash reproduction with \evocrash}
+
+Search-based algorithms have been increasingly used for software engineering problems since they are shown to suite complex, non-linear problems, with multiple optimization objectives which may be in conflict or competing~\cite{harman12trends}.
+Recently, Soltani et al. \cite{soltani2017,Soltani2018a} introduced a search-based approach to crash reproduction, called \evocrash.
+\evocrash applies a \textit{guided genetic algorithm} to search for a unit test that reproduces the target crash.
+To generate the unit tests, \evocrash relies on a search-based test generator called \evosuite \cite{fraser2012whole}.
+
+\evocrash takes as input a stack trace with one of its frames set as the \emph{target frame}. 
+The target frame is composed of a \emph{target class}, the class to which the exception has been propagated, a \emph{target method}, the method in that class, and a \emph{target line}, the line in that method where the exception has been propagated. 
+Then, it seeks to generate a unit test which replicates the given stack trace from the target frame (at level $n$) to the deepest frame (at level 1). 
+For instance, if we pass the stack trace in Table \ref{tab:ant49755} as the given trace and indicate the second frame as the target frame (level 2), the output of \evocrash will be a unit test for the class \texttt{TempFile} which replicates first two frames of the given stack trace with the same type of the exception (\texttt{NullPointerException}).
+
+\subsubsection{Guided genetic algorithm}
+\label{sec:background:evocrash:guidedalg}
+The search process in \evocrash begins by randomly generating unit tests for the target frame.
+In this phase, called \emph{guided initialization}, the target method corresponding to the selected frame (i.e., the \emph{failing method} to which the exception is propagated) is injected in every randomly generated unit test.
+During subsequent phases of the search, \emph{guided crossover} and \emph{guided mutation}, standard evolutionary operations are applied to the unit tests.
+However, applying these operations involves the risk of losing the injected failing method.
+Therefore, the algorithm ensures that only unit tests with the injected failing method call remain in the evolution loop. 
+If the generated test by crossover does not contain the failing method, the algorithm replaces it with one of its parents. 
+Also, if after a mutation, the resulting test does not contain the failing method, the algorithm redoes the mutation until the the failing method is added to the test again.
+The search process continues until either the search budget is over or a crash reproducing test case is found.
+
+To evaluate the generated tests, \evocrash applies the following weighted sum fitness function \cite{Soltani2018a} to a generated test $t$:
+%
+\rowcolors{1}{}{}
+\begin{equation} \label{eq:fitnessfunction}
+f(t) = 
+\left\{
+  \begin{array}{lcr}
+    3 \times d_{s}(t) + 2 \times max(d_{except}) + max(d_{trace})   && \textit{if the line is not reached}\\
+    3 \times min(d_{s}) + 2 \times d_{except}(t) + max(d_{trace})   && \textit{if the line is reached}\\
+    3 \times min(d_{s}) + 2 \times min(d_{except}) + d_{trace}(t)   && \textit{if the exception is thrown}
+  \end{array}
+\right.
+\end{equation}
+\rowcolors{1}{}{gray!15}
+%
+Where:
+%
+\begin{itemize}
+\item $d_{s} \in [0,1]$ indicates the distance between the execution of $t$ and the target statement $s$ located at the target line. 
+This distance is computed using the \textit{approach level}, measuring the minimum number of control dependencies between the path of the code executed by $t$ and $s$, and normalized \textit{branch distance}, scoring how close $t$ is to satisfying the branch condition for the branch on which$s$ is directly control dependent \cite{McMinn2004}. 
+If the target line is reached by the test case, $d_{l}(t)$ equals to $0.0$;
+%
+\item $d_{except}(t) \in \{0,1\}$ indicates if the target exception is thrown ($d_{e} = 0$) or not ($d_{e} = 1$);
+%
+\item $d_{trace}(t) \in [0,1]$ indicates the similarity of the input stack trace and the one generated by $t$ by looking at class names, methods names and line numbers;
+%
+\item $max(\cdot)$ denotes the maximum possible value for the function.
+\end{itemize}
+%
+Since the stack trace similarity is relevant only if the expected exception is thrown by $t$, and the check whether  the expected exception is thrown or not is relevant only if the target line where the exception propagates is reached, $d_{except}$ and $d_{trace}$ are computed only upon the satisfaction of two \emph{constraints}: the target exception has to be thrown in the target line $s$ and the stack trace similarity should be computed only if the target exception is actually thrown. 
+
+Unlike other stack trace similarity measures (e.g., \cite{Rossler2013}), Soltani \etal \cite{Soltani2018a} do not require two stack traces to share the same common prefix to avoid rejecting stack traces where the difference is only in one intermediate frame. Instead, for each frame, $d_{trace}(t)$ looks at the closest frame and compute a distance value. Formally, for an original stack trace $S*$ and a test case $t$ producing a stack trace $S$, $d_{trace}(t)$ is defined as follows:
+%
+\rowcolors{1}{}{}
+\begin{equation}
+d_{trace}(t) = \varphi \left( \sum_{f* \in S*} min \left\lbrace \mathit{diff}(f*, f) : f \in S \right\rbrace \right)
+\end{equation}
+\rowcolors{1}{}{gray!15}
+%
+Where $\varphi (x) = x / (x+1)$ is a normalization function \cite{McMinn2004} and $\mathit{diff}(f*, f)$ measures the difference between two frames as follows: 
+%
+\rowcolors{1}{}{}
+\begin{equation}
+\mathit{diff}(f*, f) = 
+\left\{
+  \begin{array}{lcr}
+    3 && \textit{if the classes are different}\\
+    2  && \textit{if the classes are equal but the methods are different}\\
+     \varphi \left( \vert l* - l \vert \right)   && \textit{otherwise}
+  \end{array}
+\right.
+\end{equation}
+\rowcolors{1}{}{gray!15}
+%
+Where $l$ (resp. $l*$) is the line number of the frame $f$ (resp. $f*$).
+
+Each of the three components if the fitness function defined in Equation \ref{eq:fitnessfunction} ranges from $0.0$ to $1.0$, the overall fitness value for a given test case ranges from $0.0$ (crash is fully reproduced) to $6.0$ (no test was generated), depending on the conditions it satisfies. 
+
+\subsubsection{Comparison with the state-of-the-art}
+
+
+\begin{table*}[t]
+	\centering
+	\caption{The number of crashes used in each crash reproduction tool experiment, the gained reproduction by them, and the involved projects.}
+	\label{tab:background:represults}
+	\input{papers/jcrashpack/tab-reproduction-results}
+\end{table*}
+
+\paragraph{Crash reproduction tools.}
+%
+Table \ref{tab:background:represults} presents the number of crashes used in the benchmarks used to evaluated stack-trace based post-failure crash reproduction tools as well as their crash reproduction rates. 
+\evocrash has been evaluated on various crashes reported in other studies and has the highest reproduction rate.
+
+%Unfortunately, as explained by Soltani \etal \cite{soltani2017, Soltani2018a}, other crash reproduction tools are not publicly available, and the reported comparisons in these studies are performed based on results published in \cite{Chen2015, Nayrolles2017, Xuan2015}. 
+
+\paragraph{\evosuite{}.}
+%
+Table \ref{tab:background:represults} also reports the comparison of \evocrash with \evosuite, using exception coverage as the primary objective, applied by Soltani \etal \cite{Soltani2018a}. All the crashes reproduced by \evosuite could also be reproduced by \evocrash on average 170\% faster and with a higher reproduction rate. 
+
+
