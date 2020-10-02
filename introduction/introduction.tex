@@ -60,10 +60,10 @@ After identifying the challenges, we study novel ways to tackle them by enhancin
 
 \end{framed}
 
-Since some of the detected challenges in search-based crash reproduction are observable in other search-based test generation techniques, the observed contextual information can guide the search process to generate tests for specific software behaviors, as well. Hence, the last question concentrates on novel search-based techniques for generating tests to cover other specific software behaviors using contextual information.
+Since some of the detected challenges in search-based crash reproduction are observable in other search-based test generation techniques, the observed contextual information can guide the search process to generate tests for other criteria, as well. Hence, the last question concentrates on novel search-based techniques for testing in two levels of unit testing and class integration testing.
 
 \begin{framed}
-    \textbf{RQ$_3$: } \textit{How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other specific software behaviors?}
+    \textbf{RQ$_3$: } \textit{How can we leverage the existing knowledge, carved from information sources, to design search-based test generation approaches for unit and class integration testing?}
 \end{framed}
 
 This thesis answers $RQ_3$ by (i) introducing a whole new search-algorithm for class integration testing using the collected information about the method calls from one class (\textit{caller class}) to the other one (\textit{callee class}), and (ii) introducing a new search objective for search-based unit testing considering the common and uncommon execution paths in the class under test.
@@ -89,7 +89,7 @@ Table \ref{tab:chaptersvsRQs} outlines the connections between each defined rese
 \hline
 $RQ_1$: What are the challenges in search-based crash reproduction? & 2\\
 $RQ_2$: Based on the identified challenges, how can we leverage the existing knowledge, carved from information sources, to steer the crash reproduction search process? & 3 to 5\\
-$RQ_3$: How can we utilize the knowledge gained from static and dynamic analysis to design search-based test generation approaches for other specific software behaviors? & 6 \& 7\\
+$RQ_3$: How can we leverage the existing knowledge, carved from information sources, to design search-based test generation approaches for unit and class integration testing? & 6 \& 7\\
 \hline
 \end{tabular}
 \end{table}
@@ -145,6 +145,16 @@ Finally, we summarize our findings and conclusions in this thesis. This chapter 
 
 
 \section{Origins of the chapters}
+All chapters of this thesis (except Chapter 7, which is currently under review) have been published in peer-reviewed journals and conferences. Hence, each chapter contains a dedicated background, related work, and conclusion section. This section lists the origin of each chapter.
+
+\begin{itemize}
+    \item \textit{Chapter 2} was published in the paper "A benchmark-based evaluation of search-based crash reproduction" in Empirical Software Engineering Journal (EMSE) 2020.
+    \item \textit{Chapter 3} was published in the paper "Search‐based crash reproduction using behavioural model seeding" in Journal of Software: Testing, Validation, and Reliability (STVR) 2020.
+    \item \textit{Chapter 4} was published in the paper " Good Things Come In Threes: Improving Search-based Crash Reproduction With Helper Objectives" at International Conference on Automated Software Engineering (ASE) 2020.
+    \item \textit{Chapter 5} was published in the paper "It is not Only About Control Dependent Nodes: Basic Block Coverage for Search-Based Crash Reproduction" at Symposium on Search-Based Software Engineering (SSBSE) 2020.
+    \item \textit{Chapter 6} was published is a paper called "Generating Class-Level Integration Tests Using Call Site Information", which is currently under revision in Transactions on Software Engineering journal (TSE).
+    \item \textit{Chapter 7} was published in the paper "Commonality-Driven Unit Test Generation" at Symposium on Search-Based Software Engineering (SSBSE) 2020.
+  \end{itemize}
 
 \section{Open Science}
 
