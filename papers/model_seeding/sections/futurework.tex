@@ -1,0 +1,20 @@
+% !TEX root =  ../STVR-model-seeding.tex
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Future work}
+\label{sec:model_seeding:future}
+%%%%%%%%%%%%%%%%%%%%%%
+
+We observed that one of the advantageous factors in model seeding, which helps the search process to reproduce more crashes, consists in using more multiple resources for collecting the call sequences. Further diversification of sources is worth considering. In our future work, we will consider other sources of information, like logs of the running environment, to collect relevant call sequences and additional information about the actual usage of the application.
+
+Also, collecting additional information from the log files would enable using full-fledged \emph{behavioral usage models} (\ie a transition system with probabilities on their transitions quantifying the actual usage of the application) to select and \emph{prioritize} abstract object behaviors according to that usage as it is suggested by statistical testing approaches \cite{Devroey2017b}.
+For instance, we can put a high priority for the most uncommon observed call sequences for the abstract object behavior selection. We observed that selecting the most dissimilar paths in model-seeding helps the search process through crash reproduction. However, there is no guarantee that this approach is the best one. In future studies, we examine this approach with the new abstract object behavior selection approaches that we gain by the new full-fledged \emph{behavioral usage models}.
+
+In this study, we focus on the impact of seeding during guided initialization by using different values for  $Pr[pick\ init]$ and $Pr[clone]$ and setting $Pr[pick\ mut]$ to the default value (0.3). However, our results show that even with the default value 0.3, using seeded objects during the search process helps to reproduce several crashes. Our future work includes a thorough assessment of that factor.
+%
+Furthermore, in the current version of model seeding, we noticed that the fixed size for the selected abstract object behaviors from the usage models could negatively impact the crash reproduction process. 
+This set's size affects \botsing's performance and must be chosen carefully.  If too small, abstract object behaviors may not cover the transition system sufficiently, missing out on important usage information.  Too few abstract object behaviors can misguide the search process. In contrast, too many of them will lead to a time-consuming test concretization process.
+In future investigations, we will study the integration of the search process with the abstract object behavior selection from the models. This integration can guide the seeding (\eg the abstract object behavior selection) using the current status of the search process.
+
+Finally, we hypothesize that this seeding strategy may be useful for other search-based software testing applications and we will evaluate this hypothesis in our future work.

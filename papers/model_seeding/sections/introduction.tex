@@ -1,0 +1,62 @@
+% !TEX root =  ../STVR-model-seeding.tex
+
+
+
+The starting point of any debugging activity is to try to reproduce the problem reported by a user in the development environment~\cite{Zeller2009,BellerICSE2018}. In particular, for Java programs, when a crash occurs, an exception is thrown. A developer strives to reproduce it to understand its cause, then fix the bug, and finally add a (non-)regression test to avoid reintroducing the bug in future versions. 
+
+Manual crash reproduction can be a challenging and labor-intensive task for developers: it is often an iterative process that requires setting the debugging environment in a similar enough state as the environment in which the crash occurred~\cite{Zeller2009}. Moreover, it requires the developer to have knowledge of the system's components involved in the crash. 
+%
+%To help developers in their task, several automated crash reproduction methods, relying on different techniques, have been proposed: symbolic execution~\cite{Chen2015}, model checking~\cite{nayrolles2015jcharming,Nayrolles2017}, mutation testing~\cite{Xuan2015}, or evolutionary algorithms~\cite{BPT17concrash,soltani2017,Soltani2018b}.
+%
+To help developers in their task, several automated crash reproduction methods, relying on different techniques, have been proposed \cite{Chen2015, nayrolles2015jcharming, Nayrolles2017, Xuan2015, BPT17concrash, soltani2017, Soltani2018b}.
+
+One of the most promising approaches is to generate crash-reproducing test cases using search-based software testing \cite{soltani2017, Soltani2018b}. This approach benefits from a \textit{guided genetic algorithm} which searches for the crash reproducing test case. Soltani \etal performed an empirical evaluation of \evocrash and reported that it outperforms other crash reproduction approaches~\cite{soltani2017}.
+
+One of the challenges of search-based crash reproduction is to bring enough information into the test generation process.
+For instance, complex elements (like strings with a particular format or objects with a complex structure) are hard to initialize without additional information. 
+This can lead to two different issues: first, complex elements take more time to be generated, which can prevent finding a solution within the time budget allocated to the search; and second, elements that require complex initialization procedures (\eg specific sequences of method calls to set up an object) may prevent starting the search if the search-based approach is unable to create an initial population. 
+
+%In their recent work, Soltani \etal \cite{soltani2017, Soltani2018b} define \botsing, a search-based crash reproduction tool that uses a guided genetic algorithm to generate a test case able to replicate the crash. Soltani \etal performed an empirical evaluation of \botsing and reported that it outperforms other approaches~\cite{soltani2017}. However, as other search-based testing approaches, \botsing has limitations regarding its efficiency and applicability~\cite{Rojas2016}. For instance, complex elements (like strings with a particular format or objects with a complex structure) are hard to initialize without additional information. 
+%This can lead to two different issues: first, complex elements increase the size of the search space, which can prevent to find a solution, event with a large time budget; and second, complex elements that require complex initialization procedures (\eg specific sequences of method calls to setup an object) may prevent the search to start if the search-based approach is unable to create an initial population. 
+
+Rojas \etal~\cite{Rojas2016} demonstrated that \emph{seeding} is beneficial for search-based unit test generation. More specifically, by analyzing source code (collecting information that relates to numeric values, string values, and class types) and existing tests (collecting information about the behavior of the objects in the test) and making them available for the search process, the overall coverage of the generated test improves. 
+%They applied seeding to \evosuite~\cite{Rojas2016} and confirmed that a good seeding strategy can lead to an overall improvement of the search results.
+However, current seeding strategies focus on collecting and reusing values and object states as-is. 
+
+In this paper, we define, implement, and evaluate a new seeding strategy, called \emph{behavioral model seeding}, which abstracts behavior observed in the source code and test cases using transition systems. The transition systems represent the (observed) usages of the classes and are used during the search to generate objects and sequences of method calls on those objects.
+
+\emph{Behavioral model seeding} takes advantage of the advances made by the model-based testing community~\cite{Utting2007} and uses them to enhance search-based software testing. This seeding strategy helps the search process: 
+\begin{inparaenum}[(i)]
+\item it provides the possibility of covering the given crash by collecting information from various resources (\eg source code and existing test cases)  to infer a unique transition system; and
+\item it finds the most beneficial seeding candidates, for guiding the crash reproduction search process, by defining a rational procedure for the selection of abstract object behaviors from the inferred models.
+\end{inparaenum} 
+
+%Since \botsing is based on \evosuite, it uses the default configuration for seeding and enables analysis of the source code for constants seeding, dynamic seeding, and type seeding. Other seeding strategies that use existing tests are not used by default and have never been evaluated on \botsing. 
+%%
+%In contrast to \evosuite that aims at generating a test suite that maximizes statement and branch coverage, the goal of \botsing is to generate a single test that replicates a crash. In this context, existing tests can be useful to focus the search as the execution steps leading to a crash are likely to be close to the execution steps of valid executions of the system.
+%
+%Currently, \botsing randomly generates test cases to initialize its search process. In this paper, we explore existing \emph{test seeding} strategies to adapt and evaluate them for crash reproduction, and devise a new \emph{model seeding} strategy subsuming test seeding and based on both static analysis of the source code and the dynamic execution of the existing test cases. Models are automatically generated using 2-grams \cite{Sprenkle2013,Tonella2014,Verwer2017} to abstract and generalize the behavior (compare to test seeding) of the system, and used to generate sequences of execution steps that are reused during the search.
+
+We also adapt \emph{test seeding}, introduced by Rojas \etal, for search-based crash reproduction. Contrarily to model seeding, \emph{test seeding} relies only on the states of the objects observed during the execution of the test to seed a search process. Unlike search-based unit test generation, search-based crash reproduction does not seek to maximize the coverage of the class, but rather generates a specific test case able to reproduce a crash. Since test seeding has only been applied to search-based unit test generation~\cite{Rojas2016}, we first evaluate the use of test seeding for crash reproduction.  We then compare the results of test seeding with the application of \emph{model seeding}, which combines information on the objects states coming from the test cases with information collected in the source code, to search-based crash reproduction. 
+
+We performed an evaluation on 122 crashes from 6 open-source applications to answer the following research questions: 
+%
+\begin{itemize}
+\item[\textbf{RQ1}] What is the influence of \emph{test seeding used during initialization} on search-based crash reproduction?
+\item[\textbf{RQ2}]  What is the influence of \emph{behavioral model seeding used during initialization}  on search-based crash reproduction?
+\end{itemize}
+%
+We consider both research questions from the perspective of \emph{effectiveness} (of initializing the population and reproducing crashes) and \emph{efficiency}. We also investigate the factors (\eg the cost of analyzing existing tests) that influence the test and model seeding approaches and gain a better insight into how search-based crash reproduction works and how it can be improved.
+Generally, our results indicate that behavioral model seeding increases the number of crashes that we can reproduce. 
+More specifically, because of the randomness in the test generation process, we execute the crash replication multiple times and we observe that in the majority of these executions 4 crashes (out of 122) can be replicated; also, this seeding strategy can reproduce 9 crashes, which are not reproducible at all with no seeding, in at least one execution. In addition, this seeding strategy slightly improves the efficiency of the crash reproduction process. Moreover, model seeding enables the search process to start for three additional crashes. In contrast, using test seeding in crash-reproduction leads to a lower crash-reproduction rate and search initialization.
+
+The contributions of this chapter are:
+\begin{compactenum}
+    \item An evaluation of test seeding techniques applied to search-based crash reproduction;
+    \item A novel behavioral model seeding approach for search-based software testing and its application to search-based crash reproduction;
+%    \item an open source implementation of search-based crash reproduction, test seeding, and model seeding in the \botsing toolset\footnote{Available at \url{https://github.com/STAMP-project/botsing}.}; and
+    \item An open source implementation of model seeding in the \botsing toolset\footnote{Available at \url{https://github.com/STAMP-project/botsing}.}; and
+    \item The discussion of our results demonstrating improvements in search-based crash reproduction abilities and contributing to a better understanding of the search-based process. All our results are available in the replication package\footnote{Available at \url{https://doi.org/10.5281/zenodo.3673916}}.
+\end{compactenum}
+
+The remainder of the chapter is structured as follows: Section \ref{sec:model_seeding:background} provides background on search-based crash reproduction, and model-based testing. Section \ref{sec:model_seeding:approach} describes our behavioral model seeding strategy. Section \ref{sec:model_seeding:implementation} details our implementation, while Section \ref{sec:model_seeding:setup} explains the evaluation setup. Section \ref{sec:model_seeding:eval-results} presents our results. We discuss them and explain  threats to our empirical analyses in Section~\ref{sec:model_seeding:discussion}. Section \ref{sec:model_seeding:future} discusses future work and Section \ref{sec:model_seeding:conclusion} wraps up the paper. %concludes.

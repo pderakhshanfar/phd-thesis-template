@@ -1,0 +1,79 @@
+% !TEX root =  ../STVR-model-seeding.tex
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion}\label{sec:model_seeding:discussion}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Practical implications}
+
+\paragraph{Model derivation costs} Generating seeds comes with a cost. %For test seeding, the cost amounts to providing test cases. For model seeding, as described in Section \ref{sec:approach},  the cost is related to both model inference, using static and dynamic analysis, and abstract test selection and concretization using a dissimilarity criterion.
+%
+For our worst case, XWIKI-13916, we collected 286K call sequences from static and dynamic analysis and generated 7,880 models from which we selected 6K abstract object behaviors. We repeated this process 10 times and found the average time for call sequence collection to be 14.2 seconds; model inference took 77.8 seconds; and abstract object behavior selection and concretization took 51.5 seconds. We do note however that the model inference is a one-time process that could be done offline (in a continuous integration environment). After the initial inference of models, any search process can utilize model seeding. To summarize, the total initial overhead is $\sim2.5$ minutes, and the total nominal overhead is around $\sim1.25$ minute.
+%
+We argue that \textbf{the overhead of model seeding is affordable giving its increased effectiveness. }
+%
+The initial model inference can also be incremental, to avoid complete regeneration for each update of the code, or limited to subparts of the application (like in our evaluation where we only applied static and dynamic analysis for classes involved in the stack trace).
+%
+Similarly, abstract object behavior selection and concretization may be prioritized to use only a subset of the classes and their related model. In our current work, this prioritization is based on the content of the stack traces. Other prioritization heuristics, based for instance on the size of the model (reflecting the complexity of the behavior), is part of our future work.
+
+%\subsubsection*{Seeding strategy performance}
+
+%Our empirical study shows that \textit{model s. 1.0} significantly outperforms test seeding in all the configurations but one: \textit{test s. 1.0}.
+
+\paragraph{Applicability and effectiveness} Generally, test seeding alone does not make crash reproduction more effective. Actually, test seeding has a more negative impact on the search-based crash reproduction.
+Test seeding only uses dynamic analysis, which entails that it collects more accurate information from the potential usage scenarios of the software under test; it also means that this strategy collects more limited information for seeding. If these limited amounts of call sequences differ from the call sequences needed to reproduce the crash scenario, test seeding can misguide the crash reproduction search process.
+
+In contrast to test-seeding, we observe that model seeding always performs better than no seeding with different configurations. As such, we observe that \textbf{model seeding can reproduce more crashes than other strategies}. Also, since model seeding also exploits test cases, thereby subsuming test seeding regarding the observed behavior of the application that is reused during the search, greater performance can be attributed to the analysis of the source code translated in the model.
+
+In our experiments, various configurations of model seeding reproduced 8 new crashes that neither test seeding nor no seeding strategies could reproduce. Additionally, \textbf{only model seeding could reproduce stack traces with more than seven frames} (\eg LANG-9b). Still, model seeding missed the reproduction of one crash which is reproduced by no seeding.
+Despite the achieved improvements by model seeding, this seeding strategy could not outperform no-seeding dramatically (crash reproduction improved by 6\%). To better understand the reasons for the results, we manually analyzed the logs of Botsing executions on the crashes for which model seeding could not show any improvements. Through this investigation, we noticed that the generated usage models in these cases are limited and they do not contain the beneficial call sequences for covering the particular path that we need for crash reproduction. The average size of the generated model in this study is 7 states and 14 transitions.
+We believe that by collecting more call sequences from different sources (\ie log files), model seeding can increase the number of crash reproductions.
+
+We also observed two crashes that all of the test seeding configurations could reproduce them significantly more often compared to all of the configurations of model seeding: \textrm{LANG-6b} and \textrm{TIME-5b}. We manually analyzed the crash reproduction process in these two crashes to understand the reason for test seeding outperforming model seeding.
+In the former crash, test seeding is the only seeding strategy that can reproduce the crash because of the \textbf{Crash-Test Proximity} (explained in section \ref{sec:eval:rq14} as an example of this factor). 
+In the latter crash, we observed that the size of the inferred model for the target class is big (it has 99 states and more than 300 transitions).
+
+
+We witnessed that the size of the generated abstract behaviors set is commensurate to the size of the inferred model. If we have a small model, and we choose too many abstract behaviors, we will get similar abstract behaviors that misguide the search process. The mutation operator may counter this negative impact during the search by potentially adding the missing method calls.
+In contrast, if we chose a small set of abstract behaviors from a behavioral model with a large size, we will miss the chance of using all of the potentials of the model for increasing the chance of crash reproduction by the search process.
+
+\paragraph{Extendability} The usage models can be inferred from any resource providing call sequences. In this study, we used the call sequences derived from the source code and existing test cases. However, we can extend the models with extra resources (\eg execution logs). Also, the abstract object behavior selection approach can be adapted according to the problem. In this study, we used the dissimilarity strategy to increase the diversity of the generated tests.
+Moreover, model seeding makes a distinction between using the object pool during guided initialization and guided mutation (as shown in Figure~\ref{fig:approach}). This distinction enables us to study the influence of seeding during the different steps of the algorithm independently. 
+
+% \paragraph{Recommendation} We, therefore, \textbf{recommend to use behavioral model seeding} as the seed generation overhead is compensated by quantitative (more reproduced crashes and fewer failures) and qualitative (\eg by using relevant objects in the test cases) improvements.
+
+
+\subsection{Model seeding configuration}
+
+\begin{table}[t]
+	\center
+	\caption{Evaluation results for comparing different configurations of model seeding in crash reproduction. $\overline{\text{rate}}$ and $\sigma$  designate average crash reproduction rate and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
+	\label{tab:additional-expe-repr-table}
+%	\vspace{-2mm}
+    \begin{footnotesize}
+	\input{papers/model_seeding/tables/additional-expe-repr-table.tex}
+    \end{footnotesize}
+%	\vspace{-3mm}
+\end{table}
+
+\begin{table*} [t]
+	\center
+	\caption{Evaluation results for comparing different configurations of model seeding in the number of fitness evaluations $\overline{\text{rate}}$ and $\sigma$  designate average fitness function evaluations needed for crash reproduction and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
+%	\vspace{-2mm}
+	\label{tab:additional-expe-ff-evals-table}
+	\begin{footnotesize}
+	\input{papers/model_seeding/tables/additional-expe-ff-evals-table.tex}
+	\end{footnotesize}
+%	\vspace{-3mm}
+\end{table*}
+
+Model seeding can be configured with different $Pr[pick\ init]$ and $Pr[pick\ mut]$ probabilities. Like many other parameters in search-based test case generation~\cite{Arcuri2013}, the values of those parameters could influence our results.
+Although a full investigation of the effect of $Pr[pick\ init]$ and $Pr[pick\ mut]$ on the search process is beyond the scope of this paper, we set up a small experiment on a subset of crashes (10 crash in total) with 15 new configurations, each one run 10 times.
+
+Tables \ref{tab:additional-expe-repr-table} and \ref{tab:additional-expe-ff-evals-table} presents the configurations used for $Pr[pick\ init]$ and $Pr[pick\ mut]$ with, for each one, the crash reproduction effectiveness (Table \ref{tab:additional-expe-repr-table}), and the crash reproduction efficiency (Table \ref{tab:additional-expe-ff-evals-table}). In general, we observe that changing the probability of picking an object during guided initialization ($Pr[pick\ init]$) has an impact on the search and leads to more reproduced crashes with a lower number of fitness evaluations. This confirms the results presented in Section \ref{sec:model_seeding:eval-results}.
+Changing the probability of picking an object during mutation ($Pr[pick\ mut]$) does not seem to have a large impact on the search.
+A full investigation of the effects of $Pr[pick\ init]$ and $Pr[pick\ mut]$ on the search process is part of our future work.
+
+
+\input{papers/model_seeding/sections/ttvalidity}

@@ -1,0 +1,190 @@
+% !TEX root =  ../STVR-model-seeding.tex
+ 
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Empirical Evaluation}\label{sec:model_seeding:setup}
+%%%%%%%%%%%%%%%%%%%%%%
+
+Our evaluation aims to assess the effectiveness of each of the mentioned seeding strategies (model and test seeding) on search-based crash reproduction.
+For this purpose, first, we evaluate the impact of each seeding strategy on the number of reproduced crashes. Second, we examine if using each of these strategies leads to a faster crash reproduction. Third, we see if each seeding strategy can help the search process to start more often. Finally, we characterize the impacting factors of test and model seeding.
+
+Since the focus of this study is using seeding to enhance the guidance of the search initialization, we examine different probabilities of using the seeded information during the guided initialization in the evaluation of each strategy. Hence, we repeat each execution of test seeding with the following values for $Pr[clone]$: 0.2, 0.5, 0.8, and 1.0. Likewise, we execute each execution of model seeding with the same values for $Pr[pick\ init]$ (which is the only property that we can use for modifying the probability of the object seeding in the initialization of model seeding).
+
+% Behavioral model seeding exploits both test cases and source code, thereby \emph{subsuming} test seeding regarding the observed behavior of the application that is reused during the search. Test seeding only uses dynamic analysis, which entails that it collects more accurate information from the potential usage scenarios of the software under test but only relies on call sequences found in the existing tests. If these call sequences differ from the call sequences needed to reproduce the crash scenario, test seeding can misguide the crash reproduction search process.
+
+%----------------------
+\subsection{Research questions}
+\label{sec:model_seeding:setup:rqs}
+%----------------------
+
+In order to assess the usage of test seeding applied to crash reproduction and our new model seeding approach during the guided initialization, we performed an empirical evaluation to answer the two research questions defined in introduction of this chapter.
+
+\medskip \textbf{RQ1} \emph{What is the influence of test seeding used during initialization on search-based crash reproduction?}
+%
+To answer this research question, we compare \botsing executions with \emph{test seeding} enabled to executions where no additional seeding strategy is used (denoted \emph{no seeding} hereafter), from their effectiveness to reproduce crashes and start the search process, the factors influencing this effectiveness, and the impact of test seeding on the efficiency. We divide \textbf{RQ1}  into four sub-research questions:
+%
+\begin{compactitem}
+    \item[\textbf{RQ1.1}] Does test seeding help to reproduce more crashes?
+    \item[\textbf{RQ1.2}] Does test seeding impact the efficiency of the search process?
+    \item[\textbf{RQ1.3}] Can test seeding help to initialize the search process? 
+    \item[\textbf{RQ1.4}] Which factors in test seeding impact the search process?
+\end{compactitem}
+
+\medskip \textbf{RQ2}  \emph{What is the influence of behavioral model seeding used during initialization on search-based crash reproduction?}
+%
+To answer this question, we compare \botsing executions with \emph{model seeding} to executions with \emph{test seeding} and \emph{no seeding}. We also divide \textbf{RQ2}  into four sub-research questions:
+%
+\begin{compactitem}
+    \item[\textbf{RQ2.1}] Does behavioral model seeding help to reproduce more crashes compared to no seeding?
+
+    \item[\textbf{RQ2.2}] Does behavioral model seeding impact the efficiency of the search process compared to no seeding?
+    \item[\textbf{RQ2.3}] Can behavioral model seeding help to initialize the search process compared to no seeding? 
+    \item[\textbf{RQ2.4}] Which factors in behavioral model seeding impact the search process?
+\end{compactitem}
+
+
+%----------------------
+\subsection{Setup}
+\label{sec:setup:setup}
+%----------------------
+
+\subsubsection{Crash selection}
+\label{sec:setup:setup:selection}
+In Chapter 2, we introduced a new benchmark, called \jcrashpack, containing 200 real-world crashes from seven projects: 
+\textit{JFreeChart}, a framework for creating interactive charts; 
+\textit{Commons-lang}, a library providing additional utilities to the \texttt{java.lang} API;
+\textit{Commons-math}, a library of mathematics and statistics components; 
+\textit{Mockito}, a testing framework for object mocking; 
+\textit{Joda-time}, a library for date and time manipulation; 
+\textit{XWiki}, a popular enterprise wiki management system; 
+and \textit{ElasticSearch}, a distributed RESTful search and analytics engine.
+We use the same benchmark for the empirical evaluation of model-seeding and test-seeding on crash reproduction.
+
+
+To use test and model seeding for reproducing the crashes of \jcrashpack, first, we needed to apply static and dynamic analysis on different versions of projects in this benchmark. We successfully managed to run static analysis on all of the classes of \jcrashpack.
+On the contrary, we observed that dynamic analysis was not successful in the execution of existing test suites of ElasticSearch. The reason for this failure stemmed from the technical difficulty of running ElasticSearch tests by the EvoSuite test executor. 
+Since both of the seeding strategies need dynamic analysis, we excluded ElasticSearch cases from \jcrashpack for this experiment. 
+\jcrashpack contains 122 crashes after excluding ElasticSearch cases. Table~\ref{tab:projects} provides more details about our dataset.
+
+We used the selected crashes for the evaluation of \emph{no seeding} and \emph{model seeding}. Since \emph{test seeding} needs existing test cases that are using the target class, we filtered out the crashes which contain only classes without any using tests. Hence, we used only 59 crashes for the evaluation of \emph{test seeding}. More information about average number of used test classes for test seeding is available in Table \ref{tab:seeding-info}.
+
+
+% In the recent study about applying an empirical evaluation
+% In the earliest \evocrash empirical study \cite{soltani2017}, Soltani \etal used a benchmark consisting of 50 crashes. They compared their search-based approach with the other crash reproduction approaches using this benchmark. They demonstrated that \evocrash could replicate 82\% of the crashes. Considering that this benchmark was not enough challenging, they introduced a new benchmark, which contains more complex and more realistic crashes \cite{Soltani2018b}. The new benchmark includes 33 stack traces from 5 open source projects. They demonstrated that \evocrash has a lower crash reproduction rate in the new benchmark. For example, \evocrash cannot replicate 12 crashes by setting any frame as the target frame.
+
+% For the empirical evaluation of model-seeding and test-seeding, we extend the most recent benchmark by Soltani et al~\cite{Soltani2018b} to 122 crashes by collecting new stack traces from the same projects.
+%  In this extended benchmark, 26 new crashes are mined from XWiki (an open-source enterprise wiki) issue tracker.\footnote{See \url{https://jira.xwiki.org/}.} We make sure that our benchmark covers all of the available stack traces from \textit{XWiki 7.0} to \textit{Xwiki 9.X} (\ie, the latest version available at the time that we were extending the benchmark). The other crashes are gathered from Defects4j. Our benchmark includes all of the crashes in Defects4j which manifest a crash. Table~\ref{tab:projects} provides more details about our extended benchmark.
+
+%(\textbf{Cr.}) used for the evaluation, with, for each one: the average number of frames in the stack traces of the crashes ($\overline{\mathbf{frm}}$), the average cyclomatic complexity ($\overline{\mathbf{CCN}}$), the average number of lines of code ($\overline{\mathbf{LOC}}$), the average line coverage of the existing test cases ($\overline{\mathbf{LC}}$), and the average branch coverage of the existing test cases ($\overline{\mathbf{BC}}$).
+
+\begin{table} [t]
+    \centering
+	\caption{Projects used for the evaluation with the number of crashes (\textbf{Cr.}), the average number of frames per stack trace ($\overline{\mathbf{frm}}$), the average cyclomatic complexity ($\overline{\mathbf{CCN}}$), the average number of statements ($\overline{\mathbf{NCSS}}$), the average line coverage of the existing test cases ($\overline{\mathbf{LC}}$), and the average branch coverage of the existing test cases ($\overline{\mathbf{BC}}$).}
+    \footnotesize
+	\input{papers/model_seeding/tables/benchmark-details.tex}
+	\label{tab:projects}
+\end{table}
+
+\begin{table}[t]
+    \center
+    \caption{Information about test classes and models used, respectively, for test and model seeding in each project. $\overline{test}$ designate the average number of test classes used for test seeding. Also, $\overline{state}$, $\overline{trans}$, and $\overline{BFS}$ denote the average number of states, transitions, and BFS height of the used models, respectively. The standard deviations of each of these metrics ($\sigma$) are located beside them.}
+    \label{tab:seeding-info}
+    \footnotesize
+    \input{papers/model_seeding/tables/tests-table.tex}
+    \input{papers/model_seeding/tables/models-table.tex}
+\end{table}
+
+\subsubsection{Model inference}
+Since the selected crashes for this evaluation are identified before the model inference process, we have applied the dynamic analysis only on the test cases which use the classes involved in the crashes. During the static analysis, we spot all relevant test cases which call the methods of the classes that have appeared in the stack traces of the crashes. Next, we apply dynamic analysis only on the detected relevant test cases.
+This filtering process helps us to shorten the model inference execution time without losing accuracy in the generated models.
+
+More information about the inferred models is available in Table \ref{tab:seeding-info}.
+
+
+
+\subsubsection{Configuration parameters}
+
+We used a budget of 62,328 fitness evaluations (corresponding on average to 15 minutes of executing \botsing with no seeding on our infrastructure which is introduced in Section \ref{sec:setup:setup:infrst}) to avoid side effects on execution time when executing \botsing on different frames in parallel.
+We also fixed the population size to 100 individuals as suggested by the latest study on search-based crash reproduction~\cite{Soltani2018b}.
+% \todo{From Gilles: maybe also add that having the same number of individuals is useful for comparison with \evocrash?} 
+%\andy{Why? What are the reasons? What are the potential consequences?
+%\pouria{We used the same configurations as our SSBSE paper. However, the best population for the search-based crash reproduction is still an open issue to study.}
+%\pouria{I have cited our SSBSE paper.}
+%}
+All other configuration parameters are set at their default value~\cite{Rojas2016}, and we used the default weighted sum scalarization fitness function (Equation \ref{fitness_function}) from Soltani \etal \cite{Soltani2018b}.
+
+For test seeding executions, as we described at the beginning of this section, we execute each execution with four values for $Pr[clone]$: 0.2 (which is the default value), 0.5, 0.8, and 1.0. Also, we used the default value of 0.3 for \texttt{p\_object\_pool}.
+
+% \paragraph{Test seeding}
+
+% During the guided initialization of the algorithm, test seeding can clone test cases according to a user-defined probability $Pr[clone]$. In addition to the default 0.2 value, we executed model seeding with values 0.5, 0.8, and 1.0 for $Pr[clone]$. In the current \evosuite implementation, both $Pr[pick\ init]$ and $Pr[pick\ mut]$ are indicated as a single property called \texttt{p\_object\_pool}.
+% This property indicates the probability of using the object pool during test generation (either during initialization or mutation).
+% We left the default value of 0.3 for \texttt{p\_object\_pool}, and we only changed the value of $Pr[clone]$ in different configurations. Assessing the influence of test seeding on mutation is part of our future work. 
+% \paragraph{Model seeding}
+
+We also use values  0.2, 0.5, 0.8, and 1.0 for $Pr[pick\ init]$ for model seeding executions. The value of $Pr[pick\ mut]$, which indicates the probability of using seeded information during the mutation, is fixed at 0.3. In addition to model seeding configurations, we fix the size of the selected abstract object behaviors to the size of the individual population in order to ensure that there are enough test cases to initiate the search.
+
+
+
+
+% As discussed in Section \ref{sec:approach}, model seeding does not clone the test cases in the initial population. It only has the probability of using the collected objects in the object pool during the test generation. 
+%  $Pr[pick\ init]$ indicates the probability of using object pool in the guided initialization, and $Pr[pick\ mut]$ means the probability of using object pool during the guided mutation.
+% Since the focus of this study is using seeding to enhance the guidance of the search initialization, and $Pr[pick\ init]$ is the only property that we can use for modifying the probability of the object seeding in initialization, we use the following values for $Pr[pick\ init]$: 0.2, 0.5, 0.8, 1.0. The value of $Pr[pick\ mut]$  is fixed to 0.3.
+
+%\andy{Should we make it explicit for the reader why the $Pr[pick\ init]$ is differently configured for test seeding versus model seeding?
+%\pouria{I have added the reason.}
+%}
+
+
+For each frame (951 in total), we executed \botsing for \emph{no seeding} (\ie no additional seeding compared to the default parameters of \botsing) and each configuration of \emph{model seeding}. 
+%\andy{Each configuration... has that been explained sufficiently?
+%\pouria{I have moved this discussion to the end of this subsubsection. The configurations of model seeding and test seeding are explained in the previous paragraphs.}
+%}
+Since \emph{test seeding} needs existing test cases which are using the target class, we filtered out the frames that do not have any test for execution of this seeding strategy. Therefore, we executed each configuration of \emph{test seeding} on the subset of frames (171 in total). 
+
+
+\subsubsection{Infrastructure}
+\label{sec:setup:setup:infrst}
+We used 2 clusters (with 20 CPU-cores, 384 GB memory, and 482 GB hard drive) for our evaluation. For each stack trace, we executed an instance of \botsing for each frame which points to a class of the application. We discarded other frames to avoid generating test cases for external dependencies. 
+We ran \botsing on 951 frames from 122 stack traces for no-seeding and each model-seeding strategy configuration. Also, we ran \botsing with test-seeding on 171 frames from 59 crashes. To address the random nature of the evaluated search approaches, we repeated each execution 30 times.
+We executed a total of 186,560 independent executions for this study. These executions took about 18 days overall.
+
+
+%-------------------------------------------
+\subsection{Data analysis procedure} 
+\label{sec:setup:analyzing}
+%-------------------------------------------
+
+To check if the search process can reach a better state using seeding strategies, we analyze the status of the search process after executing each of the cases (each run in one frame of a stack trace). We define 5 states: % for the status of the search process: 
+% 
+\begin{compactenum}[(i)]
+\item \textbf{not started}, the initial population could not be initialized, and the search did not start;
+\item \textbf{line not reached}, the target line could not be reached;
+\item \textbf{line reached}, the target line has been reached, but the target exception could not be thrown;
+\item \textbf{ex. thrown}, the target line has been reached, and an exception has been thrown but produced a different stack trace; and 
+\item \textbf{reproduced} the stack trace could be reproduced.
+\end{compactenum}
+%
+Since we repeat each execution 30 times, we use the majority of outcomes for a frame reproduction result. For instance, if \botsing reproduces a frame in the majority of the 30 runs, we count that frame as a \textit{reproduced}. 
+
+
+To measure the impact of each strategy in the crash reproduction ratio (\textbf{RQ1.1} and \textbf{RQ2.1}), we use the Odds Ratio (OR) because of the binary distribution of the related data:  a search process either reproduces a crash (the generated test replicates the stack trace from the highest frame which is reproduced by at least one of the other searches) or not. Also, we apply Fisher's exact test, with $\alpha = 0.05$ for the Type I error, to evaluate the significance of results.
+
+Moreover, to answer \textbf{RQ1.2} and \textbf{RQ2.2}, which investigate the efficiency of the different strategies, we compare the number of fitness function evaluations needed by the search to reach crash reproduction.
+This metric indicates if seeding strategies lead to better initial populations that need fewer iterations to achieve the crash reproducing test. Since efficiency is only relevant for the reproduced cases, we only applied this comparison on the crashes which are reproduced at least once by no seeding or the seeding strategy (test seeding for \textbf{RQ1.2} and model seeding for \textbf{RQ2.2}).
+ We use the Vargha-Delaney statistic \cite{vargha} to appraise the effect size between strategies. In this statistic, a value lower than 0.5 for a pair of factors $(A,B)$ gives that $A$ reduces the number of needed fitness function evaluations, and a value higher than 0.5 shows the opposite. Also, we use the Vargha-Delaney magnitude measure to partition the results into three categories having large, medium, and small impact. In addition, to examine the significance of the calculated effect sizes, we use the non-parametric Wilcoxon Rank Sum test, with  $\alpha = 0.05$  for Type I error. Moreover, we do note that since the reproduction ratio of each strategy is not 30/30 for each crash, executions that could not reproduce the frame simply reached the maximum allowed budget (62,328).
+
+
+To measure the impact of each strategy in initializing the first population (\textbf{RQ1.3} and \textbf{RQ2.3}), we use the same procedure as \textbf{RQ1.1} and \textbf{RQ2.1} because the distribution of related data in this aspect is binary too (\ie whether the search process can start the search or not).
+
+For all of the statistical tests in this study, we only use a level of significance $\alpha = 0.05$.
+
+Since the model inference (in model seeding) and test carving (in test seeding) techniques can be applied as one time processes before running any search-based crash reproduction, we do not include them in the efficiency evaluation.
+
+To answer \textbf{RQ1.4} and \textbf{RQ2.4}, we performed a manual analysis on the logs and crash reproducing test case (if any). We focused our manual analysis on the crash reproduction executions for which the search in one seeding configuration has a significant  impact (according to the results of the previous sub-research questions) on 
+\begin{inparaenum}[(i)]
+\item \textit{initializing the initial population},
+\item \textit{crash reproduction},
+\item or \textit{search process efficiency}
+\end{inparaenum}
+ compared to no-seeding.
+Based on our manual analysis, we used a card sorting strategy by assigning keywords to each frame result and grouping those keywords to identify influencing factors.

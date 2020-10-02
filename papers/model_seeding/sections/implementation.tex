@@ -1,0 +1,57 @@
+% !TEX root =  ../STVR-model-seeding.tex
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation}\label{sec:model_seeding:implementation}
+%%%%%%%%%%%%%%%%%%%%%%
+
+%Based on the \evocrash approach and our re-engineering of the \evocrash tool, we developed \botsing, a framework for crash reproduction.
+%We had two main goals for developing \botsing.
+%Firstly, we wanted a more stable and well-tested toolset for crash reproduction. For Botsing, we have achieved 83\% branch coverage for the key \textit{botsing reproduction} module by unit testing. During the testing process, we found and fixed many bugs which affected the performance of the search process.
+%Secondly, we aimed for an extendable framework for crash reproduction and other search-based testing problems. Similar to \evocrash, \botsing relies on \evosuite~\cite{Fraser2011} for the code instrumentation during test generation and execution. However, \botsing only uses \textit{evosuite-client} as a dependency, while \evocrash was an extension of \evosuite itself.
+%Our open-source implementation is available at \url{https://github.com/STAMP-project/botsing}. The current version of \botsing includes both test seeding and model seeding as features.
+
+%Based on the \evocrash approach, we developed \botsing, an extendable framework for crash reproduction.
+% \botsing relies on \evosuite~\cite{Fraser2011} for the code instrumentation during test generation and execution %by using \textit{evosuite-client} as a dependency.
+%Our open-source implementation is available at \url{https://github.com/STAMP-project/botsing}. The current version of \botsing includes both test seeding and model seeding as features.
+
+Relying on the \evocrash experience (Chapter 2),  we developed \botsing, a framework for crash reproduction with extensibility in mind.
+ \botsing also relies on \evosuite~\cite{Fraser2011} for the code instrumentation during test generation and execution by using \textit{evosuite-client} as a dependency.
+Our open-source implementation is available at \url{https://github.com/STAMP-project/botsing}. The current version of \botsing includes both test seeding and model seeding as features.
+
+
+
+%-----------------------------------
+\subsection{Test seeding}
+%-----------------------------------
+
+Test seeding relies on the implementation defined by Rojas \etal~\cite{Rojas2016} and available in \evosuite. This implementation requires the user to provide a list of test cases to consider for cloning and carving. In \botsing, we automated this process using the dynamic analysis of the test cases to automatically detect those accessing classes involved in a given stack trace. We also modified the standard guided initialization and guided mutation to preserve the call to the target method during cloning and carving.
+
+%-----------------------------------
+\subsection{Model seeding}
+%-----------------------------------
+
+% Add this to the setup part
+%During the static analysis, we collect the used objects in each of the test cases too. This information is used in the dynamic analysis to keep this process within a reasonable amount of time.
+As mentioned in Section~\ref{sec:model_seeding:approach}, \botsing uses a combination of static and dynamic analysis to infer models. The static analysis (\circled{1} in Figure \ref{fig:approach}) uses the reflection mechanisms of \evosuite to inspect the compiled code of the classes involved in the stack traces, and collect call sequences. The dynamic analysis (\circled{2} in Figure \ref{fig:approach}) relies on the test seeding mechanism used for cloning that allows inspecting an internal representation of the test cases obtained after their execution and collect call sequences.
+%
+The resulting call sequences are then used to infer the transition system models of the classes using a 2-gram inference tool called YAMI~\cite{Devroey2017b} (\circled{3} in Figure \ref{fig:approach}).
+From the infered models, we extract a set of dissimilar (based on the Jaccard distance \cite{Jaccard1901}) abstract object behaviors (\circled{4} in Figure \ref{fig:approach}). For abstract object behavior extraction, we use the VIBeS~\cite{Devroey2016} model-based testing tool.
+%
+Abstract object behaviors are then concretized into real objects. For this concretization, we rely on the EvoSuite API.
+
+%A set of abstract object behaviors are selected from each of the models using a dissimilarity criterion (based on the Jaccard distance \cite{Jaccard1901}), taken from VIBeS~\cite{Devroey2016}, a model-based testing tool, working with transition systems.
+
+%
+% \todo{The following sentences are not clear. Explain that this is an implementation detail and that we could directly generate and concretize new abstract object behaviors each time.
+% From Gilles: updated below.  $Pr[pick\ init]$ and $Pr[pick\ mut]$ need to be defined, though}.
+
+
+
+% We rely on the \evosuite API to concretize abstract object behaviors into objects for the objects' pool. $Pr[pick\ init]$ and $Pr[pick\ mut]$ are user-defined probabilities to select objects during the guided genetic algorithm execution in \botsing.
+
+
+%
+%If the size of this set is too small, the generated abstract object behaviors do not cover all of the transitions of the transition system. Also, using a small set of test cases can misguide the search process. On the contrary, if the size of the set is too large, the test concretization can become a time taking process.
+%In this study, the size of this set is equivalent to the size of the individual population to make sure that we have enough test case to seed into the first population even if $Pr[pick\ init]$ is set to 1.0.
+%
+%The concretization of the test cases into objects for the objects pool is done using the \evosuite API to create Java unit tests. The objects are then picked during the guided genetic algorithm execution in \botsing with user-defined probabilities $Pr[pick\ init]$ and $Pr[pick\ mut]$.

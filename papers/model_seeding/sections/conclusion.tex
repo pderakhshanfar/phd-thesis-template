@@ -1,0 +1,27 @@
+% !TEX root =  ../STVR-model-seeding.tex
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\label{sec:model_seeding:conclusion}
+%%%%%%%%%%%%%%%%%%%%%%
+
+Manual crash reproduction is labor-intensive for developers.
+A promising approach to alleviate them from this challenging activity is to automate crash reproduction using search-based techniques. In this paper, we evaluate the relevance of using both test and behavioral model seeding to improve crash reproduction achieved by such techniques. We implement both test seeding and the novel model seeding in \botsing.
+
+For practitioners, the implication is that more crashes can be automatically reproduced, with a small cost. In particular, our results show that behavioral model seeding outperforms test seeding and no seeding without a major impact on efficiency. The different behavioral model seeding configurations reproduce 6\% more crashes compared to no seeding, while test seeding reduces the number of reproduced crashes. Also, behavioral model seeding can significantly increase the search initialization rate for 3 crashes compared to no seeding, while test seeding performs worse than no seeding in this aspect. We hypothesize that the achieved improvements by model seeding can be further extended by using more resources (\ie execution logs) for collecting the call sequences which are beneficial for the model generation.
+
+From the research perspective, by abstracting behavior through models and taking advantage of the advances made by the model-based testing community, we can enhance search-based crash reproduction.
+Our analysis reveals that (1) using collected call sequences, together with (2) the dissimilar selection, and (3) prioritization of abstract object behaviors, as well as (4) the combined information from source code and test execution, enable more search processes to get started, and ultimately more crashes to be reproduced.
+
+In our future work, we will explore whether behavioral model seeding has further ranging implications for the broader area of search-based software testing. Furthermore, we aim to study the effect of changing the seeding probabilities on the search process, explore other sources of data to generate the model and try different abstract object behavior selection strategies.
+
+%, and apply behavioral model seeding to other search-based testing problems with classical coverage criteria.
+
+%
+%
+%This paper opens a new field for seeding in search-based software testing. We introduced \emph{behavioral model seeding}, a novel seeding strategy, and applied it to crash reproduction. While previous test generation studies usually use evolutionary algorithms for model-based testing, in this work, we take advantage of the advances made by the model-based testing community to enhance search-based testing. We implemented and investigated the effect of this new strategy for search-based crash reproduction, and compared it with test seeding and no seeding strategies.
+%%
+%Our results show that behavioral model seeding outperforms test seeding and no seeding without a major impact on efficiency. The different behavioral model seeding configurations replicate 13\% more cases compared to no seeding, while test seeding improves only by 1\%. Behavioral model seeding could also start the search process for 14\% more cases in the evaluation compared to no seeding, while model seeding could only achieve 8\% more. Our manual analysis reveals that the helping factors include the cloning and mutation of existing tests for test seeding; the seeded call sequences for test and behavioral model seeding; and the dissimilar selection, the usage of multiple information sources to build the model, and the prioritization of the call sequences based on the stack trace for behavioral model seeding.
+%
+%In our future work, we will study the effect of changing the seeding probabilities on the search process, explore other sources of data to generate the model and try different abstract object behavior selection strategies, and apply behavioral model seeding to other search-based testing problems with classical coverage criteria.
