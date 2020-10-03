@@ -1,0 +1,20 @@
+% \setlength\tabcolsep{1.4pt}
+% \resizebox{0.5\textwidth}{!}{%
+
+\begin{tabular}{ l r | rr | rr | rr | rrrr }
+\hline 
+\textbf{Project} & \textbf{\#} & \multicolumn{2}{c}{\textbf{Caller}} & \multicolumn{2}{c}{\textbf{Callee}} & \multicolumn{2}{c}{\textbf{Calls}} & \multicolumn{4}{c}{\textbf{Coupled branches}} \\ 
+%  &  & $\overline{cc}$ & 1,723.0 & 377.2 & 472.5 & 70.3 & 101.0 & 4 & 10,542 & 17,080 & 60,754 \\ 
+ &  & $\overline{cc}$ & $\sigma$ & $\overline{cc}$ & $\sigma$ & $\overline{count}$ & $\sigma$ & min & $\overline{count}$ & $\sigma$ & max \\  
+\hline 
+closure & 26 & 1,221.3 & 1,723.0 & 377.2 & 472.5 & 70.3 & 101.0 & 4 & 10,542 & 17,080 & 60,754 \\ 
+mockito & 20 & 115.3 & 114.4 & 127.8 & 113.2 & 39.5 & 64.9 & 0 & 1,185 & 1,974 & 6,929 \\ 
+time & 51 & 68.7 & 84.0 & 87.2 & 92.3 & 23.9 & 50.5 & 0 & 494 & 1,093 & 5,457 \\ 
+lang & 18 & 145.0 & 177.8 & 235.3 & 242.7 & 12.4 & 14.6 & 2 & 409 & 598 & 1,826 \\ 
+math & 25 & 79.2 & 88.4 & 57.5 & 64.4 & 18.8 & 34.5 & 2 & 294 & 613 & 2,682 \\ 
+\hline 
+\textbf{All} & 140 & 301.1 & 859.5 & 160.6 & 257.7 & 32.4 & 62.8 & 0 & 2,412 & 8,294 & 60,754 \\ 
+\hline 
+\end{tabular}
+% }
+ 

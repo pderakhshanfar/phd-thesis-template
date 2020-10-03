@@ -1,0 +1,16 @@
+
+\textbf{Internal validity:}
+Our implementation of \cling may contain bugs. We mitigated this threat by reusing standard algorithms implemented in \evosuite, a widely used state-of-the-art unit test generation tool. And by unit testing the different extensions (described in Section \ref{sec:implementation}) we developed. 
+%
+To take the randomness of the search process into account, we followed the guidelines of the related literature \cite{Arcuri2014} and executed \cling and \evosuite 20 times to generate the different test suites ($T_{\cling}$, $T_{E}$, and $T_{R}$) for the 140 caller-callee classes pairs. 
+%
+We have described how we parametrize \cling and \evosuite in Sections \ref{sec:cling} and \ref{tab:cling:projects}. We left all other parameters to their default value, as suggested by related literature \cite{Arcuri2013, Panichella2015, Shamshiri2018}.
+
+\textbf{External validity:}
+We acknowledge that we report our results for only five open-source projects. However, we recall here their diversity and broad adoption by the software engineering community.
+%
+The identification and categorization of the integration faults done in \textbf{RQ3} have been performed by the first author.
+
+\textbf{Reproducibility:}
+We provide \cling as an open-source publicly available tool  as the data and the processing scrips used to present the results of this paper.\footnote{\url{https://github.com/STAMP-project/Cling-application}} Including the subjects of our evaluation (inputs) and the produced test cases (outputs). 
+

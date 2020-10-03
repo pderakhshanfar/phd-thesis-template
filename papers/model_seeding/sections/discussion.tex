@@ -7,7 +7,7 @@
 
 \subsection{Practical implications}
 
-\paragraph{Model derivation costs} Generating seeds comes with a cost. %For test seeding, the cost amounts to providing test cases. For model seeding, as described in Section \ref{sec:approach},  the cost is related to both model inference, using static and dynamic analysis, and abstract test selection and concretization using a dissimilarity criterion.
+\paragraph{Model derivation costs} Generating seeds comes with a cost. %For test seeding, the cost amounts to providing test cases. For model seeding, as described in Section \ref{sec:cling:approach},  the cost is related to both model inference, using static and dynamic analysis, and abstract test selection and concretization using a dissimilarity criterion.
 %
 For our worst case, XWIKI-13916, we collected 286K call sequences from static and dynamic analysis and generated 7,880 models from which we selected 6K abstract object behaviors. We repeated this process 10 times and found the average time for call sequence collection to be 14.2 seconds; model inference took 77.8 seconds; and abstract object behavior selection and concretization took 51.5 seconds. We do note however that the model inference is a one-time process that could be done offline (in a continuous integration environment). After the initial inference of models, any search process can utilize model seeding. To summarize, the total initial overhead is $\sim2.5$ minutes, and the total nominal overhead is around $\sim1.25$ minute.
 %

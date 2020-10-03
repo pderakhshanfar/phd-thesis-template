@@ -1,0 +1,50 @@
+
+
+%This is introduction~\cite{Jin1998}.
+
+Search-based approaches have been applied to a variety of white-box testing activities \cite{Harman2012}, among which test case and data generation \cite{McMinn2004}. 
+In white-box testing, most of the existing work has focused on the unit level, where the goal is to generate tests that achieve high structural (e.g., branch) coverage.
+Prior work has shown that search-based unit test generation can achieve high code coverage~\cite{almasi2017industrial, Campos2017, Panichella2018a}, detect real-bugs~\cite{fraser20151600, Shamshiri2016}, and help developers during debugging activities~\cite{Ceccato2015, Panichella2016}.
+ 
+Despite these undeniable results, researchers have identified various limitations of the generated unit tests~\cite{gay2015risks, Shamshiri2016, schwartz2018}. 
+Prior studies have questioned the effectiveness of the generated unit tests with high code coverage in terms of their capability to detect real faults or to kill mutants when using mutation coverage. 
+For example, Gay \etal~\cite{gay2015risks} have highlighted how traditional code coverage could be a poor indicator of test effectiveness (in terms of fault detection rate
+ and mutation score). Shamshiri \etal~\cite{Shamshiri2016} have reported that around 50\% of faults remain undetected when relying on generated tests with high coverage. 
+ Similar results have also been observed for large industrial systems~\cite{almasi2017industrial}. 
+
+Gay \etal~\cite{gay2015risks} have observed that traditional unit-level adequacy criteria only measure whether certain code elements are reached, but not \textit{how} each element is 
+covered. The quality of the test data and the paths from the covered element to the assertion play an essential role in better test effectiveness. As such, they have advocated the need 
+for more reliable adequacy criteria for test case generation tools. While these results hold for generated unit tests, other studies on hand-written unit tests have further highlighted 
+the limitation of unit-level code coverage criteria~\cite{wei2012branch, schwartz2018}.
+
+%However, the search process remains mostly ignorant of how the classes under test are actually used, thus making it difficult to generate test cases involving complex parameter values or specific usages of those classes~\cite{almasi2017industrial}. Previous approaches tried to tackle this problem by retrieving information from the already existing tests (i.e., test seeding \cite{Rojas2016}) or the documentation \cite{Goffi2016}, depending on the quality of the existing tests and the availability of the documentation \cite{blasi2018, robillard2011, zhou2017}.
+
+In this paper, we explore the usage of the integration code between coupled classes as guidance for the test generation process. The idea is that, by exercising the behavior of 
+a class under test \textit{E} (the calleE) through another class \textit{R} (the calleR) calling its methods, \textit{R} will handle the creation of complex parameter values and exercise valid 
+usages of \textit{E}. In other words, the caller \textit{R} might contain integration code that (1) enables the creation of better test data for the callee $E$, and (2) allows to better validate the data returned 
+by \textit{E}.
+
+Integration testing can be approached from many different angles \cite{Jin1998,Offutt2000b}.
+In our case, we focus on \textbf{class integration testing} between a caller and a callee~\cite{scott1997building}.  Class integration 
+testing aims to assess whether two or more classes work together properly by thoroughly testing their interactions~\cite{scott1997building}. Our idea is to  complement unit test generation
+for a class under test by looking at its integration with other classes. To that end, we define a novel structural adequacy criterion that we call \textbf{Coupled Branches Coverage} (CBC), targeting specific integration 
+points between two classes. Coupled branches are pairs of branches 
+$\langle r, e\rangle$, with $r$ a branch of the caller, and $e$ a branch of the callee,
+such that an integration test that exercises branch $r$ also exercises branch $e$.
+
+Furthermore, we implement a search-based approach that generates integration-level test suites leveraging the CBC criterion. We coin our approach \integration
+(for \underline{cl}ass \underline{in}tegration testin{\underline g}). \cling uses a state-of-the-art many-objective solver that generates test suites maximizing the number of covered coupled branches. For the guidance, \cling uses novel search heuristics defined for each pair of coupled branches (the search objectives).
+
+
+We conducted an empirical study on 140 well-distributed (in terms of complexity and coupling) pairs of caller and callee classes extracted from five open-source Java projects. Our results show that \cling can achieve up to 99\% CBC scores, with an average CBC coverage of 49\% across all classes. We analyzed the benefits of the integration-level test cases generated by \cling compared to unit-level tests generated by \evosuite, the state-of-the-art generator of unit-level tests \cite{Fraser2011}. In particular, we assess whether integration-level tests generated by \cling can kill mutants and detect faults that would remain uncovered when relying on generated unit tests. 
+
+According to our results, on average, \cling kills 7.7\% of mutants per class that remain undetected by unit tests (\evosuite) for both the caller and the callee. The improvements in mutation score are up to 50\% for certain classes, such as the \texttt{PeriodType} class in the Joda Time subject system.
+Finally, we have found 32 integration faults that were detected only by the integration tests generated with \cling (and not through unit testing with \evosuite).
+
+%In this paper, we consider only integration call type of integration between classes, although other types of integration exists between classes~\cite{Offutt2000b} (i.e., integration through external data). Furthermore, we generated integration tests for single pairs of classes, while in practice, a class can have more than one caller. However, our results are very encouraging because they show \textit{how integration-level tests based on CBC coverage complement unit-level tests generated with \evosuite in terms of test effectiveness}. Further research is needed to incorporate other types of integrations in \cling.
+
+\textbf{Paper structure}. The remainder of this chapter is organized as follows. Section~\ref{sec:cling:background} summarizes the background and related work in the area. % test case generation and integration testing. 
+Section~\ref{sec:cling:approach} defines the Coupled Branches Criteria and introduces \cling, our integration-level test case generator. Section~\ref{sec:cling:evaluation} describes our empirical study, while Section~\ref{sec:cling:results} reports the empirical results. Section~\ref{sec:cling:discussion} discusses the practical implication of our results. Section~\ref{sec:cling:threats} discusses the threats to validity. Finally, Section~\ref{sec:cling:future-conclusion} concludes the paper.
+
+
+
