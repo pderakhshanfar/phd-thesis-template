@@ -1,0 +1,14 @@
+\section{Threats to validity}
+\label{sec:threats}
+
+
+\textbf{Internal validity.}
+We cannot ensure that our implementation of \botsing is without bugs. However, we mitigated this threat by testing our tool and manually analyzing some samples of the results. We used a previously defined benchmark for crash reproduction, which contains 124 non-trivial crashes from six open-source projects and applications.  Moreover, we explained how we parametrized the evolutionary algorithms in Section \ref{sec:approach:setup}. We used the default values of these algorithms in the other open-source implementations like \evosuite and \textit{JMetal}. The effect of these values for crash reproduction is part of our future work. Finally, to take the randomness of the search process into account, we followed the guidelines of the related literature \cite{Arcuri2014} and executed each evolutionary crash reproduction algorithm for 30 times.
+
+
+\textbf{External validity.}
+We report our results for only 124 crashes introduced by \crashpack (Cahpter \ref{sec:jcrashpack:introduction}), which is an open-source crash reproduction benchmark collected from six open-source projects. However, we recall here that we cannot guarantee that our results are generalizable to all crashes. Evaluation \moho on a larger benchmark from more projects is part of our future work.
+
+
+\textbf{Reproducibility.}
+We provide \botsing as an open-source publicly available tool. Also, the data and the processing scripts used to present the results of this paper, including the subjects of our evaluation (inputs), the evolution of the best fitness function value in each generation of each execution, and the produced test cases (outputs), are openly available as a docker image~\cite{zenodoRP}. 

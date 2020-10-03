@@ -1,0 +1,73 @@
+\section{Background and related work}
+
+\begin{figure}[t]
+  \begin{lstlisting}[numbers=left,
+      firstnumber=0]
+  java.lang.ArrayIndexOutOfBoundsException: 4 (*@\label{line:exception}@*)
+    at [...].FastDateParser.toArray(FastDateParser.java:413) (*@\label{line:firstframe}@*)
+    at [...].FastDateParser.getDisplayNames([...]:381)
+    at [...].FastDateParser$TextStrategy.addRegex([...]:664) (*@\label{line:thirdframe}@*)
+    at [...].FastDateParser.init([...]:138)
+    at [...].FastDateParser.<init>([...]:108)
+    [...] (*@\label{line:lowestframe}@*)
+  \end{lstlisting}
+  % \Description{The stack trace from the LANG-9b crash, composed of a thrown ArrayIndexOutOfBoundsException and the list of frames describing the active stack of method calls trough which the exception propagated.}
+  \caption{LANG-9b crash stack trace \cite{just2014defects4j}}
+  \label{lst:moho:stacktrace}
+\end{figure}
+
+Several approaches have been introduced in the literature that aim to reproduce a given crash. Some of these techniques (\eg \textsc{ReCore} \cite{Rossler2013}) use runtime data (\ie core dumps). However, collecting the runtime data may induce a significant overhead and raises privacy concerns. In contrast, other approaches \cite{BPT17concrash, Chen2015, Nayrolles2017, Xuan2015} only require the \textit{stack traces} of the unhandled exception causing the crash, collected from executions logs or reported issues.
+For Java programs, a stack trace includes the list of classes, methods, and code line numbers involved in the crash. As an example, Figure \ref{lst:moho:stacktrace} shows a stack trace produced by a crash (due to a bug) in \textrm{Apache Commons Lang}. This stack trace contains the \textit{type of the exception} (\texttt{Ar\-ray\-In\-dex\-Out\-Of\-Bounds\-Ex\-cep\-tion}) and \textit{frames} (lines \ref{line:firstframe}-\ref{line:lowestframe}) indicating the stack of active method calls during the crash. 
+
+Among the various approaches solely using a stack trace as input, \textsc{STAR} \cite{Chen2015} and \textsc{BugRedux} \cite{jin2012bugredux} use backward and forward symbolic execution, respectively; \textsc{MuCrash} \cite{Xuan2015} mutates the existing test cases of the classes involved in the stack trace; \textsc{JCharming} \cite{Nayrolles2017, nayrolles2015jcharming} applies model checking and program slicing for crash reproduction; and \textsc{ConCrash} \cite{BPT17concrash} is designed to use pruning strategies to reproduce the crash-reproducing test case. 
+
+\evocrash is an evolutionary-based approach that applies a Single-Objective Genetic Algorithm (\SGGA) to generate a crash-reproducing test case for a given stack trace and a \emph{target frame} (\ie the class under test for which the test case is generated).  The generated test will trigger a crash with a stack trace that is identical to the original one, up to the target frame.
+For instance, for the stack trace in Figure \ref{lst:moho:stacktrace} with a target frame at line \ref{line:thirdframe}, \evocrash generates a test case that reproduces the first three frames of this stack trace (\ie identical from lines \ref{line:exception} to \ref{line:thirdframe}).
+A previous empirical evaluation \cite{Soltani2018a} shows that \evocrash performs better compared to other crash reproduction approaches relying on model checking and program slicing~\cite{nayrolles2015jcharming, Nayrolles2017}, backward symbolic execution~\cite{Chen2015}, or exploiting existing test cases~\cite{Xuan2015}.
+The study also confirms that automatically generated crash-reproducing test cases help developers to reduce their debugging effort.
+
+\subsection{\SGGA Heuristics}
+
+To evaluate the candidate tests, and consequently guide the search process, \SGGA applies a fitness function called the \CrashFunction. This fitness function contains three components: 
+(i) the \textbf{line coverage distance}, indicating the distance between the execution trace and the \emph{target line} (the line number pointed to by the target frame), 
+(ii) the \textbf{exception type coverage}, indicating whether the \emph{target exception} is thrown, and 
+(iii) the \textbf{stack trace similarity}, indicating whether all frames (from the beginning up to the target frame) are included in the triggered stack trace.
+%
+\begin{definition}[\CrashFunction \cite{Soltani2018a}]
+For a given test case execution $t$, the \CrashFunction ($f$) is defined as follows:
+\begin{equation}
+f(t) = 
+\left\{
+    \begin{array}{ll}
+      3 \times d_{s}(t) + 2 \times max(d_{e}) + max(d_{tr}) & \textit{if line not reached}\\
+      3 \times min(d_{s}) + 2 \times d_{e}(t) + max(d_{tr}) & \textit{if line reached}\\
+      3 \times min(d_{s}) + 2 \times min(d_{e}) + d_{tr}(t) & \textit{if exception thrown}
+    \end{array}
+  \right.
+ \end{equation}
+\end{definition}
+%
+Where $d_{s}(t) \in [0,1]$ indicates how far the test $t$ is from reaching the \textit{target line} using two heuristics: \textit{approach level} and \textit{branch distance} \cite{McMinn2004}. The former measures the minimum number of control dependencies between the execution path of $t$ and the target line; the latter indicates how far $t$ is from satisfying the branch condition on which the target line is control dependent.
+And $d_{e}(t) \in \{0,1\}$ indicates whether an exception with the same type as the target exception is thrown ($0$) or not ($1$). 
+Finally, $d_{tr}(t) \in [0,1]$ calculates the similarity between the stack trace produced by $t$ and the expected one, based on classes, methods, and line numbers appearing in both stack traces.
+Functions $max(.)$ and $min(.)$ denote the maximum and minimum possible values for a function, respectively. Concretely, $d_{e}(t)$ and $d_{tr}(t)$ are only calculated upon the satisfaction of two \textit{constraints}: \textit{exception type coverage} and \textit{stack trace similarity} are relevant only when we reach the target line (first constraint) and when we have the same type of exception (second constraint), respectively.
+
+\subsection{\SGGA}
+
+The search process starts with a \textbf{guided initialization} during which an initial population of randomly generated test cases is created. The algorithm ensures that each test case calls the \textit{target method} (pointed to by the target frame) at least once. 
+In each generation, the fittest test cases are evolved by applying \textbf{guided mutation} and \textbf{guided crossover}. Guided mutation applies a classical mutation to the test cases while ensuring that the mutated test contains one or more calls to the target method. 
+Similarly, guided crossover is a variant of the single-point crossover that preserves calls to the target methods in the offsprings. Accordingly, each generated test case contains at least one call to the target method (\ie the method triggering the crash)~\cite{Soltani2018a}.
+
+With those operators, \SGGA improves the \emph{exploitation}, but it penalizes \emph{exploration} of new areas of the search space by not generating diverse enough test cases. As a consequence, the search process may get stuck in local optima. 
+
+%Since the \textit{exploration} is not satisfied in such a focused search, thereby \SGGA does not generate diverse enough test cases, this search process may get stuck in local optima during the reproduction of some cases. Hence, we need to apply a multi-objective search for tackling this issue.
+
+\subsection{Decomposition-based Multi-objectivization}
+
+To increase diversity during the search, a prior study \cite{Soltani2018b} investigated the usage of \emph{Decomposition-based Multi-Objectivization} (called \decomposition hereafter) to decompose the \CrashFunction in three distinct (sub-)objectives. 
+\decomposition on the \CrashFunction (temporarily) decomposes the function in three distinct (sub-)objectives: $d_{s}(t)$, $d_{e}(t)$, and $d_{tr}(t)$. Then, \decomposition uses a multi-objective evolutionary algorithm optimizing three objectives to generate one crash-reproducing solution. 
+In the end, the global optimal solution is a test case in the Pareto front produced by MOEAs that satisfies all of the sub-objectives simultaneously.
+%
+The empirical evaluation shows that \decomposition increases the efficiency of the crash reproduction process for some specific cases compared to \SGGA. However, it loses efficiency in some other cases.
+
+In particular, in \textit{Multi-objectivization}, search objectives should be conflicting to increase the diversity of generated solutions \cite{jensen2004helper}. However, the three sub-objectives in \decomposition \cite{Soltani2018b} are tightly coupled and not conflicting: the stack trace similarity ($d_{tr}(t)$) cannot be computed for test case $t$ without executing the target line ($d_{s}(t) = 0$) and throwing the correct type of exception ($d_{e}(t) = 0$). Also, the type of exception  ($d_{e}(t)$) is not relevant, while test $t$ does not cover the statement in the target line ($d_{s}(t) = 0.0$).

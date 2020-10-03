@@ -4,6 +4,13 @@
 %\documentclass[print,draft]{dissertation}
 \usepackage{graphicx}
 
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+% \theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+
+
 % \hyphenation{TestRoots WatchDog proj-ect proj-ects Ec-lipse two-fold clie-nts Mo-cki-to wide-spread}
 \newcommand{\sparkline}[1]{$\vcenter{\hbox{\includegraphics[scale=0.04]{#1}}}$}
 
@@ -93,6 +100,7 @@
 \include{introduction/introduction}
 \include{papers/jcrashpack/main}
 \include{papers/model_seeding/main}
+\include{papers/moho/main}
 \include{conclusion/conclusion}
 
 %% Use letters for the chapter numbers of the appendices.

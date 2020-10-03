@@ -1,0 +1,28 @@
+
+\section{Conclusion and Future work} 
+
+Crash reproduction can ease the process of debugging for developers. Evolutionary approaches have been successfully used to automate this process.
+Existing evolutionary-based approaches use one single objective (\ie \CrashFunction) to guide the search and rely on guided genetic operators. 
+Later strategies applied multi-objectivization via decomposition (\decomposition) in an attempt to improve diversity (and, therefore, exploration). However, the latter strategy may misguide the search process because the sub-objectives are not strongly conflicting.
+
+In this study, we apply a new approach called Multi-Objectivizati\-on using Helper-Objectives (\moho) to tackle the problems of the former techniques. In \moho, multi-objectivization is performed by adding two helper-objectives that are in conflict with \CrashFunction. We evaluated \moho with five MOEAs, which are selected from different categories of multi-objective algorithms. Our results indicate that \moho is the most efficient algorithm, significantly outperforming \SGGA and \decomposition. Also, this algorithm is able to reproduce 8 and 5 more crashes in 1 and 5 minutes, respectively, compared to the state-of-the-art. Moreover, in contrast to the previous multi-objectivized crash reproduction approach (\decomposition), the crash reproduction ability of \moho increases with large search budgets (\ie above two minutes).
+
+% The better performance over state-of-the-art methods is due to the ability of \moho to maintain a good balance between high method sequence diversity and short test length. 
+We performed an additional analysis to find the correlation between the different aspects of the crashes and the ability of \moho in reproducing them. The result of this analysis shows that two factors in crashes significantly impact the performance of \moho: (i) type of exception and (ii) the number of crash stack frames.
+
+Furthermore, we observed that \SGGA and \decomposition could outperform \moho but only in a few cases. We performed a manual analysis to characterize the negative factors leading to the adverse results in these cases. Our analysis reveals that two negative factors are at play in these cases: (i) extra calculations in fitness evaluation and (ii) helper-objectives misguidance. We also showed in Section \ref{sec:results:corner} that while the differences in \textit{extra calculations in fitness evaluation} are significant, they are often negligible in practice.
+
+The contributions of the chapter are as follows:
+\begin{compactenum}
+    % \item The re-formulation of crash reproduction as a multi-objective problem with two new helper objectives (Section \ref{section:approach}).
+    \item An open-source implementation of seven crash reproduction techniques (Section \ref{sec:approach:implementation}).
+    \item An empirical comparison of seven search-based crash reproduction approaches (Section \ref{sec:setup}).
+    \item An analysis of the benefits of multi-objectiv\-ization with helper objectives in terms of reproduction ratio and efficiency (Section \ref{sec:results}).
+    \item The identification of the special situations in which \moho can be counter-productive (Section \ref{sec:results:corner}).
+    \item The identification of a strong correlation between the ability of \moho in improving the efficiency and effectiveness of crash reproduction for combinations of exception types and the number of frames in the stack trace of the target crash (Section \ref{sec:discussion:factors}). 
+\end{compactenum}
+
+In our future work, we will investigate additional helper-objecti\-ves for crash reproduction. For instance, the current helper-objectiv\-es in \moho concern the test length and method sequence diversity. However, further objectives can be added, such as test input/data diversity. Increasing the number of objectives will require to evaluate their performance using different many-objective evolutionary algorithms. 
+We will also analyze the evolution of the fitness values of existing and new objective to further investigate the root causes of good and bad performances of \moho and other objectives for different crashes and different MOEAs. 
+
+Moreover, the search objectives introduced by \decomposition is only optimized by \textit{NSGA-II} MOEA. As future work, we will investigate the impact of utilizing other MOEAs for optimizing \decomposition objectives.

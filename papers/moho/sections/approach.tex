@@ -1,0 +1,100 @@
+
+\section{Multi-Objectivization with Helper-Objectives (MO-HO)}
+\label{section:approach}
+% Using multi-objectivization, converting a single objective optimization to a multi-objective problem with a set of representative objectives, is an attempt to boost diversity in evolutionary algorithms. As suggested by  Knowles \etal \cite{}, multi-objectivization can be done in two ways: (i) decompose the single objective into multi objectives and (ii) add some helper objective the existing one. 
+
+Decomposing the \CrashFunction leads to a set of dependent sub-objectives, which reduces the effect of improving diversity through multi-objectivization~\cite{jensen2004helper}. In this study,  we focus on using new helper-objectives in addition to the \CrashFunction, rather than decomposing it. We define two helper-objectives called \textbf{method sequence diversity} and \textbf{test length minimization} that aim to (i) increase diversity in the population (\ie generated tests) and (ii) address the \textit{bloating} effect~\cite{mondal2015, Panichella2018}.
+Then, we use five different evolutionary algorithms belonging to different categories of MOEAs (\eg decomposition-based and rank-based) to solve this optimization problem. In the remainder of this section, we first discuss the two helper-objectives. Next, we present the MOEAs used to solve this problem.
+% Finally, we discuss the  implementation of our approach in a tool \botsing (including MOEAs, search objectives, \etc) in Java.
+
+\subsection{Helper-Objectives}
+
+As suggested by Jensen \etal \cite{jensen2004helper}, adding helper-objectives to an existing single objective can help search algorithms escape from local optima. However, this requires that the helper objectives are in conflict with the primary one \cite{jensen2004helper}. Therefore, defining proper helper-objectives is crucial. 
+
+\textbf{Method Sequence Diversity.}
+%
+The first helper-objective seeks to maximize the diversity of the method-call sequences that compose the generated tests because more diverse tests might execute different paths or behaviors of the \textit{target class}. Notice that each test case is a sequence of statements, where each statement belongs to 
+one of the following five different categories~\cite{Panichella2018}: \textit{primitive} statements, \textit{constructors}, \textit{field statements}, \textit{method calls}, or \textit{assignments}. Furthermore, the length of a test case is variable, \ie it is not fixed a priori and can vary during the search.
+
+In recent years, several functions have been introduced to measure test case diversity \cite{mondal2015}. These functions measure the diversity between two test cases by using a binary encoding function to calculate the distance between the corresponding encoded vectors using the Levenshtein distance \cite{Levenshtein1966}, Hamming distance \cite{Hamming1950}, \etc
+For three or more test cases, the overall diversity corresponds to the average pairwise diversity of the existing test cases \cite{mondal2015}. These metrics have been used in other testing tasks (\eg automated test selection), but not in crash reproduction. 
+
+
+To measure the value of this helper-objective for the generated solutions, we follow a similar procedure. Let us assume that $F=\{f_1, f_2, ..f_n\}$ is a set of public and protected methods in the target class (\ie method calls that can be called directly by the generated tests), and $T=\{t_1, t_2, ..t_m\}$ is a set of generated test cases.
+To calculate the diversity of $T$, we first need to encode each $t_k \in T$ into a binary vector. We use the same encoding function proposed by Mondal \etal \cite{mondal2015}: each test case $t_k \in T$ corresponds to a binary vector $v_k$ of length  $n$ (\ie the number of public and protected methods in the target class). Each element $v_k[i]$ of the binary vector denotes whether the corresponding method $f_i\in F$ is invoked by the test case $t_k$. More formally, for each method $f_i \in F$,  the corresponding entry $v_k[i]=1$ if $t_k$ calls $f_i$;  $v_k[i]=0$ otherwise.
+%For instance, $f_i \in F$ has the $i$th position in $V_j$. If $t_j$ has a method call to $f_i \in F$, the $i$th element in $V_j$ will be $1$. Otherwise, we set a value of $0$ for this element.
+
+Then, we calculate the diversity for each pair of test cases $t_k$ and $t_i$ as the Hamming distance between the corresponding binary vectors  $v_k$ and $v_i$  \cite{Hamming1950}. 
+The Hamming distance (\textit{Hamming}) between two vectors corresponds to the number of mismatches\footnote{The number of positions at which the corresponding bits are different.} over the total length of the binary vectors. For instance, the Hamming distance between $A=\langle1,1,0,1,0\rangle$ and $B=\langle0,1,0,1,1\rangle$ equals to $2/5= 0.4$. 
+
+\begin{definition}[Method Sequence Diversity]
+\textit{Given an encoding function $V(.)$, the method sequence diversity ($MSD$) of a test $t \in T$ corresponds to the average Hamming distance of that test from the other test cases in $T$}:
+\begin{equation}
+MSD(t)= \frac{\sum_{t_i \in T \setminus \{t\}} Hamming(V(t),V(t_i))}{|T| - 1}
+\end{equation}
+\end{definition}
+
+In our approach, $MSD$ should be maximized to increase the chance of the generated test to execute new paths or behaviors in the \textit{target class}. Since our tool (see Section \ref{sec:approach:implementation}) is designed for minimization problems, we minimize the method sequence similarity using the formula:
+\begin{equation}
+    f_{MSD}(t) = 1 - MSD(t)
+\end{equation}
+
+
+
+\textbf{Test Length Minimization}
+While increasing method sequence diversity can help to execute diverse paths of the target class, a previous study~\cite{albunian2017diversity} also showed that \textit{test diversity metrics} (such as call sequence diversity) can reduce coverage. This is due to the \textit{bloating effect}, \ie diversity will also promote larger test cases over short ones. Let us assume that we have a set of short test cases with few method calls in our population (most of the elements in their binary vectors are $0$). A lengthy test case $t_L$ that calls all the methods of the target class will have a binary vector containing only $1$ values. As a consequence, $t_L$ will have a large Hamming distance from the existing test cases. 
+
+Larger tests introduce two potential issues: (i) they are likely more expensive to run (extra overhead), and (ii) they may contain spurious statements that do not help code coverage (which is a part of \CrashFunction). In the latter case, mutation can become less effective as it may mutate spurious statements rather than the relevant part of the chromosomes. Therefore, test diversity is in conflict with \CrashFunction. 
+To avoid the \textit{bloating} effect, our second helper-objective is \textit{test length minimization}, which counts the number of statements in a given test:
+
+\begin{definition}[Test Length Minimization]
+\textit{For a test case $t$ with a length $|t|$, the fitness function is:}
+\begin{equation}
+ f_{len}(t) = |t|
+ \end{equation}
+\end{definition}
+
+
+
+\subsection{Multi-Objective Evolutionary Algorithms}
+
+In this study, our goal is to solve a multi-objectivized problem by minimizing the three objective functions (\CrashFunction, $f_{MSD}$, and $f_{len}$).
+In theory, we could consider various MOEAs, each coming with different advantages and disadvantages over different optimization problems (\eg multimodal, convex, \etc).
+However, we cannot establish upfront what type of MOEA works better for crash reproduction as the shape of the Pareto Front (\ie type of problem) for crash reproduction is unknown.
+Hence, we chose five MOEAs from different categories to determine the best algorithm for \moho:
+\textit{NSGA-II} uses the non-dominated sorting procedure; \textit{SPEA2} is an archive-based algorithm that selects the best solutions according to the fitness value; \textit{PESA-II} divides the objective space to hyper-boxes and selects the solutions from the hyper-boxes with the lower density; \textit{MOEA/D} decomposes the problem to multiple sub-problems; and \textit{FEMO}, is a (1+1) evolutionary algorithm that evolves tests solely with mutation and without crossover.
+
+We use the same stopping conditions for all search algorithms,  which is a maximum search budget, or when the target crash is successfully reproduced, \ie a solution with a \CrashFunction of $0.0$ is found. Also, to increase \textit{exploitation} during the search, all algorithms use the \textit{guided crossover} and \textit{guided mutation} operators.
+
+In the following subsections, we briefly describe the selected search algorithms and their core characteristics.
+
+\subsubsection{Non-dominated Sorting Genetic Algorithm II (NSGA-II) \cite{deb2002fast}. } 
+%
+In NSGA-II, offspring tests are generated, from given a population of size $N$, using genetic operators (crossover and mutation). Next, NSGA-II unions the offspring population with the parent population into a set of size $2N$ and applies a \textit{non-dominated sorting} to select the $N$ individuals for the next generation.
+This sorting is performed based on the \textit{dominance} relation and \textit{crowding distance}: the solutions are sorted into subsequent dominance fronts. The non-dominated solutions are in the first front ($Front_0$). These solutions have a higher chance of being selected. Furthermore, \textit{crowding distance} is used to raise the chance of the most diverse solutions within the same front to be selected for the next generation. 
+In each generation, parent test cases are selected for reproduction using the \textit{binary tournament selection}. 
+
+\subsubsection{Strength Pareto Evolutionary Algorithm 2 (SPEA2)~\cite{zitzler2001spea2}. } 
+%
+Besides the current population, SPEA2 contains an external archive that collects the non-dominated solutions among all of the solutions considered during the search process. SPEA2 assigns a \textit{fitness value} to each solution (test) in the archive. The \textit{fitness value} of solution~$i$ is calculated by summing up two values: \textit{Raw fitness} ($R(i) \in \mathbb{N}_{0}$), which represents the dominance relation of $i$; and \textit{Strength value} ($S(i) \in [0,1]$), which estimates the density of solutions in the same Pareto front (solutions that are not dominating each other).
+A solution with lower fitness value is ``better'' and has a higher chance of being selected. For instance, the non-dominated solutions have a $R(i) = 0$, and their fitness values are lower than $1$.
+
+The external archive has a fixed size, which is given at the beginning of the search process. After updating the archive in each iteration, the algorithm checks if the size of the archive exceeds this given size. If the size of the archive is smaller than the given size, SPEA2 fills the archive with the existing dominated solutions. In contrast, if the size of the archive is bigger than the given size, this algorithm uses a \textit{truncation operator} to remove the solutions with a high \textit{fitness value} from the archive. After updating the archive, SPEA2 applies \textit{binary tournament selection} based on the calculated \textit{fitness values}, selects parent solutions, and  generates offspring solutions via  \textit{crossover} and \textit{mutation}.
+
+\subsubsection{Pareto Envelop-based Selection Algorithm (PESA-II)~\cite{Corne2001}. }  
+%
+Similar to SPEA2, PESA-II benefits from an external archive. In each generation, the archive is updated by storing the non-dominated solutions in the archive and the current population. However, the difference is in the selection strategy and archive truncation. In this algorithm, instead of assigning a fitness value to each of the solutions in the archive, the objective space is divided, based on the existing solutions, into \emph{hyper-boxes} or grids. Non-dominated solutions in a hyper-box with lower density have a higher chance of being selected and a lower chance of being removed.
+
+\subsubsection{Multi-objective Evolutionary Algorithm Based on Decomposition (MOEA/D)~\cite{zhang2007moea}. }
+%
+This algorithm decomposes the $M$-objectives problem into $K$ single-objective sub-problems and optimizes them simultaneously. 
+Each sub-problem has different weights for the optimization objectives. The $K$ sub-problems $g(x|w_1), \dots,$ $g(x|w_K)$ are obtained using a scalarization function $g(x|w)$ and a set of uniformly-distributed weight vectors $W=\{w_1, \dots, w_k\}$. The decomposition can be done  with several techniques such as \textit{weighted sum} \cite{Miettinen1999}, \textit{Tchebycheff} \cite{Miettinen1999}, or \textit{Boundary Intersection} \cite{Indraneel, messac2003normalized}. 
+In each generation, MOEA/D maintains the best individuals for each subproblem $g(x|w_i)$, while the reproduction (based on crossover and mutation) is allowed only among solutions (tests) within the same neighbourhood (\textit{mating restriction}).
+
+
+\subsubsection{Fair Evolutionary Multi-objective Optimizer (FEMO)~\cite{laumanns2002}. } 
+%
+This algorithm is a local (1+1) evolutionary algorithm. It means that in each iteration, only one solution is evolved by the mutation operator to have only one offspring solution for the next generation.
+FEMO contains an archive. In the first iteration, it generates a random solution and places it in the archive. In the next generations, it selects one individual from the archive and evolves it by mutation operator to generate a new solution. Finally, if the new solution dominates at least one of the solutions in the archive, it adds the new solution to the archive and removes the dominated solutions.
+
+Each solution in the archive has a weight ($w$) that indicates the number of times that a solution was selected from the archive. So, the initial weight of a newly generated test case is $0$. During the selection, FEMO selects a solution randomly from the solutions in the archive that have the lowest $w$.

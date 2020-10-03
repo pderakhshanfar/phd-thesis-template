@@ -1,0 +1,69 @@
+
+
+\section{Empirical Evaluation}
+\label{sec:setup}
+To assess the impact of \moho on crash reproduction, we performed an empirical evaluation and answered the following research questions.
+
+\textbf{RQ$_1$: } \textit{Which Multi-Objective algorithm performs better with \moho's search objectives in terms of crash reproduction?}
+
+\textbf{RQ$_2$: } \textit{What is the impact of the \moho algortihm on crash reproduction compared to \SGGA and \decomposition?}
+
+\textbf{RQ$_3$: } \textit{How does \moho's efficiency compare to \SGGA and \decomposition?}
+
+
+
+\subsection{Implementation}
+\label{sec:approach:implementation}
+Since other crash reproduction approaches are not openly available, we implemented a new open-source evolutionary-based crash reproduction framework, called \botsing.\footnote{Available at \url{https://github.com/STAMP-project/botsing}}
+\botsing is well-tested and designed to be easily extensible for new techniques (new evolutionary algorithms, new genetic operators, \etc). It relies on \evosuite \cite{Fraser2011}, an evolutionary-based unit test generation tool, for code instrumentation and for the internal representation of an individual (\ie a test case) by using \texttt{e\-vo\-suite-cli\-ent} as a dependency.
+
+For this study, we implemented the techniques used in previous studies for crash reproduction (\SGGA and \decomposition) in \botsing. Moreover, we implemented all of the \moho approaches, which include the two fitness functions for our new helper-objectives (\textit{method sequence diversity} and \textit{test length}) and the five MOEAs mentioned above.
+
+\subsection{Setup}
+\label{sec:approach:setup}
+\textbf{Crash Selection. }
+We selected our crashes from \crashpack (Chapter 2). 
+Based on the reported results in Chapter 2 and our prior studies on decomposition-based crash re[roduction \cite{Soltani2018b}, we know that \SGGA and \decomposition face various challenges to reproduce many of the crashes in this benchmark. For this study, we apply our approach and state-of-the-art algorithms to 124 crashes from \crashpack. These crashes stem from six open-source projects: \textrm{JFreeChart}, a framework for building interactive charts; \textrm{Commons-lang}, a library providing extra utilities to the \texttt{java.lang} API; \textrm{Commons-math}, a library for mathematical and statistical usages; \textrm{Mockito}, a testing framework for mocking objects;
+\textrm{Joda-time}, a library for date and time manipulation; XWiki, a large-scale enterprise wiki management system.
+
+
+\textbf{Algorithm Selection. }
+We attempted to reproduce the selected crashes using seven evolutionary algorithms: \SGGA, \decomposition,
+and \moho with  five MOEAs (NSGA-II, SPEA2, PESA-II, MOEA/D, and FEMO). 
+For each crash, we ran each algorithm on each frame of crash stack traces. We repeated each execution 30 times to take randomness into account, for a total number of 199,710 independent executions.
+We ran the evaluation on servers with 40 CPU-cores, 128 GB memory, and 6 TB hard drive.
+
+\textbf{Evaluation procedure. }
+In RQ$_1$, %since we do not know the final shape of the Pareto-front, 
+we perform an internal assessment of \moho by comparing all MOEAs to determine the best-performing one when optimizing the search objectives in \moho. Then, to answer RQ$_2$ and RQ$_3$, we use the best-performing \moho configuration (MOEA) to evaluate its effectiveness and efficiency against the state-of-the-art crash reproduction approaches. 
+
+\textbf{Parameter Settings. }
+We set the search budget to five minutes, as suggested by previous studies on evolutionary-based crash reproduction \cite{Soltani2018a}. Also, we fixed the population size and archive size (if needed) to 50 individuals, as recommended in prior studies on test case generation~\cite{Panichella2018}. For \moho with PESA-II, the number of bisections for gridding is set to the default value of five grids.
+In \moho with MOEA/D, the weight vectors are obtained using a variant \textit{simplex-lattice design}~\cite{tan2012modification} and using the \textit{Tchebycheff approach} as the aggregation function. Finally, we set the \textit{neighborhood selection probability} to 0.2 (set to the default value~\cite{durillo2010jmetal}) and the maximum number of \textit{solutions that can be replaced} in each generation to 50. For all MOEAs, we use the 
+\textit{guided mutation} with mutation probability $p_m=1/n$ ($n$ is the length of the test case), and  
+\textit{guided crossover} with crossover probability $p_c=0.8$ (the same parameters used for the suggested baselines). 
+
+\subsection{Data Analysis}
+
+To evaluate the crash reproduction ratio (\ie the percentage of successful crash reproduction attempts in 30 rounds of runs) of different algorithms, we follow the same procedure as the study presented in Chapter \ref{sec:model_seeding}: for each crash $C$, we find the highest frame that can be reproduced by at least one of the algorithms ($r_{max}$). 
+We analyze the crash reproduction ratio of each algorithm for a target crash $C$ targeting frame $r_{max}$.
+
+To check whether the performance (reproduction ratio) of MO\-EAs significantly differs from one another, we use the Friedman test~\cite{garcia2008study}. The Friedman test is a non-parametric version of the ANOVA test \cite{fisher1936use}, \ie it does not make any assumption about the data distribution. It is a multiple-problem statistical test and has been widely used in the literature to compare randomized algorithms~\cite{Panichella2017c, Jan2017}.
+Friedman's test allows to rank and statistically compare different MOEAs over multiple independent problems, i.e., crashes in our case. %Additionally, based on the results of the algorithms, we rank the \moho + MOEAs using the standard method of Panichella \etal~\cite{Panichella2017c, Jan2017}: to produce a global ranking, we provide sub-rankings for each MOEA according to their performance for each individual crash. The average of a seeding configuration sub-rankings gives the ranking of that configuration.
+For Friedman's test, we use a level of significance $\alpha = 0.05$. If the $p$-values obtained from Friedman's test are significant (\textrm{$p$-values} $<= 0.05$), we apply pairwise multiple comparison using Conover's post-hoc procedure~\cite{conover1981rank}. To correct for multiple comparison errors, we adjust the $p$-values from Conover's procedure using Holm-Bonferroni~\cite{holm79}.
+
+To answer $RQ_2$, we need to determine whether an algorithm reproduces a crash.
+Since we repeat each execution 30 times, we use the majority of outcomes for a crash reproduction result. In other words, if an algorithm could reproduce a crash in $\geq 15$ runs (\ie reproduction ratio of $\geq50\%$), we count that frame as \textit{reproduced}.
+
+To compare the number of reproduced crashes by each algorithm, we used the same procedure used by Almasi \etal \cite{almasi2017industrial} and Campos \etal \cite{campos2013entropy}: we check crash reproduction status and reproduction ratio of the best-performing \moho algorithm (according to the results of $RQ_1$), \SGGA, and \decomposition at five time intervals: 1, 2, 3, 4 and 5 minute.
+
+% Since crash reproduction data is a dichotomic distribution (\ie an algorithm reproduces a crash $C$ from its $r_{max}$ or not), we use the Odds Ratio ($OR$) to measure the impact of each algorithm in crash reproduction ratio ($RQ_1$). A value $OR > 0$ in a comparison between a pair of factors $(A,B)$ indicates that the application of factor A increases the crash reproduction ratio, while $OR < 0$ indicates the opposite. Also, a value of $OR = 0$ indicates that both of the factors have the same performance.
+% We apply Fisher's exact test, with $\alpha = 0.05$ for the Type I error, to assess the significance of results. 
+
+To evaluate the efficiency of the algorithms ($RQ_3$), we analyze the time spent by the best \moho algorithm, \SGGA, and \decomposition for generating a crash reproducing test cases. Since efficiency is only applicable to the reproduced crashes, we compare the efficiency of algorithms on the crashes that are reproduced at least once by one of the algorithms. 
+If, for one execution, an algorithm was not able to reproduce the crash, it means that it consumed the maximum allowed time budget (5 minutes).
+%In executions that an algorithm failed to reproduce a crash, we consider that it reached to the maximum allowed budget (5 minutes).
+To assess the effect size of differences between algorithms, we use the Vargha-Delaney \^A$_{12}$ statistic \cite{vargha}. A value of \^A$_{12} < 0.5$ for a pair of factors $(A,B)$ shows that $A$ reproduced the target crash in a shorter time, while a value of \^A$_{12}> 0.5$ indicates the opposite. Besides, \^A$_{12}= 0.5$ means that there is no difference between the factors.
+To evaluate the significance of effect sizes (\^A$_{12}$), we use the non-parametric Wilcoxon Rank Sum test, with $\alpha = 0.05$ for the Type I error.
+
+A replication package of our evaluation is available on Zenodo \cite{zenodoRP}. It contains the selected crashes, the results and data analysis presented in this paper, as well as the implementation of MOEAs in \botsing and a Docker-based infrastructure to enable the full-replication of our evaluation.
