@@ -1,0 +1,49 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Background and related work}
+\label{sec:cub:background}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%-----------------------------------------------
+\subsection{Search-based unit test generation}
+\label{sec:cub:unit-test-generation}
+%-----------------------------------------------
+
+Search-based unit test generation has been extensively investigated by prior studies~\cite{Fraser2011, Fraser2014b, Panichella2018}. These studies have confirmed that it achieves a high level of coverage~\cite{Fraser2014b, Panichella2018}, detects faults in real-world applications~\cite{Fraser2015a,almasi2017industrial}, and reduces the debugging costs~\cite{Panichella2016}. 
+Most search-based unit test generation approaches abstract the source code of a method to a control flow graph:
+%
+\begin{definition}[Control Flow Graph (CFG)~\cite{Allen:1970:CFA:800028.808479}]
+    A control flow graph for a method $m$ is a directed graph $G=(B,E)$, where $B$ is the set of \emph{basic blocks} (\ie sequences of statements that do not have any branch before the last statement), $E$ is the set of \emph{control flow edges} connecting the basic blocks.
+\end{definition}
+%
+For instance, for the method with the pseudo-code presented in Figure \ref{subfig:pseudocode}, the corresponding CFG for this method is depicted in Figure~\ref{subfig:cfg}.
+
+Search-based software unit test generation approaches use meta-heuristics to \emph{evolve} a set of test cases. These techniques start with generating an \emph{initial population} of randomly produced test cases.
+The \emph{fitness} of each individual in the population is evaluated using a fitness function, which is usually defined according to the coverage in the CFGs of the target class. 
+Next, a subset of the fittest individuals is \emph{selected} for evolution and leads to the generation of a new population. 
+The evolving process contains three steps: (i) \emph{crossover}, which randomly mixes two selected individuals to generate new offspring; (ii) \emph{mutation}, which randomly changes, adds, or removes a statement in an individual; and (iii) \emph{insertion}, which reinserts the modified individuals into the population for the next iteration of the algorithm.
+This process continues until either satisfactory individuals are found, or the time budget allocated for the search is consumed.
+%
+Among the different approaches, \evosuite~\cite{Fraser2011} uses genetic algorithms to evolve Java test suites in order to cover a class under test.
+
+% A well-known application for unit testing using genetic algorithms is \evosuite \cite{Fraser2011}, which considers a whole test suite as an individual. It uses coverage of the whole target class (\eg covering branches in the CFGs) as a single search goal. In this way, the outcome does not depend on the order or differences in the difficulty of satisfying separate goals.
+
+\textit{MOSA} \cite{Panichella2015} and \textit{DynaMOSA} \cite{Panichella2018} are two new many-objectives genetic algorithms proposed for unit test generation. These algorithms consider test cases as individuals and incorporate separate fitness functions for separate coverage goals (\eg covering each branch in the CFGs will be an independent search objective). They use non-dominated fronts to generate test cases in the direction of multiple coverage goals in parallel, and thereby generate tests aiming to cover specific goals, while not letting the test generation be trapped for covering a single goal. Panichella \etal \cite{Panichella2015} show that \textit{MOSA} outperforms the original \evosuite approach in terms of structural coverage and mutation score.
+
+In this paper, we use \textit{MOSA} to automatically generate test cases according to the collected logs during the production phase. Future work includes the evaluation of our approach with other multi and many-objectives algorithms, like \textit{DynaMOSA}.
+
+%----------------------------------------
+\subsection{Usage-based test generation}
+\label{sec:cub:usage-based-test-generation}
+%----------------------------------------
+
+The majority of search-based test generation techniques aim to achieve high coverage for various metrics (\eg line coverage, branch coverage, or more recently mutation coverage).
+Despite their considerable achievements, they do not consider the execution patterns observed in production use for automatic generation of unit tests. Hence, Wang \etal \cite{Wang2017} investigated how developer-written tests and automatically generated tests represent typical execution patterns in production. Their study confirms that these tests are not a proper representation of real-world execution patterns.
+
+The behavior of actual users may reveal faults, which are not detected by the existing test cases. For instance, a piece of code in the software under test that is not often used in practice may be left relatively untested because it is rarely exercised in production. 
+A recent method from Wang \etal \cite{Wang2019}, based on symbolic execution, recreates users behaviors using log data from a system run in production, which has allowed to find the same faults in a system encountered by a user. 
+%
+This chapter aims to expand upon generating tests based on the actual usage of a system at the unit level.
+In contrast to Wang \etal \cite{Wang2019}, where the aim is to replicate a full behavior executed by a user by using symbolic execution, we aim to guide the search process in a genetic algorithm towards executing common or uncommon behaviors. In the same vein as Wang et al.~\cite{Wang2019}, log data is used to determine the execution counts of code branches.
+
+Other approaches consider user feedback \cite{Grano2018}, or \emph{usage models} of the application and \emph{statistical testing} \cite{Tonella2004c, Sprenkle2013, Kallepalli2001, Devroey2017b} to generate and prioritize test cases at the system level. A usage model consists in a state machine where transitions have been labelled with a probability of being executed. Unlike those approaches, we consider test case generation at the unit level. 

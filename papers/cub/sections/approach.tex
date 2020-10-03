@@ -1,0 +1,137 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Test generation for common and uncommon behaviors}
+\label{sec:cub:approach}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%------------------------------------------
+%\subsection{Commonality score}
+%------------------------------------------
+
+Intuitively, \emph{commonality} describes to what extent a test exercises code branches that are executed often during the normal operation of the system under test. If a test executes branches that are often (respectively rarely) executed in practice, it will have a high (respectively low) \emph{commonality score}. The commonality score has a value between 0 and 1 and is computed based on an annotated control flow graph~\cite{Allen:1970:CFA:800028.808479}:
+ %
+\begin{definition}[Annotated Control Flow Graph]
+    An annotated control flow graph is a directed graph $G = (B, E, \gamma)$, where $G=(B,E)$ is a control flow graph, and $\gamma: B \rightarrow \mathbb{R}$ is a labelling function giving for the basic blocks in $B$ an \emph{execution weight} denoting how often the block is executed during operations.
+\end{definition}
+%
+The \emph{execution weights} can be derived from the operation logs of the system, an instrumented version of the system (like in our evaluation), or assigned manually. 
+
+\begin{figure}
+    \subfloat[Pseudo-code.]{
+        \label{subfig:pseudocode}
+        %\removelatexerror
+        \begin{minipage}{0.33\textwidth}
+            \begin{algorithm}[H]
+                \tcc{Branch 1}
+                \eIf{condition1}{
+                \tcc{Branch 2}
+                ...\;
+                }{
+                \tcc{Branch 3}
+                ...\;
+                \If{condition2}{
+                \tcc{Branch 4}
+                ...\;
+                }
+                \tcc{Branch 5}
+                ...\;
+                }
+                \tcc{Branch 6}
+                ...\;
+            \end{algorithm}
+        \end{minipage}
+    }
+    \subfloat[CFG.]{
+        \label{subfig:cfg}
+        \begin{minipage}{0.30\textwidth}
+            \resizebox{\columnwidth}{!}{%
+            \begin{tikzpicture}[roundnode/.style={circle, draw=black, fill=white, thick, scale=2.0, transform shape}]
+                \node[roundnode]              (branch1)                                   {$b_1$};
+                \node[roundnode]               (branch2)       [below left=of branch1]     {$b_2$};
+                \node[roundnode]               (branch3)       [below right=of branch1]    {$b_3$};
+                \node[roundnode]               (branch4)       [below right=of branch3]    {$b_4$};
+                \node[roundnode]       (branch5)       [below left=of branch4]     {$b_5$};
+                \node[roundnode]      (branch6)       [below left=of branch5]     {$b_6$};
+                
+                \draw[->] (branch1) -- (branch2);
+                \draw[->] (branch1) -- (branch3);
+                \draw[->] (branch2) -- (branch6);
+                \draw[->] (branch3) -- (branch4);
+                \draw[->] (branch3) -- (branch5);
+                \draw[->] (branch4) -- (branch5);
+                \draw[->] (branch5) -- (branch6);
+                
+            \end{tikzpicture}
+            }
+        \end{minipage}
+    }
+    \subfloat[ACFG.]{
+        \label{subfig:acfg}
+        \begin{minipage}{0.30\textwidth}
+            \resizebox{\columnwidth}{!}{%
+            \begin{tikzpicture}[roundnode/.style={circle, draw=black, fill=white, thick, scale=2.0, transform shape}]
+                \node[roundnode,label=\large$\gamma_1${:} 10]              (branch1)                                   {$b_1$};
+                \node[roundnode,label=\large$\gamma_2${:} 3]               (branch2)       [below left=of branch1]     {$b_2$};
+                \node[roundnode,label=\large$\gamma_3${:} 7]               (branch3)       [below right=of branch1]    {$b_3$};
+                \node[roundnode,label=\large$\gamma_4${:} 1]               (branch4)       [below right=of branch3]    {$b_4$};
+                \node[roundnode,label=below:{\large$\gamma_5${:} 7}]       (branch5)       [below left=of branch4]     {$b_5$};
+                \node[roundnode,label=below:{\large$\gamma_6${:} 10}]      (branch6)       [below left=of branch5]     {$b_6$};
+                
+                \draw[->] (branch1) -- (branch2);
+                \draw[->] (branch1) -- (branch3);
+                \draw[->] (branch2) -- (branch6);
+                \draw[->] (branch3) -- (branch4);
+                \draw[->] (branch3) -- (branch5);
+                \draw[->] (branch4) -- (branch5);
+                \draw[->] (branch5) -- (branch6);
+                
+            \end{tikzpicture}
+            }
+        \end{minipage}
+    }
+    \caption{Example of pseudo-code and its corresponding annotated control flow graph. The $\gamma_i$ indicate to the execution weight of the node.}
+    \label{fig:example}
+\end{figure}
+
+Let us define the \emph{commonality score}. For a test case, its commonality score depends only on the branches it covers and on the highest and lowest execution weights in the class under test. Branches without execution weights are ignored and branches covered multiple times (\eg in a loop) are counted only once. 
+%
+\begin{definition}[Commonality score]
+    For a test case $t$ executing $n$ basic blocks $b_i$ labelled by a function $\gamma$, the highest execution weight in the class under test $h$, the lowest execution weight in the class under test $l$, the commonality score of $t$, denoted $c(t)$ is defined as:
+    $$c(t) = \frac{\sum_{i = 1}^{n} \left( \gamma b_i - l \right)}{n \times (h-l)}$$
+\end{definition}
+%
+The commonality score for a \emph{test suite} $s$ is defined as the average of the commonality scores of its test cases: $c(s) = \left( \sum_{t_i \in s} c(t_i) \right) / \vert s \vert $.
+
+For instance, considering a class containing a single method with the pseudo-code presented in Figure \ref{subfig:pseudocode}, the corresponding annotated control flow graph in Figure \ref{subfig:acfg}, and a test suite containing three test cases $t_1$ covering ($b_1$, $b_2$, $b_6$), $t_2$ covering ($b_1$, $b_3$, $b_5$, $b_6$), and $t_3$ covering ($b_1$, $b_3$, $b_4$, $b_5$, $b_6$). The commonality scores are  
+$c(t_1) = \left( (10-1))+ (3-1) + (10-1) \right)/\left(3 \times (10 - 1)\right) = 20/27 \approx 0.741$, 
+$c(t_2) = 5/6 \approx 0.833$, and 
+$c(t_3) = 2/3 \approx 0.667$.
+
+
+%------------------------------------------
+\subsection{Commonality as a secondary objective}
+%------------------------------------------
+
+Secondary objectives are used to choose between different test cases in case of a tie in the main objectives. For instance, the default secondary objective used by MOSA \cite{Panichella2015} minimizes the test case length (\ie the number of statements) when two test cases satisfy the same main objectives (\eg cover the same branches). Using test case length minimization as a secondary objective addresses the \emph{bloating effect} \cite{Silva2012} by preventing the search process from always generating longer test cases. Since this is a desirable property, we combine the test case length minimization with the commonality of the test case using a weighted sum when comparing two test cases. 
+%
+\begin{definition}[Commonality secondary objective]\label{def:common}
+    For two test cases $t_1$, $t_2$ with lengths $l_1$, $l_2$, the comparison between the two test cases is done using the following formula: 
+    $$\textit{common}(t_1,t_2) = \frac{\left( 
+        \alpha \left( \frac{l_1}{l_2} \right) +
+        \beta \left( \frac{1 - c(t_1)}{1 - c(t_2)} \right)
+    \right)}{\left(\alpha + \beta \right)} $$
+    If $\textit{common}(t_1,t_2) \leq 1$, then $t_1$ is kept, otherwise $t_2$ is kept. 
+\end{definition}
+%
+Similarly, for the uncommonality between two test cases, we will have the following definition.
+%
+\begin{definition}[Uncommonality secondary objective]\label{def:uncommon}
+    For two test cases $t_1$, $t_2$ with lengths $l_1, l_2$, the comparison between the two test cases is done using the following formula: 
+    $$\textit{uncommon}(t_1,t_2) = \frac{\left( 
+        \alpha \left( \frac{l_1}{l_2} \right) +
+        \beta \left( \frac{c(t_1)}{c(t_2)} \right)
+    \right)}{\left(\alpha + \beta \right)} $$
+    If $\textit{uncommon}(t_1,t_2) \leq 1$, then $t_1$ is kept, otherwise $t_2$ is kept. 
+\end{definition}
+%
+In our evaluation, we use commonality and uncommonality with MOSA to answer our different research questions. 

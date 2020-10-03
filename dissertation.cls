@@ -213,7 +213,7 @@
 
 \RequirePackage{multicol}
 
-\RequirePackage{algorithm}
+% \RequirePackage{algorithm}
 \RequirePackage{algpseudocode}
 \newcommand{\var}[1]{{\ttfamily#1}}% variable
 

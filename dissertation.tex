@@ -7,6 +7,11 @@
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
+
+\usepackage[plain, vlined, linesnumbered, noresetcount]{algorithm2e}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
 % \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 
@@ -65,6 +70,10 @@
 \newcommand{\integBB}{\textit{STD + BBC}\xspace}
 \newcommand{\TargetDistance}{\textit{TargetStatementDistance}\xspace}
 
+\newcommand{\df}{\textit{default}\xspace}
+\newcommand{\com}{\textit{commonality}\xspace}
+\newcommand{\ucom}{\textit{uncommonality}\xspace}
+\newcommand{\pit}{\textsc{Pit}\xspace}  
 \newcommand{\jabref}{\textsc{JabRef}\xspace}  
 
 \begin{document}
@@ -103,6 +112,7 @@
 \include{papers/moho/main}
 \include{papers/bbc/main}
 \include{papers/cling/main}
+\include{papers/cub/main}
 \include{conclusion/conclusion}
 
 %% Use letters for the chapter numbers of the appendices.

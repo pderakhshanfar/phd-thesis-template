@@ -1,0 +1,14 @@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion and future work}
+\label{sec:cub:conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this paper, we introduced the \emph{commonality score}, denoting how close an execution path is from common or uncommon executions of the software in production, and the \com and \ucom secondary objectives for search-based unit test generation. 
+We implemented our approach in \evosuite and evaluated it on \jabref using execution data from real usages of the application. 
+Our results are mixed. The \com secondary objective leads to an increase of the commonality score, and the \ucom secondary objective leads to a decrease of the score, compared to the \df secondary objective (\textbf{RQ.1}).
+However, results also show that if the commonality score can have a positive impact on the structural coverage (\textbf{RQ.2}) and mutation score (\textbf{RQ.3}) of the generated test suites, it can also be detrimental in some cases. 
+Future research includes a replication of our evaluation on different applications and using different algorithms (\eg \textit{DynaMOSA}) to gain a deeper understanding of when to apply \com and \ucom secondary objectives; the exploration and assessment of different definitions of commonality; and an assessment of the generated tests regarding their usefulness for debugging. 
+
+

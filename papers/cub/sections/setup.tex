@@ -1,0 +1,47 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Empirical evaluation}
+\label{sec:cub:evaluation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+To assess the usage of commonality as a secondary objective for test case generation, we performed an empirical evaluation using 150 classes from \jabref\footnote{\url{https://www.jabref.org}}, an open source bibliography reference manager, to answer the following research questions:
+%
+\begin{itemize}
+    \item[\textbf{RQ.1}] How does the \emph{commonality score} of the generated tests compare when using the \textit{common}, \textit{uncommon}, and \textit{default} secondary objectives?
+    \item[\textbf{RQ.2}] How does the \emph{line} and \emph{branch coverage} of the generated tests  compare when using the \textit{common}, \textit{uncommon}, and \textit{default} secondary objectives?
+    \item[\textbf{RQ.3}] How does the \emph{mutation score} of the generated tests  compare when using the \textit{common}, \textit{uncommon}, and \textit{default} secondary objectives? 
+\end{itemize}
+
+We implemented the secondary objectives from Section \ref{sec:cub:approach} in \evosuite \cite{Fraser2011}, a state-of-the-art white-box unit test generator tool for Java. Our implementation is openly available at \url{https://github.com/STAMP-project/evosuite-ramp}, and the replication package of our evaluation and data analysis have been uploaded to Zenodo \cite{evers_bjorn_2020_3897513, evers_bjorn_2020_3894711}. 
+
+%------------------------------------------
+\subsection{Subject and execution weights}
+%------------------------------------------
+
+\paragraph{Collecting execution weights}
+%
+For our evaluation, we choose \jabref (46 KLOC), an open-source Java bibliography reference manager with a graphical user interface working with BibTex files. To determine the execution weights of the different branches, we instrumented \jabref using Spoon\footnote{\url{http://spoon.gforge.inria.fr/}} and added log statements producing a message with a unique identifier each time a branch is executed. These identifiers are then mapped to a source code location, identified by the \emph{class name}, the \emph{method name}, and the \emph{line number}. Furthermore, the number of occurrences of the identifier in the log messages is established. We then asked five people (including the first author) to use our modified \jabref implementation to perform various tasks (adding a reference, updating a reference, removing a reference, \etc) and collected the produced logs. In an industrial context, operations logs can be analyses and traced back to the source code to identify the execution weights \cite{Winter2019}. 
+
+\paragraph{Classes under test}
+%
+We sampled 150 classes. We excluded classes from the \texttt{org.\-jab\-ref.gui} and \texttt{org.jabref.\-logic.importer.fileformat} packages as they respectively work with \textsc{JavaFX} and perform input-output operations. 
+From the remaining classes and following the best practices of the search-based unit testing community \cite{Molina2018}, we selected 75 classes with the highest cyclomatic complexity, as classes with a higher cyclomatic complexity are harder to process for unit test generation tools and 38 classes with the largest number of lines of code. Additionally, we selected 37 classes that were executed the most by our modified \jabref implementation. 
+
+\paragraph{Configuration parameters}
+%
+We ran \evosuite with the default coverage criteria (line, branch, exception, weak mutation, input, output, method, method without exceptions, and context branch) and three different secondary objectives: 
+(i) \df, minimizing the test case length,
+(ii) \com, as described in Definition \ref{def:common}, 
+and (iii) \ucom, as described in Definition \ref{def:uncommon}.
+We executed \evosuite on each class under test 30 times with the MOSA algorithm \cite{Panichella2015} and a search budget of three minutes, offering a good compromise between runtime and coverage \cite{Fraser2014b, Panichella2018a}. All other configuration parameters were left to their default value. 
+
+
+%------------------------------------------
+\subsection{Data analysis}
+%------------------------------------------
+
+For each of the 13,500 execution (150 classes $\times$ 30 repetitions $\times$ 3 configurations), we collected the commonality score and structural coverage information from \evosuite. Additionally, we performed a mutation analysis of the generated test suites using \pit \cite{Coles2016a}. 
+For 46 classes (out of 150), \evosuite could not complete 30 executions using our different configurations. We excluded those classes to keep the comparison fair and performed our analysis on the 104 remaining classes. 
+
+To compare the commonality score, the structural coverage, and the mutation score, we used the non-parametric Wilcoxon Rank Sum test, with $\alpha = 0.05$ for Type I error, and the Vargha-Delaney statistic $\widehat{A}_{12}$ \cite{Vargha2000} to evaluate the effect size between two configurations. An $\widehat{A}_{12}$ value lower than 0.5 for a pair of configurations (A,B) indicates that A increases the score or coverage compared to B, and a value higher than 0.5 indicates the opposite. The Vargha-Delaney magnitude measure also allows partitioning the results into three categories having large, medium, and small impact \cite{Vargha2000}.
+
