@@ -1,0 +1,51 @@
+\section{Empirical Evaluation}
+\label{sec:bbc:setup}
+To assess the impact of \bbc on search-based crash reproduction, we perform an empirical evaluation to answer the following research questions:
+
+\textbf{RQ$_1$: } \textit{What is the impact of \bbc on crash reproduction in terms of effectiveness in crash reproduction ratio?}
+
+\textbf{RQ$_2$: } \textit{What is the impact of \bbc on the efficiency of crash reproduction?}
+
+In these two RQs we want to evaluate the effect of \bbc on the existing fitness functions, namely \integ and \WS, from two perspectives: effectiveness on crash reproduction ratio and efficiency.
+
+\subsection{Setup}
+
+% \subsubsection{Implementation. }
+\textbf{Implementation. }
+%
+Since \recore and \evocrash are not openly available, we implement \bbc in \botsing, an extensible, well-tested, and open-source search-based crash reproduction framework already implementing the \WS fitness function and the guided initialization, mutation, and crossover operators. We also implement \integ (\recore fitness function) in this tool.
+\botsing relies on \evosuite \cite{Fraser2011}, an open-source search-based tool for unit test generation, for code instrumentation and test case generation by using \texttt{evosuite-client} as a dependency. 
+We also implement the \integ fitness function used as baseline in this paper.
+
+% \subsubsection{Crash selection. }
+\textbf{Crash selection. }
+%
+We select crashes from \crashpack (Chapter \ref{sec:jcrashpack:introduction}), a benchmark containing hard-to-reproduce Java crashes.
+We apply the two fitness functions with and without using \bbc as a secondary objective to 124 crashes, which have also been used in Chapter \ref{sec:model_seeding}. 
+These crashes stem from six open-source projects: \textrm{JFreeChart}, \textrm{Commons-lang}, \textrm{Commons-math}, \textrm{Mockito}, \textrm{Joda-time}, and \textrm{XWiki}.
+For each crash, we apply each configuration on each frame of the crash stack traces. We repeat each execution 30 times to take randomness into account, for a total number of 114,120 independent executions.
+We run the evaluation on two servers with 40 CPU-cores, 128 GB memory, and 6 TB hard drive.
+
+% \subsubsection{Parameter settings. }
+\textbf{Parameter settings. }
+%
+We run each search process with five minutes budget and set the population size to 50 individuals, as suggested by previous studies on search-based test generation~\cite{Panichella2018}. Moreover, as recommended in prior studies on search-based crash reproduction~\cite{Soltani2018a}, we use the \textit{guided mutation} with a probability $p_m=1/n$ ($n = $ length of the generated test case), and the \textit{guided crossover} with a probability $p_c=0.8$ to evolve test cases. We do note that prior studies do not investigate the sensitivity of the crash reproduction to these probabilities. Tuning these parameters should be undertaken as future works.
+
+
+\subsection{Data Analysis}
+
+To evaluate the crash reproduction ratio (\ie the ratio of success in crash reproduction in 30 rounds of runs) of different assessed configurations (\textbf{RQ$_1$}), we follow the same procedure as Chapter \ref{sec:model_seeding}: for each crash $C$, we detect the highest frame that can be reproduced by at least one of the configurations ($r_{max}$). 
+We examine the crash reproduction ratio of each configuration for crash $C$ targeting frame $r_{max}$.
+Since crash reproduction data has a dichotomic distribution (\ie an algorithm reproduces a crash $C$ from its $r_{max}$ or not), we use the Odds Ratio ($OR$) to measure the impact of each algorithm in crash reproduction ratio. A value $OR > 0$ in a comparison between a pair of factors $(A,B)$ indicates that the application of factor A increases the crash reproduction ratio, while $OR < 0$ indicates the opposite. Also, a value of $OR = 0$ indicates that both of the factors have the same performance.
+We apply Fisher's exact test, with $\alpha = 0.01$ for the Type I error, to assess the significance of results. 
+
+To evaluate the efficiency of different configurations (\textbf{RQ$_2$}), we analyze the time spent by each configuration on generating a crash reproducing test case.
+We do note that the extra pre-analysis and basic block coverage in \bbc is considered in the spent time.
+Since measuring efficiency is only possible for the reproduced crashes, we compare the efficiency of algorithms on the crashes that are reproduced at least once by one of the algorithms. 
+In executions that an algorithm failed to reproduce a crash, we assume that it reached the maximum allowed budget (5 minutes).
+
+In this study, we use the Vargha-Delaney \^A$_{12}$ statistic \cite{vargha} to examine the effect size of differences between using and not using \bbc for efficiency.
+For a pair of factors $(A,B)$ a value of \^A$_{12} > 0.5$ indicates that $A$ reproduces the target crash in a longer time, while a value of \^A$_{12} < 0.5$ shows the opposite. Also, \^A$_{12}= 0.5$ means that there is no difference between the factors.
+In addition, to assess the significance of effect sizes (\^A$_{12}$), we utilize the non-parametric Wilcoxon Rank Sum test, with $\alpha = 0.01$ for the Type I error.
+
+A replication package of this study has been uploaded to Zenodo \cite{derakhshanfar_pouria_2020_3953519}.

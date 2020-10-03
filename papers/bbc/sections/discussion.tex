@@ -1,0 +1,11 @@
+\section{Discussion}
+\label{sec:bbc:discussion}
+Generally, using \bbc as secondary objective leads to a better crash reproduction ratio and higher efficiency in search-based crash reproduction. This improvement is achieved thanks to the additional ability to guide the search process when facing implicit branches during the search. 
+Combining \bbc with \integ shows an important improvement compared to the combination of \bbc with \WS. This result was expected, since only one (out of three) component in \WS is allocated to line coverage, and thereby most parts of the fitness function do not use the approach level and branch distance heuristics. In contrast, \integ uses the approach level and branch distance to cover each of the frames in the given stack trace incrementally.
+
+Our results show that \bbc helps the crash reproduction process to reproduce new crashes. For instance, the crash that we used in this study (XWIKI-13377) can be reproduced only by \integ + \bbc.
+Considering our results, we believe that the usage of approach level and branch distance can be improved in other areas of search-based test generation (\eg unit testing) by taking the \textit{implicit branches} into account. However, it can be expensive to apply this secondary objective in cases where the search process tries to cover multiple paths. Assessing the impact of \bbc on other search-based test generation techniques is part of our future research agenda.
+
+% We also observed in Section \ref{sec:results} that the number of crashes, in which \bbc provided a significant improvement in efficiency, is more than crashes that \bbc could significantly improve the crash reproduction ratio. This is because a particular test case, which drives the software under test to a particular state, is needed for reproducing a crash.
+
+\input{papers/bbc/sections/threats}

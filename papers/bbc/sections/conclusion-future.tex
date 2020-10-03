@@ -1,0 +1,9 @@
+\section{Conclusion and Future work} 
+\label{sec:bbc:confut}
+
+Approach level and branch distance are two well-known heuristics, widely used by search-based test generation approaches to guide the search process towards covering target statements and branches. These heuristics measure the distance of a generated tests from covering the target using the coverage of control dependencies. However, these two heuristics do not consider implicit branches. For instance, if a test throws an exception during the execution of a non-branch statement, approach level and branch distance cannot guide the search process to tackle this exception. In this paper, we introduced a secondary objective called \bbc to address this issue. To assess \bbc, we used it for search-based crash reproduction due to the high chance of implicit branch occurrence and the limited number of basic blocks that should be covered.
+Our results show that \bbc helps \integ and \WS to reproduce 6 and 1 new crashes, respectively.
+Also, \bbc significantly improves the efficiency in 26.6\% and 13.7\% of the crashes using \integ and \WS,~respectively.
+
+In our future work, we will investigate the application of \bbc for other search-based test generation techniques (such as unit and  integration).
+\vspace{-1em}

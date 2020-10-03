@@ -1,0 +1,10 @@
+\begin{abstract}
+Search-based techniques have been widely used for white-box test generation. Many of these approaches rely on the \emph{approach level} and \emph{branch distance} heuristics to guide the search process and generate test cases with high line and branch coverage. 
+Despite the positive results achieved by these two heuristics, they only use the information related to the coverage of explicit branches (\eg indicated by conditional and loop statements), but ignore potential implicit branchings within basic blocks of code. 
+If such implicit branching happens at runtime (\eg if an exception is thrown in a branchless-method), the existing fitness functions cannot guide the search process. 
+To address this issue, we introduce a new secondary objective, called Basic Block Coverage (\bbc), which takes into account the coverage level of relevant basic blocks in the control flow graph. We evaluated the impact of \bbc on \emph{search-based crash reproduction} because the implicit branches commonly occur when trying to reproduce a crash, and the search process needs to cover only a few basic blocks (\ie blocks that are executed before crash happening). We combined \bbc with existing fitness functions (namely \integ and \WS) and ran our evaluation on 124 hard-to-reproduce crashes. 
+Our results show that \bbc, in combination with \integ and \WS, reproduces 6 and 1 new crashes, respectively.
+\bbc significantly decreases the time required to reproduce 26.6\% and 13.7\% of the crashes using \integ and \WS, respectively. For these crashes, \bbc reduces the consumed time by 44.3\% (for \integ) and 40.6\% (for \WS) on average.
+
+\keywords{automated crash reproduction \and search-based software testing \and  evolutionary algorithm \and secondary objective.}
+\end{abstract}

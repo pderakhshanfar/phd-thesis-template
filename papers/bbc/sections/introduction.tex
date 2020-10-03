@@ -1,0 +1,44 @@
+
+\label{section:bbc:introduction}
+
+Various search-based techniques have been introduced to automate different white-box test generation activities (\eg unit testing \cite{fraser2012whole,Fraser2011}, system-level testing \cite{arcuri2019restful}, \etc). Depending on the testing level, each of these approaches utilizes dedicated fitness functions to guide the search process and produce a test suite satisfying given criteria (\eg line coverage, branch coverage, \etc). 
+% In many criteria, the main goal is covering specific statements in the software under test \cite{McMinn2004}.
+ 
+Fitness functions typically rely on \textit{control flow graphs (CFGs)} to represent the source code of the software under test \cite{McMinn2004}. Each node in a CFG is a \textit{basic block} of code (\ie maximal linear sequence of statements with a single entry and exit point without any internal branch), and each edge represents a possible \textit{execution flow} between two blocks.
+Two well-known heuristics are usually combined to achieve high line and branch coverages: the \textit{approach level} and the \textit{branch distance} \cite{McMinn2004}. The former measures the distance between the execution path of the generated test and a target basic block (\ie a basic block containing a statement to cover) in the CFG. The latter measures, using a set of rules, the distance between an execution and the coverage of a \textit{true} or \textit{false} branch of a particular predicate in a branching basic block of the CFG.
+
+% The \textit{approach level} is the number of uncovered control dependent basic blocks for the target basic block (\ie basic blocks which have at least one outgoing edge leading the execution path toward the target basic block and at least another outgoing edge leading the execution path away from the target basic block) between the closest covered control dependent basic block and the target basic block. The \textit{branch distance} is calculated from the predicate of the closest covered control dependent basic block, based on a set of predefined rules.
+
+Both \textit{approach level} and \textit{branch distance} assume that only a limited number of basic blocks (\ie \textit{control dependent} basic blocks \cite{Allen:1970:CFA:800028.808479}) can change the execution path away from a target statement (\eg if a target basic block is the true branch of an conditional statement).
+However, basic blocks are not atomic due to the presence of \textbf{implicit branches} \cite{borba2010testing} (\ie branches occuring due to the exceptional behavior of instructions).
+%It is always possible that any basic block, lying between the starting point of the execution and the target basic block, impacts the target basic block coverage.
+As a consequence, any basic block between the entry point of the CFG and the target basic block can impact the execution of the target basic block.
+For instance, a generated test case may stop its execution in the middle of a basic block with a runtime exception thrown by one of the statements of that basic block. 
+% Especially in modern applications, each basic block may contain multiple potential implicit branches (\eg chained method calls).
+In these cases, the search process does not benefit from any further guidance from the approach level and branch distance.
+
+Fraser and Arcuri \cite{fraser20151600} introduced testability transformation, which instruments the code to guide the unit test generation search to cover implicit exceptions happening in the class under test. However, this approach does not guide the search process in scenarios where an implicit branch happens in the other classes called by the class under test. This is because of the extra cost added to the process stemming from the calculation and monitoring of the implicit branches in all of the classes, coupled with the class under test.
+For instance, the class under test may be heavily coupled with other classes in the project, thereby finding implicit branches in all of these classes can be expensive.
+
+However, for some test case generation scenarios, like \textbf{crash reproduction}, we aim to cover a limited number of paths, and thereby we only need to analyse a limited number of basic blocks~\cite{Chen2015, Xuan2015, nayrolles2015jcharming, Rossler2013, Soltani2018a}. Current crash reproduction approaches rely on information about a reported crash (\eg stack trace, core dump \etc) to generate a \textbf{crash reproducing test case (\CRT)}
+% However, some criteria aim to cover a limited number of paths, and thereby have a limited number of basic blocks. One of those criteria is \textbf{crash reproduction} \cite{Chen2015, Xuan2015, nayrolles2015jcharming, Rossler2013, Soltani2018a}. These rely on information about a reported crash (\eg stack trace, core dump \etc) to generate a \textbf{crash reproducing test case (\CRT)}. % that its execution leads to the same crash as the reported one. 
+%Among these approaches, two of them use evolutionary algorithms to reproduce the crash: \recore and \evocrash.
+%Both of these approaches use a single fitness function to guide the search process to reproduce a crash, given its stack trace.
+
+%To reproduce a crash, both \evocrash and \recore need to guide the search process to cover the specific statements pointed by the given stack trace (\ie line numbers appeared in each frame of the stack trace). 
+% For this guidance, both of the fitness functions rely on \textit{approach level} and \textit{branch distance}. Hence, they both suffer from the lack of guidance in cases that the involved basic blocks contain implicit branches.
+
+Among these approaches, search-based crash reproduction \cite{Rossler2013, Soltani2018a} takes as input a \textbf{stack trace} to guide the generation process. More specifically, the statements pointed by the stack trace act as target statements for the approach level and branch distance.
+Hence, current search-based crash reproduction techniques suffer from the lack of guidance in cases where the involved basic blocks contain implicit branches (which is common when trying to reproduce a crash). 
+
+This chapter introduces a novel secondary objective called \textbf{Basic Block Coverage (\bbc)} to address this guidance problem in crash reproduction. \bbc helps the search process to compare two generated test cases with the same distance (according to approach level and branch distance) to determine which one is closer to the target statement. In this comparison, \bbc
+analyzes the coverage level, achieved by each of these test cases, of the basic blocks in between the closest covered control dependent basic block and the target statement.
+
+%To assess the impact of \bbc on both of the search-based crash reproduction techniques, we empirically compared the performance of these two approaches with and without using \bbc (4 configurations in total). 
+To assess the impact of \bbc on search-based crash reproduction, we re-implemented the existing \integ \cite{Rossler2013} and \WS \cite{Soltani2018a} fitness functions and empirically compared their  performance with and without using \bbc (4 configurations in total). 
+We applied these four crash reproduction configurations to 124 hard-to-reproduce crashes introduced as \crashpack (Chapter \ref{sec:jcrashpack:introduction}).
+We compare the performances in terms of \textit{effectiveness in crash reproduction ratio} (\ie percentage of times that an approach can reproduce a crash) and \textit{efficiency} (\ie time required by for reproducing a crash).
+
+Our results show that \bbc significantly improves the crash reproduction ratio over the 30 runs in our experiment for respectively 5 and 1 crashes when compared to using \integ and \WS without any secondary objective. Also, \bbc helps these two fitness functions to reproduce 6 (for \integ) and 1 (for \WS) crashes that they could not be reproduced without secondary objective. 
+Besides, on average, \bbc increases the crash reproduction ratio of \integ by 4\%. 
+Applying \bbc also significantly reduces the time consumed for crash reproduction guided by \integ and \WS in 33 (26.6\% of cases) and 14 (13.7\% of cases) crashes, respectively, while it was significantly counter productive in only one case. In cases where \bbc has a significant impact on efficiency, this secondary objective improves the average efficiency of \integ and \WS by 40.6\% and 44.3\%, respectively.
