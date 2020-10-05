@@ -4,7 +4,7 @@ The \textit{Evaluation} phase reveals the limitations and challenges in the buil
 
 In this thesis, we define a framework for search-based test case generation for crash reproduction. This framework includes a benchmark for crash reproduction approaches containing real-world and non-trivial crashes, an extensible platform for search-based crash reproducing test case generation, and accompanying guidelines for efficient usage of the platform in an industrial setting. This framework applies the existing search-based crash reproduction approach to real-world crashes and identifies the challenges (to answer $RQ_1$). We then improve the crash reproduction approach by addressing the identified challenges (to answer $RQ_2$). Finally, we go beyond search-based crash reproduction and introduce a novel approach for generating tests to cover other specific behaviors (\eg class integration testing). Accordingly, we extend the evaluation process to assess the new artifacts, as well (to address $RQ_3$).
 
-\subsection{Search-based test case generation for testing specific behavior}
+\subsection{Search-based Test Case Generation Implementations}
 \subsubsection{Search-based crash reproduction (\botsing)}
 In this thesis, we present \botsing: an open-source, extendable search-based crash reproduction framework. \botsing implements search-based crash reproduction approaches introduced in previous studies~\cite{Rossler2013, Soltani2018a, Soltani2018b}. The tool takes as input a stack trace and software under test. Then, it starts a single-objective or multi-objective search process to generate a test reproducing the crash.
 
