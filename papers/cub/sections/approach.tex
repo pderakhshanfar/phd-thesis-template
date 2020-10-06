@@ -102,7 +102,9 @@ Let us define the \emph{commonality score}. For a test case, its commonality sco
 %
 The commonality score for a \emph{test suite} $s$ is defined as the average of the commonality scores of its test cases: $c(s) = \left( \sum_{t_i \in s} c(t_i) \right) / \vert s \vert $.
 
-For instance, considering a class containing a single method with the pseudo-code presented in Figure \ref{subfig:pseudocode}, the corresponding annotated control flow graph in Figure \ref{subfig:acfg}, and a test suite containing three test cases $t_1$ covering ($b_1$, $b_2$, $b_6$), $t_2$ covering ($b_1$, $b_3$, $b_5$, $b_6$), and $t_3$ covering ($b_1$, $b_3$, $b_4$, $b_5$, $b_6$). The commonality scores are  
+For instance, considering a class containing a single method with the pseudo-code presented in Figure \ref{subfig:pseudocode}, the corresponding annotated control flow graph in Figure \ref{subfig:acfg}, and a test suite containing three test cases $t_1$ covering ($b_1$, $b_2$, $b_6$), $t_2$ covering ($b_1$, $b_3$, $b_5$, $b_6$), and $t_3$ covering ($b_1$, $b_3$, $b_4$, $b_5$, $b_6$). The commonality scores are:
+
+
 $c(t_1) = \left( (10-1))+ (3-1) + (10-1) \right)/\left(3 \times (10 - 1)\right) = 20/27 \approx 0.741$, 
 $c(t_2) = 5/6 \approx 0.833$, and 
 $c(t_3) = 2/3 \approx 0.667$.

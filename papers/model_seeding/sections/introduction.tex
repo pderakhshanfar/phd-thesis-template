@@ -2,15 +2,15 @@
 
 
 
-The starting point of any debugging activity is to try to reproduce the problem reported by a user in the development environment~\cite{Zeller2009,BellerICSE2018}. In particular, for Java programs, when a crash occurs, an exception is thrown. A developer strives to reproduce it to understand its cause, then fix the bug, and finally add a (non-)regression test to avoid reintroducing the bug in future versions. 
+% The starting point of any debugging activity is to try to reproduce the problem reported by a user in the development environment~\cite{Zeller2009,BellerICSE2018}. In particular, for Java programs, when a crash occurs, an exception is thrown. A developer strives to reproduce it to understand its cause, then fix the bug, and finally add a (non-)regression test to avoid reintroducing the bug in future versions. 
 
-Manual crash reproduction can be a challenging and labor-intensive task for developers: it is often an iterative process that requires setting the debugging environment in a similar enough state as the environment in which the crash occurred~\cite{Zeller2009}. Moreover, it requires the developer to have knowledge of the system's components involved in the crash. 
+% Manual crash reproduction can be a challenging and labor-intensive task for developers: it is often an iterative process that requires setting the debugging environment in a similar enough state as the environment in which the crash occurred~\cite{Zeller2009}. Moreover, it requires the developer to have knowledge of the system's components involved in the crash. 
 %
 %To help developers in their task, several automated crash reproduction methods, relying on different techniques, have been proposed: symbolic execution~\cite{Chen2015}, model checking~\cite{nayrolles2015jcharming,Nayrolles2017}, mutation testing~\cite{Xuan2015}, or evolutionary algorithms~\cite{BPT17concrash,soltani2017,Soltani2018b}.
 %
-To help developers in their task, several automated crash reproduction methods, relying on different techniques, have been proposed \cite{Chen2015, nayrolles2015jcharming, Nayrolles2017, Xuan2015, BPT17concrash, soltani2017, Soltani2018b}.
+% To help developers in their task, several automated crash reproduction methods, relying on different techniques, have been proposed \cite{Chen2015, nayrolles2015jcharming, Nayrolles2017, Xuan2015, BPT17concrash, soltani2017, Soltani2018b}.
 
-One of the most promising approaches is to generate crash-reproducing test cases using search-based software testing \cite{soltani2017, Soltani2018b}. This approach benefits from a \textit{guided genetic algorithm} which searches for the crash reproducing test case. Soltani \etal performed an empirical evaluation of \evocrash and reported that it outperforms other crash reproduction approaches~\cite{soltani2017}.
+% One of the most promising approaches is to generate crash-reproducing test cases using search-based software testing \cite{soltani2017, Soltani2018b}. This approach benefits from a \textit{guided genetic algorithm} which searches for the crash reproducing test case. Soltani \etal performed an empirical evaluation of \evocrash and reported that it outperforms other crash reproduction approaches~\cite{soltani2017}.
 
 One of the challenges of search-based crash reproduction is to bring enough information into the test generation process.
 For instance, complex elements (like strings with a particular format or objects with a complex structure) are hard to initialize without additional information. 
@@ -56,7 +56,7 @@ The contributions of this chapter are:
     \item A novel behavioral model seeding approach for search-based software testing and its application to search-based crash reproduction;
 %    \item an open source implementation of search-based crash reproduction, test seeding, and model seeding in the \botsing toolset\footnote{Available at \url{https://github.com/STAMP-project/botsing}.}; and
     \item An open source implementation of model seeding in the \botsing toolset\footnote{Available at \url{https://github.com/STAMP-project/botsing}.}; and
-    \item The discussion of our results demonstrating improvements in search-based crash reproduction abilities and contributing to a better understanding of the search-based process. All our results are available in the replication package\footnote{Available at \url{https://doi.org/10.5281/zenodo.3673916}}.
+    \item The discussion of our results demonstrating improvements in search-based crash reproduction abilities and contributing to a better understanding of the search-based process. All our results are available in the replication package~\cite{pouria_derakhshanfar_2019_3673916}.
 \end{compactenum}
 
 The remainder of the chapter is structured as follows: Section \ref{sec:model_seeding:background} provides background on search-based crash reproduction, and model-based testing. Section \ref{sec:model_seeding:approach} describes our behavioral model seeding strategy. Section \ref{sec:model_seeding:implementation} details our implementation, while Section \ref{sec:model_seeding:setup} explains the evaluation setup. Section \ref{sec:model_seeding:eval-results} presents our results. We discuss them and explain  threats to our empirical analyses in Section~\ref{sec:model_seeding:discussion}. Section \ref{sec:model_seeding:future} discusses future work and Section \ref{sec:model_seeding:conclusion} wraps up the paper. %concludes.

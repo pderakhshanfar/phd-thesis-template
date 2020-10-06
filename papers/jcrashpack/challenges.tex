@@ -50,8 +50,8 @@ Based on the results of our evaluation, handling Java generics in \evocrash need
   firstnumber=0]
 java.lang.NullPointerException: null
   at com.xpn.xwiki.internal.template.TemplateListener.onEvent(TemplateListener.java:79)
-  at org.xwiki.observation.internal.DefaultObservationManager.notify(DefaultObservationManager.java:307)
-  at org.xwiki.observation.internal.DefaultObservationManager.notify(DefaultObservationManager.java:269)
+  at org.xwiki.observation.internal.DefaultObservationManager.notify([...]:307)
+  at org.xwiki.observation.internal.DefaultObservationManager.notify([...]:269)
   [...]
 \end{lstlisting}
 
@@ -70,7 +70,7 @@ public void onEvent(Event event, Object source, Object data) {
   if (document.getXObject(WikiSkinUtils.SKINCLASS_REFERENCE) != null) {
     if (event instanceof AbstractAttachmentEvent) {
       XWikiAttachment attachment = document.getAttachment(((AbstractAttachmentEvent) event).getName());
-      String id = this.referenceSerializer.serialize(attachment.getReference()); // target line (*@\label{line:input-generation:target}@*)
+      String id = this.referenceSerializer.serialize(attachment.getReference()); // target line *\label{line:input-generation:target}*
       [...]
     }
   }

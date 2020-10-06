@@ -255,7 +255,8 @@ For instance, the class \texttt{GreenPerson} in Listing \ref{list:ClassAPrime}, 
 The call sites $S$ are identified according to the CCFGs, depending on the caller and the callee. If the caller $R$ is the super-class, $S$ will contain all the calls in $R$ to methods that have been redefined by the sub-class. For instance, nodes 6 and 13 in Figure \ref{fig:CCFF_new} with \texttt{Person} as caller. If the caller $R$ is the sub-class, $S$ will contain all the calls in $R$ to methods that have been inherited but not redefined by $R$. For instance, node 6 in Figure \ref{fig:greenPersonCCFG} with \texttt{GreenPerson} as caller.
 
 \begin{figure}[!t]
-  \includegraphics[width=0.98\linewidth]{papers/cling/figures/GreenPerson2}
+    \centering
+  \includegraphics[width=0.65\linewidth, angle=-90]{papers/cling/figures/GreenPerson2}
 \caption{CCFG of $GreenPerson$ as subclass}
 \label{fig:greenPersonCCFG}
 \end{figure}
