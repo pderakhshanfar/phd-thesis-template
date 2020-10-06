@@ -77,7 +77,7 @@ The representativeness of the collected sequences depends on the coverage of the
 
 
 %---------------------------------------------
-\subsection{Abstract object behaviors selection}
+\subsection{Abstract Object Behaviors Selection}
 \label{ssec:abstract-selection}
 %---------------------------------------------
 
@@ -170,7 +170,7 @@ As an example of object picking in action, test case generation with model seedi
 The target method is the last method called in the test (line \ref{line:target}) and throws a \texttt{NullPointerException}, reproducing the input stack trace. The first parameter of the method has to be a \texttt{Collection<T>} object. In this case, the guided genetic algorithm picked the list object from the object pool (from Listing \ref{lst:concretized-test}) and inserted it in the test case (lines \ref{line:startobject} to \ref{line:endobject}). The algorithm also modified that object (during guided mutation) by invoking an additional method on the object (line \ref{line:additional}).
 
 %-----------------------------
- \subsection{Test seeding}
+ \subsection{Test Seeding}
 %-----------------------------
 
 As described in Section \ref{ssec:background:testseeding}, test seeding starts by executing the test cases (Figure \ref{fig:approach} box \circled{A}) for carving and cloning, and subsequently populating the test and object pools. Like for model seeding, only internal classes and external classes appearing in the stack trace are considered.

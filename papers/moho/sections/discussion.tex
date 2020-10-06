@@ -1,14 +1,14 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{Effectiveness and applicability}
+\subsection{Effectiveness And Applicability}
 Generally, \decomposition reproduces some crashes that cannot be reproduced by \SGGA due to its improved exploration ability, resulting from the multi-objectivization of the crash distance. However, since the decomposed objectives in this approach depend on one another (\eg the stack trace similarity is not helpful if the generated test does not throw the given type of exception), they may misguide the search process in various cases. For instance, as we saw in Section \ref{sec:results:rq2}, \SGGA reproduces six crashes that are not reproducible by \decomposition.
 
 In contrast, \moho has three \textit{conflicting} search objectives. From the theory~\cite{jensen2004helper}, the objective function must be conflicting to increase the overall exploration ability. Our results confirm the theory: the chance of the search process getting trapped in a local optimum is lower by using \moho objectives compared to the ones used in \decomposition. As we observed in Section \ref{sec:results:rq2}, after 1 minute of search, \moho reproduces 8 and 7 crashes more than \SGGA and \decomposition, respectively. Also, it continues outperforming with larger search budgets (2, 3, 4, and 5 minutes) until the end of the search process. It reproduces 5 and 6 crashes more than \SGGA and \decomposition, respectively, while it cannot reproduce only two crashes, reproduced by the other algorithms.
 
 Note that reproducing each crash needs a particular test case which drives the software under test to a particular state, and then, it calls a method with proper input variables. To achieve this goal, each crash reproducing test case needs to create multiple complex objects. Hence, reproducing five new crashes (4\% of crashes available in our benchmark) is a significant improvement for \moho.
 
-\subsection{Factors in the benchmark crashes that impact the Success of \moho}
+\subsection{Factors In The Benchmark Crashes That Impact The Success Of \moho}
 \label{sec:discussion:factors}
 
 There are multiple factors/characteristics of the crashes in our benchmark that might impact the performance of our approach positively. We identify the following relevant factors: (1) the type of the exception (e.g., null pointer exception), (2) the size the stack frames, (3) the number of classes involved in the crashes, (4) the number of methods of the deepest class in the crash stack. To verify whether these factors influence the performance of our algorithm, we used the two-way permutation test~\cite{pesarin2010permutation}. The permutation test is a well-established non-parametric to assess the significance of factor interactions in multi-factorial analysis of variance (non-parametric ANOVA). We use a significance level $alpha$=0.05 and a very large number of iterations (1,000,000) to ensure the stability of the results over multiple executions of the procedure~\cite{pesarin2010permutation}. 
@@ -22,7 +22,7 @@ Finally, \moho outperforms \decomposition when reproducing \texttt{NullPoin}-\te
 \texttt{UnsupportedOperationException} (+23\% on average),
 \texttt{MockitoException} (+83\% for short traces, on average), and \texttt{MissingMethodInvocation} (+80\% on average).
 
-\subsection{Crash reproduction cost}
+\subsection{Crash Reproduction Cost}
 In this study, we observed that since \moho increases the diversity of the generated test cases, it can dramatically improve the efficiency of crash reproduction. This algorithm significantly improved the speed of the search process in more than 36\% of crashes compared to \SGGA and \decomposition. In cases in which \moho had a significant impact, it improves the crash reproduction speed by more than 47\%.
 
 Our prior study (Chapter 2) suggested 5 minutes as the search budget because the search process cannot reproduce more after 5 minutes. However, we observed that despite the high efficiency of \moho, this algorithm continues to reproduce more crashes in the second half of the time budget. Section \ref{sec:results:rq2} shows that \moho keeps increasing the crash reproduction ratio even in the last minutes of the search process, while the previous multi-objectivization approach (\decomposition) changes only slightly after the first 2 minutes of crash reproduction. Hence, increasing the search budget for \moho can lead to a higher crash reproduction ratio.

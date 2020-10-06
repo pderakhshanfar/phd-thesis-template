@@ -2,7 +2,7 @@
 From the evaluation and the challenges derived from our manual analysis, we devise the following future research directions. 
 While the same challenge can be addressed in different ways, some requiring technical improvements of \evocrash and other raising new research directions, we focus the discussion of this section on the latter. 
 
-\subsection{Context matters}
+\subsection{Context Matters}
 
 While search-based crash-reproduction with \evocrash~\cite{soltani2017,Soltani2018a} outperformed other approaches based on \begin{inparaenum}[(i)]
 \item backward symbolic execution \cite{Chen2015},
@@ -23,7 +23,7 @@ Those data can be used to guide the search more accurately.
 For instance, by seeding the search using values observed in the execution logs and setting up values for \emph{environmental dependencies} (databases, external services, etc.).
 
 
-\subsection{Stack trace preprocessing and target frame selection}
+\subsection{Stack Trace Preprocessing And Target Frame Selection}
 
 Various factors may influence the selection of a target frame in a stack trace.
 As observed in our evaluation, when not performed cautiously, this selection leads to unsuccessful executions of \evocrash.
@@ -41,7 +41,7 @@ For a given stack trace, this analysis will also identify frames pointing to a \
 Those stack traces are commonly reported by users to issue tracking systems but cannot (for now) be completely reproduced by \evocrash.
 Further investigation on current error handling practices in Java code \cite{Cabral2007,Coelho2017} and how they are reported by users \cite{Maiga2015} will help us to devise efficient approaches to replicate such stack traces.
 
-\subsection{Guided search}
+\subsection{Guided Search}
 
 Besides usage of contextual information to enhance the generation of test cases during the search process, we also consider to enhance the guidance itself.
 Search based testing algorithms have several parameters (365 in \evocrash), like population size, search budget, probability of applying crossover and mutation, etc. 
@@ -51,7 +51,7 @@ For instance the fitness function could take other elements into account (e.g., 
 We will also consider multi-objectives search, where, for a given target frame, reproducing each lower  frame becomes an objective of the search.
 We plan to reuse our evaluation infrastructure to compare those different approaches and investigate their different fitness landscapes to gain deeper understanding of the search process for crash reproduction. And eventually devise guidelines on \evocrash settings to maximize crash reproduction for a given stack trace and its characteristics.
 
-\subsection{Improving testability}
+\subsection{Improving Testability}
 
 Finally, as we observed, code complexity was among the major challenges in crash reproduction with \evocrash.
 To improve testability, several testability transformation techniques \cite{McMinn2011, LiBytecodeTT, MarkFlag,MarkFlagRemoval, MarkLoopFlag} have been proposed in the literature so far.

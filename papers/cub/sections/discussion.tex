@@ -5,7 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %------------------------------------------
-\subsection{Execution weights}
+\subsection{Execution Weights}
 %------------------------------------------
 
 In our evaluation, we collected execution weights using an instrumented version of \jabref distributed to five different users. As a result, a large number of log messages allowed us to have execution weights for many different classes. Such data collection is not realistic in an industrial setting as the collection and analysis of log data is challenging for large applications \cite{Candido2019}. It is likely that the collected data will not cover the complete system but only a subset of its classes. 
@@ -17,7 +17,7 @@ Finally, our current approach considers execution weights individually to approx
 % fact that execution weights are considered independently (same kind of discussion as 2-gram inference)
 
 %------------------------------------------
-\subsection{Impact on mutation analysis}
+\subsection{Impact On Mutation Analysis}
 %------------------------------------------
 
 After manual investigation of the generated tests\footnote{The results and complete manual analysis are available online \cite{Evers2020, evers_bjorn_2020_3897513, evers_bjorn_2020_3894711}.}, we saw that the classes on which \com performs relatively well are often executed. The class on which the performance was especially good compared to \df was an enum class (\texttt{org.jab\-ref.lo\-gic.util.Stan\-dard\-File\-Type}).
@@ -30,7 +30,7 @@ This method is consistently involved in the test cases that kill the mutants tha
 This supports our initial assumption that using \com can drive the search process to cover the code in a different way, possibly finding different kinds of faults.
 
 %------------------------------------------
-\subsection{Usefulness for debugging}
+\subsection{Usefulness For Debugging}
 %------------------------------------------
 
 The end-goal of any test suite is to identify faults in source code and help the developer during her debugging activities. Our evaluation measured the fault-finding capabilities of the generated test suites, but did not investigate their usefulness for debugging. Previous research has confirmed that automatically generated tests can find faults in real software~\cite{almasi2017industrial} and are useful for debugging~\cite{Ceccato2015}. 
@@ -39,7 +39,7 @@ However, there remain several challenges, like the understandability of the gene
 
 
 %------------------------------------------
-\subsection{Threats to the validity}
+\subsection{Threats To The Validity}
 %------------------------------------------
 
 \paragraph{Internal validity}

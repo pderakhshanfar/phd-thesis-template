@@ -9,7 +9,7 @@ provides an overview of earlier work in this area.
 %Among these tasks, test data generation in different testing levels (such as \textit{unit testing}, \textit{integration testing}, \etc) is one of the most contributed ones \cite{McMinn2004}.
 %This section outlines a summary of the previous studies about applying search-based test data generation in various levels.
 
-\subsection{Search-based approaches for unit testing}
+\subsection{Search-based Approaches For Unit Testing}
 % \acrshort{sbst} algorithms have been extensively used for unit test generation. Previous studies confirmed that thus generated tests achieve a high code coverage~\cite{Panichella2018a, Campos2018}, real-bug detection~\cite{almasi2017industrial}, and debugging cost reduction~\cite{soltani2017, Panichella2016}, complementing manually-written tests.
 In Section \ref{sec:background:unit} we have explaine how the general structural-based unit testing approaches work.
 We also showed an example with Listing~\ref{list:ClassA} to demonstrate how these techniques produce CFGs of the class under test and use two heuristics (called \textit{approach level} and \textit{branch distance}) to achieve a high line and branch coverage.
@@ -106,7 +106,7 @@ In this chapter, we analyze how a class is used/invoked by the other classes. Fo
 % which enriches the CFG with the calls (edges) between a target callee class and a caller class (represented using dashed lines in Figure \ref{fig:CCFG}). The CCFG is the main source we will use to generate integration tests between these two classes.
 
 
-\subsection{Search-based approaches for integration testing}
+\subsection{Search-Based Approaches For Integration Testing}
 
 Integration testing aims at finding faults that are related to the interaction between components.
 We discuss existing integration testing criteria and explain the search-based approaches that use these criteria to define fitness functions for automating integration-level testing tasks.
@@ -178,7 +178,7 @@ The paper also does not check whether the tests can complement tests generated b
 In this study, we propose a novel approach for class integration test generation.
 Instead of using the data flow graph, which is relatively expensive to construct as it needs to find the coupling paths, we use the information available in the class call graph of the classes to calculate the fitness of the generated tests. Also, we assess our generated tests using different metrics.
 
-\subsection{Search-based approaches for other testing levels}
+\subsection{Search-Based Approaches For Other Testing Levels}
 
 Arcuri \cite{Arcuri2019} proposed EvoMaster, an evolutionary-based white-box approach for system-level test generation for RESTful APIs. A test for a RESTful web service is a sequence of HTTP requests. EvoMaster tries to cover three types of targets:
  \begin{inparaenum}[(i)]

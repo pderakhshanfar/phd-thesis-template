@@ -1,7 +1,7 @@
 % !TEX root =  ../STVR-model-seeding.tex
 
 %%%%%%%%%%%%%%%%%%%%%%
-\section{Background and related work}\label{sec:model_seeding:background}
+\section{Background And Related Work}\label{sec:model_seeding:background}
 %%%%%%%%%%%%%%%%%%%%%%
 
 %\subsection{Automated crash reproduction}
@@ -38,7 +38,7 @@ Various approaches use a stack trace as input to automatically generate a test c
 Finally, \textrm{RECORE} \cite{Rossler2013} applies a search-based approach to reproduce a crash using  both a stack trace and a core dump produced by the system when the crash happened to guide the search.
 
 
-\subsection{Search-based crash reproduction}
+\subsection{Search-Based Crash Reproduction}
 
 Search-based approaches have been widely used to solve complex, non-linear software engineering problems, which  have multiple and sometimes conflicting optimization objectives~\cite{Harman2012}. Recently, Soltani \etal~\cite{soltani2017} proposed a search-based approach for crash reproduction called \evocrash. \evocrash is based on the \evosuite approach \cite{fraser2012whole,Fraser2014b} and applies a new \textit{guided genetic algorithm} to generate a test case that reproduces a given crash using a distance metric, similar to the one described by Rossler \etal \cite{Rossler2013}, to guide the search.
 %
@@ -66,7 +66,7 @@ The overall fitness value for a given test case ranges from $0.0$ (crash is full
 %In this work, we implemented the \evocrash approach in our crash reproduction toolset called \botsing\footnote{Available at ...}.
 %\todo{Add double-blinded URL}
 
-\subsection{Seeding strategies for search-based testing}
+\subsection{Seeding Strategies For Search-Based Testing}
 
 In addition to guided search, a promising technique is \textit{seeding}. Seeding strategies use related knowledge to help the generation process and optimize the fitness of the population~\cite{Fraser2012, Chen2018b, Lopez-Herrejon2014a}. We focus here on the usage of the source code and the available tests as primary sources of information for search-based testing. Other approaches, for instance, search for string inputs on the internet \cite{McMinn2012}, or use the existing test corpus \cite{Toffola2017} to mine relevant formatted string values (\eg XML or SQL statements).
 
@@ -101,7 +101,7 @@ For instance, if a test case only contains the creation of a new \texttt{LinkedL
 
 The existing seeding techniques use only one resource to collect information for seeding. However, it is possible that the selected resource does not provide enough information about class usages. For instance, test seeding only uses the carved call sequences from the execution of the existing test cases. If the existing test cases do not cover the behavior of the crash in the interesting classes, this seeding strategy may even misguide the search process. Additionally, if the number of observed call sequences is large, the seeding strategy needs a procedure to prioritize the call sequences for seeding. Using random call sequences as seeds can sometimes misguide the search process. Existing seeding strategies do not currently address these issues.
 
-\subsection{Behavioral model-based testing}
+\subsection{Behavioral Model-Based Testing}
 
  \begin{figure}[!t]
     \centering

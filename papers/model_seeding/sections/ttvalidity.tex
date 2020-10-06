@@ -1,10 +1,10 @@
 % !TEX root =  ../STVR-model-seeding.tex
 
 %%%%%%%%%%%%%%%%%%%%%%
-\subsection{Threats to validity}\label{sec:model_seeding:ttvalidity}
+\subsection{Threats To Validity}\label{sec:model_seeding:ttvalidity}
 %%%%%%%%%%%%%%%%%%%%%%
 
-\subsubsection{Internal validity}
+\subsubsection{Internal Validity}
 We selected 122 crashes from 5 open source projects: 33 crashes have previously been studied \cite{Soltani2018b} and we added additional crashes from XWiki and Defects4J (see Section~\ref{sec:model_seeding:setup}). 
 %
 Since we focused on the effect of seeding during guided initialization, we fixed the $Pr[pick\ mut]$ value (which, due to the current implementation of \botsing, is also used as $Pr[pick\ init]$ value in test seeding) to 0.3, the default value used in \evosuite for unit test generation. The effect of this value for crash reproduction, as well as the usage of test and model seeding in guided initialization, is part of our future work.

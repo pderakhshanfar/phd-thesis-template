@@ -1,5 +1,5 @@
 
-\section{Multi-Objectivization with Helper-Objectives (MO-HO)}
+\section{Multi-Objectivization with Helper-Objectives\\ (MO-HO)}
 \label{section:approach}
 % Using multi-objectivization, converting a single objective optimization to a multi-objective problem with a set of representative objectives, is an attempt to boost diversity in evolutionary algorithms. As suggested by  Knowles \etal \cite{}, multi-objectivization can be done in two ways: (i) decompose the single objective into multi objectives and (ii) add some helper objective the existing one. 
 
@@ -7,7 +7,7 @@ Decomposing the \CrashFunction leads to a set of dependent sub-objectives, which
 Then, we use five different evolutionary algorithms belonging to different categories of MOEAs (\eg decomposition-based and rank-based) to solve this optimization problem. In the remainder of this section, we first discuss the two helper-objectives. Next, we present the MOEAs used to solve this problem.
 % Finally, we discuss the  implementation of our approach in a tool \botsing (including MOEAs, search objectives, \etc) in Java.
 
-\subsection{Helper-Objectives}
+\subsection{Helper-objectives}
 
 As suggested by Jensen \etal \cite{jensen2004helper}, adding helper-objectives to an existing single objective can help search algorithms escape from local optima. However, this requires that the helper objectives are in conflict with the primary one \cite{jensen2004helper}. Therefore, defining proper helper-objectives is crucial. 
 
@@ -56,7 +56,7 @@ To avoid the \textit{bloating} effect, our second helper-objective is \textit{te
 
 
 
-\subsection{Multi-Objective Evolutionary Algorithms}
+\subsection{Multi-objective Evolutionary Algorithms}
 
 In this study, our goal is to solve a multi-objectivized problem by minimizing the three objective functions (\CrashFunction, $f_{MSD}$, and $f_{len}$).
 In theory, we could consider various MOEAs, each coming with different advantages and disadvantages over different optimization problems (\eg multimodal, convex, \etc).

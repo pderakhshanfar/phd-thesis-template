@@ -1,6 +1,6 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Empirical evaluation}
+\section{Empirical Evaluation}
 \label{sec:cub:evaluation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,7 +15,7 @@ To assess the usage of commonality as a secondary objective for test case genera
 We implemented the secondary objectives from Section \ref{sec:cub:approach} in \evosuite \cite{Fraser2011}, a state-of-the-art white-box unit test generator tool for Java. Our implementation is openly available at \url{https://github.com/STAMP-project/evosuite-ramp}, and the replication package of our evaluation and data analysis have been uploaded to Zenodo \cite{evers_bjorn_2020_3897513, evers_bjorn_2020_3894711}. 
 
 %------------------------------------------
-\subsection{Subject and execution weights}
+\subsection{Subject And Execution Weights}
 %------------------------------------------
 
 \paragraph{Collecting execution weights}
@@ -37,7 +37,7 @@ We executed \evosuite on each class under test 30 times with the MOSA algorithm 
 
 
 %------------------------------------------
-\subsection{Data analysis}
+\subsection{Data Analysis}
 %------------------------------------------
 
 For each of the 13,500 execution (150 classes $\times$ 30 repetitions $\times$ 3 configurations), we collected the commonality score and structural coverage information from \evosuite. Additionally, we performed a mutation analysis of the generated test suites using \pit \cite{Coles2016a}. 
