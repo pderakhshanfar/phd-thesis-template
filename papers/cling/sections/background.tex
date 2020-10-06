@@ -10,11 +10,12 @@ provides an overview of earlier work in this area.
 %This section outlines a summary of the previous studies about applying search-based test data generation in various levels.
 
 \subsection{Search-based approaches for unit testing}
-\acrshort{sbst} algorithms have been extensively used for unit test generation. Previous studies confirmed that thus generated tests achieve a high code coverage~\cite{Panichella2018a, Campos2018}, real-bug detection~\cite{almasi2017industrial}, and debugging cost reduction~\cite{soltani2017, Panichella2016}, complementing manually-written tests.
+% \acrshort{sbst} algorithms have been extensively used for unit test generation. Previous studies confirmed that thus generated tests achieve a high code coverage~\cite{Panichella2018a, Campos2018}, real-bug detection~\cite{almasi2017industrial}, and debugging cost reduction~\cite{soltani2017, Panichella2016}, complementing manually-written tests.
+In Section \ref{sec:background:unit} we have explaine how the general structural-based unit testing approaches work.
+We also showed an example with Listing~\ref{list:ClassA} to demonstrate how these techniques produce CFGs of the class under test and use two heuristics (called \textit{approach level} and \textit{branch distance}) to achieve a high line and branch coverage.
 
-
-From McMinn's \cite{McMinn2004} survey about search-based test data generation, we observe that most of the current approaches rely on the control flow graph (CFG) to 
-abstract the source code and represent possible execution flows. The $CFG_m=(N_m,E_m)$ represents a method\footnote{Or function in procedural programming languages.} $m$ as a directed graph of \textbf{basic blocks} of code (the nodes $N_m$), while $E_m$ is the set of the control flow edges. An edge connects a basic block $n_1$ to another one $n_2$ if the control may flow from the last statement of $n_1$ to the first statement of $n_2$.
+% From McMinn's \cite{McMinn2004} survey about search-based test data generation, we observe that most of the current approaches rely on the control flow graph (CFG) to 
+% abstract the source code and represent possible execution flows. The $CFG_m=(N_m,E_m)$ represents a method\footnote{Or function in procedural programming languages.} $m$ as a directed graph of \textbf{basic blocks} of code (the nodes $N_m$), while $E_m$ is the set of the control flow edges. An edge connects a basic block $n_1$ to another one $n_2$ if the control may flow from the last statement of $n_1$ to the first statement of $n_2$.
 
 %Following McMinn \etal's \cite{McMinn2004} survey about search-based test data generation, one of the widely used categories of approaches for automating this task is structural-based generation. These approaches use a control flow graph (CFG) to abstract the source code and represent possible execution flows.
 %The \textit{control flow graph (CFG)} of method $m$ is a directed graph $CFG_m=(N_m,E_m)$ representing all paths that might be traversed through the method. In this graph, $N_m$ is the set of the \textit{basic blocks} in method $m$, and $E_m$ is the set of the control flow edges.
@@ -24,37 +25,37 @@ abstract the source code and represent possible execution flows. The $CFG_m=(N_m
 %block are executed as well.
 %In a CFG, an edge connects a basic block $n_1$ to another one $n_2$ if the control may flow from the last statement of $n_1$ to the first statement of $n_2$.
 
-Listing~\ref{list:cling:ClassA} presents the source code of \texttt{Person}, a class representing a person and her transportation habits. A \texttt{Person} can drive home (lines 4-10), or add energy to her car (lines 12-18). The right-hand side of Figure~\ref{fig:cling:CCFG} presents the CFG of two of Person's methods, with the labels of the nodes representing the line numbers in the code. Since method \texttt{driveToHome} calls method \texttt{addEnergy}, \texttt{node 6} is transformed to two nodes, which are connected to the entry and exit point of the called method. This transformation is explained in the last paragraph of this section. 
+% Listing~\ref{list:ClassA} presents the source code of \texttt{Person}, a class representing a person and her transportation habits. A \texttt{Person} can drive home (lines 4-10), or add energy to her car (lines 12-18). The right-hand side of Figure~\ref{fig:cling:CCFG} presents the CFG of two of Person's methods, with the labels of the nodes representing the line numbers in the code. Since method \texttt{driveToHome} calls method \texttt{addEnergy}, \texttt{node 6} is transformed to two nodes, which are connected to the entry and exit point of the called method. This transformation is explained in the last paragraph of this section. 
 
-\begin{lstlisting}[frame=tb,
-    caption={Class \texttt{Person}},
-    label=list:cling:ClassA,
-    language=java,
-    captionpos=t,
-    numbers=left,
-    belowskip=-2.5em,
-    float=t,
-    firstnumber=1]
-class Person{
-    private Car car = new Car();
-    protected boolean lazy = false;
-    public void driveToHome(){
-        if (car.fuelAmount < 100) {
-            addEnergy();
-        } else {
-            car.drive();
-        }   
-    }
+% \begin{lstlisting}[frame=tb,
+%     caption={Class \texttt{Person}},
+%     label=list:ClassA,
+%     language=java,
+%     captionpos=t,
+%     numbers=left,
+%     belowskip=-2.5em,
+%     float=t,
+%     firstnumber=1]
+% class Person{
+%     private Car car = new Car();
+%     protected boolean lazy = false;
+%     public void driveToHome(){
+%         if (car.fuelAmount < 100) {
+%             addEnergy();
+%         } else {
+%             car.drive();
+%         }   
+%     }
 
-    protected void addEnergy(){
-        if (this.lazy) {
-            takeBus();
-        } else {
-            car.refuel();
-        }
-    }   
-    }
-  \end{lstlisting}
+%     protected void addEnergy(){
+%         if (this.lazy) {
+%             takeBus();
+%         } else {
+%             car.refuel();
+%         }
+%     }   
+%     }
+%   \end{lstlisting}
 %   \captionof{codetype}{Type definitions}
   
  
@@ -84,22 +85,22 @@ class Person{
 
 
 
-Many structural-based approaches combine two common heuristics to reach a high branch and statement coverage in unit-level testing. These two heuristics  are \textit{approach level} and \textit{branch distance}.
-The \textit{branch distance} measures (based on a set of rules) the distance to \textit{satisfying} (true branch) and the distance to \textit{not satisfying} (false branch) a particular branching node in the program.
-The \textit{approach level} measures the distance between the execution path and a target node in a CFG. To describe how this heuristic measures this distance, we 
-rely on the concepts of \textbf{post-dominance} and \textbf{control dependency}~\cite{Allen:1970:CFA:800028.808479}.
-%
-%need to describe \textit{post-domination} and \textit{control dependency} first. Node $y$ in a CFG \textit{post-dominates} node $x$ if and only if every path from $x$ to the exit point of CFG contains $y$. Node $z$ in a CFG \textit{post-dominates} an edge $(x,y)$ if and only if every path from $x$ to the exit point through $(x,y)$ passes by $z$. Finally, node $y$ in a CFG is \textit{control dependent} on $x$ if $y$ post dominates one of the outgoing edges of $x$, but it does not pos-dominate node $x$ itself. 
-%
-As an example, in Figure \ref{fig:cling:CCFG}, \textit{node 8} is control dependent on \textit{node 5} and \textit{node 8} post-dominates edge $\langle 5,8\rangle$. %, but it does not post-dominate $node 5$ itself ($node 5$ can reach the exit point through $node 6$). 
-The \textit{approach level} is the minimum number of control dependencies between a target node and an executed path by a test case. 
+% Many structural-based approaches combine two common heuristics to reach a high branch and statement coverage in unit-level testing. These two heuristics  are \textit{approach level} and \textit{branch distance}.
+% The \textit{branch distance} measures (based on a set of rules) the distance to \textit{satisfying} (true branch) and the distance to \textit{not satisfying} (false branch) a particular branching node in the program.
+% The \textit{approach level} measures the distance between the execution path and a target node in a CFG. To describe how this heuristic measures this distance, we 
+% rely on the concepts of \textbf{post-dominance} and \textbf{control dependency}~\cite{Allen:1970:CFA:800028.808479}.
+% %
+% %need to describe \textit{post-domination} and \textit{control dependency} first. Node $y$ in a CFG \textit{post-dominates} node $x$ if and only if every path from $x$ to the exit point of CFG contains $y$. Node $z$ in a CFG \textit{post-dominates} an edge $(x,y)$ if and only if every path from $x$ to the exit point through $(x,y)$ passes by $z$. Finally, node $y$ in a CFG is \textit{control dependent} on $x$ if $y$ post dominates one of the outgoing edges of $x$, but it does not pos-dominate node $x$ itself. 
+% %
+% As an example, in Figure \ref{fig:cling:CCFG}, \textit{node 8} is control dependent on \textit{node 5} and \textit{node 8} post-dominates edge $\langle 5,8\rangle$. %, but it does not post-dominate $node 5$ itself ($node 5$ can reach the exit point through $node 6$). 
+% The \textit{approach level} is the minimum number of control dependencies between a target node and an executed path by a test case. 
 
 % \medskip
 In search-based unit testing, each generated test case is a sequence of method calls to a target class. This call sequence can be generated randomly, or it can be generated using existing resources. Goffi \etal \cite{Goffi2016} leverage existing documentation in this process, but for various reasons it does not allow to detect all bugs~\cite{robillard2011,blasi2018,zhou2017}.
 %introduce a tool called Toradocu, which can be integrated into the test data generation process to leverage the existing documentation of the target class in this process. They show that this approach helps the test generation process to detect more exceptional bugs. However, since documentation is incomplete \cite{robillard2011}, outdated \cite{blasi2018}, or defective \cite{zhou2017}, it is not sufficient for detecting all of the bugs.
 Rojas \etal~\cite{Rojas2016} collect the usages of classes in the existing test cases to generate the call sequences. To reach that goal, they need to execute each of the existing tests to find the call sequences; this may be a time taking process.
 
-In this study, we analyze how a class is used/invoked by the other classes. For this purpose, we merge the Class-level Control Flow Graph (CCFG) of target callee and caller classes. 
+In this chapter, we analyze how a class is used/invoked by the other classes. For this purpose, we merge the Class-level Control Flow Graph (CCFG) of target callee and caller classes.
 
 
 % which enriches the CFG with the calls (edges) between a target callee class and a caller class (represented using dashed lines in Figure \ref{fig:CCFG}). The CCFG is the main source we will use to generate integration tests between these two classes.
@@ -129,7 +130,7 @@ They introduce integration testing criteria according to the data flow graph (co
 Harrold \etal \cite{Harrold1994} introduced data flow testing for a single class focusing on method-integration testing. They define three levels of testing: \textit{intra-method testing}, which tests an individual method (\ie the smallest possible unit to test); \textit{inter-method testing}, in which a public method is tested that (in)directly calls other methods of the same class, and \textit{intra-class testing}, in which the various sequences of public methods in a class are tested. For data flow testing of inter-method and intra-class testing, they defined a \textit{Class-level Control Flow Graph} (CCFG). The CCFG of class \textit{C} is a directed graph $CCFG_C=(N_{Cm},E_{Cm})$ which is a composition of the control flow graphs of methods in $C$; the CFGs are connected through their call sites to methods in the same class~\cite{Harrold1994}. This graph demonstrates all paths that might be crossed within the class by calling its methods or constructors. 
 
 
-Let us consider again the class $Person$ in Listing~\ref{list:cling:ClassA}. The CCFG of class $Person$ is created by merging the CFGs of its method, as demonstrated in Figure~\ref{fig:CCFF_new}.
+Let us consider again the class $Person$ in Listing~\ref{list:ClassA}. The CCFG of class $Person$ is created by merging the CFGs of its method, as demonstrated in Figure~\ref{fig:CCFF_new}.
 For example, in the CFG of the method \texttt{Person.driveToHome()}, the \textit{node 6c} is a call site to \texttt{Person.addEnergy()}. In the approach introduced by Harrold \etal \cite{Harrold1994}, they detect the def-use paths in the constructed CCFGs and try to cover those paths.
 %The CCFG of a class is created by merging the CFGs of methods in this class. Following Harrold \etal's \cite{Harrold1994} approach, the first step for creating CCFG is finding all of the call sites to the methods in the same class. Next, we replace these call sites with a \emph{call node} and a \emph{return node}. Finally, we add one edge from the \emph{call node} to the entry node of the called method, and onther edges from the exit nodes of the called method to the \emph{return node}.
 
