@@ -7,7 +7,7 @@
 %%%%%%%%%%%%%%%%%%%%%%
 
 Manual crash reproduction is labor-intensive for developers.
-A promising approach to alleviate them from this challenging activity is to automate crash reproduction using search-based techniques. In this paper, we evaluate the relevance of using both test and behavioral model seeding to improve crash reproduction achieved by such techniques. We implement both test seeding and the novel model seeding in \botsing.
+A promising approach to alleviate them from this challenging activity is to automate crash reproduction using search-based techniques. In this chapter, we evaluate the relevance of using both test and behavioral model seeding to improve crash reproduction achieved by such techniques. We implement both test seeding and the novel model seeding in \botsing.
 
 For practitioners, the implication is that more crashes can be automatically reproduced, with a small cost. In particular, our results show that behavioral model seeding outperforms test seeding and no seeding without a major impact on efficiency. The different behavioral model seeding configurations reproduce 6\% more crashes compared to no seeding, while test seeding reduces the number of reproduced crashes. Also, behavioral model seeding can significantly increase the search initialization rate for 3 crashes compared to no seeding, while test seeding performs worse than no seeding in this aspect. We hypothesize that the achieved improvements by model seeding can be further extended by using more resources (\ie execution logs) for collecting the call sequences which are beneficial for the model generation.
 
