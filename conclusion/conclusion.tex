@@ -50,9 +50,51 @@ This section presents an outline of how developers have used or could use our im
 
 \subsection{\botsing}
 
-\subsubsection{\botsing Jira Plugin}
+Writing a test case reproducing a crash, reported to developers, aids them in understanding the scenario in which the crash happened and thereby helps them in bug fixing and debugging practices \cite{Zeller2009}. However, as indicated by one of our industrial partners in STAMP, reproducing a reported crash manually needs a knowledgable developer. Since crash reproduction is a time-consuming and labor-intensive task, an automated crash reproduction technique reduces companies' debugging costs.
 
-\subsubsection{\botsing for other issue tracking systems}
+This thesis introduces \botsing, an open-source automated crash reproduction framework using search-based test generation techniques. 
+Initially, we implemented the best-performing automated crash reproduction approach \cite{Soltani2018a} in \botsing. A previous study confirmed that this approach helped developers in debugging practices.
+
+Chapter 2 of this thesis shows that this approach still has some limitations in reproducing complex and non-trivial crashes. Hence, we implemented novel techniques (introduced in Chapters 3 to 5) to improve this algorithm's effectiveness and efficiency. So, \botsing is currently the best automated crash reproduction tool, which is openly available.
+
+
+\botsing is useful in any issue tracking system, in which the reproted crashes contain a stack trace. Also, developers can integrate \botsing in their continus integration systems to get a test case, which reproduces the scenario, in which the reported crash happened.
+
+
+\subsection{\botsing in Continious Integration Pipelines}
+\botsing is useful in any issue tracking system, in which the reported issues contain a stack trace. Developers can integrate \botsing in their continus integration systems to get a test case, which reproduces the scenario, in which the reported crash happened.
+
+\textbf{\botsing Jira Plugin\footnote{This section uses the figures from STAMP's final deliverable: \url{https://github.com/STAMP-project/docs-forum/blob/master/docs/d44_final_api_public_version_services_courseware.pdf}}:}
+In STAMP project, we implemented \botsing Jira plugin \footnote{\url{https://github.com/STAMP-project/botsing-jira-plugin}}.
+With this plugin, any software project using the Jira issue tracking system can automatically generate crash reproducing test cases for their reported crashes. The plugin automatically detects any issue with an attached stack trace and "STAMP" label (\eg the example in Figure \ref{fig:conclusion:botsingJira1}) and initiates a \botsing instance in a remote server, linked in the configirations (look at figure \ref{fig:conclusion:botsingJira2}), for reproducing the attached crash. 
+
+
+After finishing the crash reproduction task by the remote server, a crash reproducing test case will be attached to the issue (Figure \ref{fig:conclusion:botsingJira3}). by cicking on the attachment, developers can see the reproduced crash (Figure \ref{fig:conclusion:botsingJira4}).
+\begin{figure}
+    \includegraphics[width=\textwidth]{conclusion/figures/deliverables_wp4_d44_images_jira-doing-reproduction.png}
+    \caption{Triggering automatic crash reproduction with \botsing Jira plugin.}
+    \label{fig:conclusion:botsingJira1}
+\end{figure}
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{conclusion/figures/deliverables_wp4_d44_images_jira-botsing-server-configuration.png}
+    \caption{\botsing remote server configuration in Jira}
+    \label{fig:conclusion:botsingJira2}
+\end{figure}
+
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{conclusion/figures/deliverables_wp4_d44_images_jira-reproduction-done.png}
+    \caption{crash reproducing test attached to the issue.}
+    \label{fig:conclusion:botsingJira3}
+\end{figure}
+
+
+\begin{figure}
+    \includegraphics[width=\textwidth]{conclusion/figures/deliverables_wp4_d44_images_jira-generated-test-case.png}
+    \caption{A crash reproducing test case bu \botsing Jira plugin.}
+    \label{fig:conclusion:botsingJira4}
+\end{figure}
 
 
 \subsection{\cling}
