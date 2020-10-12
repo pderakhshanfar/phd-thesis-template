@@ -1,4 +1,48 @@
 \chapter{Conclusion}
 \label{conclusion}
 
-The conclusions of your thesis.
+\section{Research Question Revisited}
+
+This section revisted the three research questions defined in Chapter 1.
+
+
+\textbf{Research Question 1: }\textit{What are the challenges in search-based crash reproduction?}
+
+With this research question, we tried to detect and categorize the challenges in search-based crash reproduction. Since previous evaluations of these techniques contained a limited number of subjects (at most 50 cases), we could not conclude a concrete answer from these experiments' results. Hence, to take the first step towards answering this research question, we designed a benchmark, called \crashpack, which includes 200 real-world Java crashes. We also proposed a new tool, called \exrunner, to conduct extensive experiments on these crashes.
+
+We made both \crashpack and \exrunner publicly available for two purposes: 
+(i) ease the comparison of the existing crash reproduction techniques against the existing ones for other researchers in the community of automated crash reproduction; and 
+(ii) help researchers to identify the impacting factors, which makes the different outcomes for each crash reproduction technique.
+
+We utilized \exrunner to apply the state of the art automated crash reproduction tool (\evocrash) on all crashes in \jcrashpack. The outcome of this experiment shows that \evocrash is not successful in reproducing more than 50\% of the crashes in \jcrashpack. Hence, we performed an extensive manual analysis to identify the challenges leading to unsuccessful crash reproduction in this search-based approach. We characterized the identified challenges into 13 categories. Some of the identified challenges (\eg complex input generation, complex code, \etc) are related to general search-based test generation issues.
+
+This research question confirms that there is still space for improvements in search-based crash reproduction and test generation techniques, despite their undeniable achievements. For instance, since some of the challenges identified in this research question (complex input data generation and complex code) are indicating the complexity of the problem in search-based crash reproduction and test generation, we settle that using pure randomness, without using any other sources of information, is not enough for the search process to generate complex solutions.
+
+
+
+\textbf{Research Question 2: }\textit{Based on the identified challenges, how can we leverage the existing knowl\-edge, carved from information sources, to steer the crash reproduction search process?}
+
+
+With this research question, we sought to address two of the most common challenges in search-based crash reproduction, which identified in Research Question 1: Input Data Generation, and Complex Code. For this purpose, this thesis introduced new techniques and search objectives, which utilize the pieces of knowledge carved from different information sources such as source code and manually-written tests.
+
+In Chapter \ref{sec:model_seeding}, we introduced a new seeding technique for search-based crash reproduction, called behavioral model seeding, to address complex input data generation challenge. This seeding strategy monitors and abstracts the usages of objects in source code and existing test suites. Then, it uses these models to generate test cases during the search process.
+We assessed the relevance of using this seeding strategy in search-based crash reproduction. We also compared the behavioral model seeding with the state-of-the-art seeding strategy (called test seeding), which only seeds the existing test cases to the search process. We witnessed that behavioral model seeding outperforms search-based crash reproduction without seeding and with test seeding in terms of effectiveness and efficiency. These results indicate that behavioral model seeding improves the search process in crash reproduction to tackle the complex input data generation issue, identified in Research Question 1, in more cases.
+
+Chapter \ref{sec:moho:introduction} introduces a novel technique (called \moho), which combines different information sources to improve the exploration ability of the search process in crash reproduction. Improving the exploration in this search-based technique leads to more diverse test cases during the search process. By generating more diverse test cases, the search process can generate more complex solutions with more complex input data \cite{jensen2004helper}. The results presented in this chapter show that using multiple information sources to define new helper objectives for crash reproduction improves search-based crash reproduction in terms of effectiveness and efficiency.
+
+Finally, Chapter \ref{section:bbc:introduction} addresses the complex code challenge, which is identified in Research Question 1, by introducing a novel secondary objective called \textit{Basic Block Coverage} (\bbc). This objective carves additional information about the coverage of basic blocks by test cases generated in the search process, and thereby it brings more guidance to the search process when the existing primary objective cannot guide. Our results show that \bbc reduces the chance of getting trapped in local optima during the search process, and consequently, aids the search-based crash reproduction to reach higher effectiveness and efficiency.
+
+This research question confirms the relevance of challenges that we have found in Research Question 1, and also introduces new techniques and search objectives to address them.
+
+\textbf{Research Question 3: }\textit{How can we leverage the existing knowledge, carved from information sources, todesign search-based test generation approaches for unit and class integration testing?}
+
+As we observed in Research Question 1, some of the search-based crash reproduction challenges are connected to the limitations in general search-based test generation. Since we addressed two of these challenges in Research Question 2 by leveraging the knowledge carved from different information sources, in this research question, we try to extend our study to investigate if using additional knowledge from other sources can help the search-based test generation in fulfilling other criteria such as class integration testing (Chapter \ref{sec:cling:introduction}) and unit testing (Chapter \ref{sec:cub:intro}).
+
+Chapter \ref{sec:cling:introduction} introduces a new approach called \cling, which uses the call-site information to generate test cases for covering different interactions between two classes. Since \cling is the first white-box search-based technique for testing the class integration, we evaluated it against the state-of-the-art unit test generation approach. The results, presented in this chapter, confirms that the tests generated by \cling complement automatically generated unit tests for higher mutation scores and more fault detection. This research question also showed that \cling could detect integration-level faults that remained unrevealed in unit testing, thanks to the call-site information.
+
+
+Chapter \ref{sec:cub:intro} introduced a new metric for the generated tests during the search process called emph{commonality score}. this metric measures how close the execution path of a test case is from the common or uncommon execution patterns observed in production. We also introduced \com and \ucom secondary objectives for search-based unit test generation according to the commonality score. The former helps the search process to generate tests with the highest similarity to the common execution paths. In opposite, the latter aids the search process to generate unit tests, which are covering the most uncommon execution paths. The results of the evaluation of these two secondary objectives are mixed. We observed that using these two helper objectives can help the search process to achieve a higher mutation score in some cases, while this is the opposite in some other cases.
+
+
+
+\section{Implications}
