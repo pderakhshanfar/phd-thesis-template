@@ -124,9 +124,11 @@ As described by section \ref{sec:background:evocrash:guidedalg}, \CrashFunction 
 \subsubsection{R3: Search-based test generation for integration of more than two classes}
 In Chapter \ref{sec:cling:introduction}, we introduced a new search-based technique for testing interactions between two coupled classes. In the next step, this approach can be extended to handle more classes. It is even possible to design an approach to test the integration of two modules that contain multiple classes.
 
-\subsection{General search-based test generation}
+\subsection{Using carved knowledge for search-based test generation}
+This thesis showed the benefits of using the knowledge, collected from different sources, in search-based test generation. Hence, this section describes how the novel techniques, introduced in this thesis, can be extended.
+
 \subsubsection{R4: Using more resources}
 This thesis introduced various strategies to utilize the carved information from source code (\eg Chapter \ref{sec:cling:introduction}), existing test cases (\eg Chapter \ref{sec:model_seeding}), and execution logs (Chapter~\ref{sec:cub:intro}) in search-based test generation. However, other resources such as commits addressing previously detected faults can be used to generate more realistic test cases during the search process. Moreover, other useful information can be carved from the application's documentation.
 
 \subsubsection{R5: carving more information}
-This thesis used carved information about the method call sequences (\eg Chapters \ref{sec:model_seeding} and \ref{sec:moho:introduction}), call-site information (Chapter \ref{sec:cling:introduction}) and test execution patterns (Chapter \ref{sec:cub:intro}). Other data such as information regarding the input parameters can be carved for white-box search-based test generation to continue this research path. For example, some applications need strings, following a specific grammar and pattern (\eg XML, JSON), to be used in their test generation. These kind of information can be carved from source code and documentations.
+This thesis used carved information about the method call sequences (\eg Chapters \ref{sec:model_seeding} and \ref{sec:moho:introduction}), call-site information (Chapter \ref{sec:cling:introduction}) and test execution patterns (Chapter \ref{sec:cub:intro}). Other data such as information regarding the input parameters can be carved for white-box search-based test generation to continue this research path. For example, some applications need strings, following a specific grammar and pattern (\eg XML, JSON), to be used in their testing. These kind of information can be carved from source code and documentations.
