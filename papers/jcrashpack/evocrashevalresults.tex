@@ -56,7 +56,7 @@ For instance, for 39 out of  the 87 reproduced stack traces, \evocrash could not
 Figure \ref{fig:rq1_framelvlex} indicates that \evocrash can replicate only the first frame in 14 out of 22 NPE crashes, while there is only one NPE crash for which \evocrash could reproduce a frame above level 3. 
 In contrast, it is more frequent for \evocrash to reproduce higher frame levels of IAE stack traces: the highest reproduced frames in 6 out of 16 IAE crashes are higher than 3.
 %
-Those results suggest that, when trying to reproduce a crash, propagating an illegal argument value trough a chain of method calls (i.e., the frames of the stack trace) is easier than propagating a \texttt{null} value. 
+Those results suggest that, when trying to reproduce a crash, propagating an illegal argument value through a chain of method calls (i.e., the frames of the stack trace) is easier than propagating a \texttt{null} value. 
 %
 According to Figure \ref{fig:rq1_framelvlapp}, \evocrash can reproduce frames higher than 6 only for \textit{Commons-math} crashes. The highest reproduced frames in most of the reproduced crashes in this project are higher than level 2 (12 out of 22). 
 In contrast, for \textit{Elasticsearch} the highest reproduced frame is 1 in most of the crashes.
