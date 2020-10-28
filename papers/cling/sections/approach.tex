@@ -55,7 +55,7 @@ To understand how we determine the target branches in the caller,
 % Before introducing the formal definition of the criterion, 
 let us consider the example of the caller and the callee in Figure~\ref{fig:CCFF_new}. The code for the class \texttt{Person} is reported in Figure~\ref{list:ClassA}. The class \texttt{Person} contains two methods, \texttt{addEnergy()} and \texttt{driveToHome()}, with the latter invoking the former (line 6 in Listing~\ref{list:ClassA}). The method \texttt{Person.addEnergy()} invokes the method \texttt{refuel()} of the class \texttt{Car} (line 16 in Listing~\ref{list:ClassA}). The method \texttt{Person.driveToHome()} invokes the method \texttt{Car.drive()} (line 8 in Listing~\ref{list:ClassA}). Therefore, the class \textit{Person} is the caller, while \texttt{Car} is the callee. 
 
-Figure~\ref{fig:CCFF_new} shows an excerpt of the Class-level Control Flow Graphs (CCFGs) for the two classes. In the figure, the names of the nodes are labelled with the line number of the corresponding statements in the code of Listing~\ref{list:ClassA}. Node 16 in \texttt{Person.addEnergy()} is a call site to \texttt{Car.refuel()}; it is also control dependent on nodes 5 (\texttt{Person.driveToHome()}) and 13 (\texttt{Person.addEnergy()}). Furthermore, node 16 only post-dominates branch $\langle 13,16\rangle$. Instead, the branch $\langle 5,6c\rangle$ is not post-dominated by  node 16 as covering $\langle 5,6c\rangle$ does not always imply covering node 16 as well. Therefore, the branches in the caller \texttt{Person.addEnergy()} that always lead to the callee are $B_{\mathtt{Person}}(\mathtt{Car.refuel()})=\{\langle 13,16\rangle\}$. 
+Figure~\ref{fig:CCFF_new} shows an excerpt of the Class-level Control Flow Graphs (CCFGs) for the two classes. In the figure, the names of the nodes are labelled with the line number of the corresponding statements in the code of Listing~\ref{list:ClassA}. Node 16 in \texttt{Person.addEnergy()} is a call site to \texttt{Car.refuel()}; it is also control dependent on nodes 5 (\texttt{Person.driveToHome()}) and 13 (\texttt{Person.addEnergy()}). Furthermore, node 16 only post-dominates branch $\langle 13,16\rangle$. Instead, the branch $\langle 5,6c\rangle$ is not post-dominated by  node 16 as covering $\langle 5,6c\rangle$ does not always imply covering node 16 as well. Therefore, the branches in the caller \texttt{Person.addEner\-gy()} that always lead to the callee are $B_{\mathtt{Person}}(\mathtt{Car.refuel()})=\{\langle 13,16\rangle\}$. 
 %%
 Hence, among all branches in the caller class (\texttt{Person} in our example), we are interested in covering the branches that, when executed, always lead to the integration call site (i.e., calling the callee class). We refer to these branches as \textit{target branches} for the caller.
  
@@ -138,8 +138,7 @@ Let $B_{R}(s)$ be the set of target branches in the caller class $R$; let $B_{E}
 \end{definition}
 %The set of \emph{coupled branches} $CB_{R,E}(s)$ for a call site $s$ from $R$ to $E$ is the product of $B_{R}(s)$ by  $B_{E}(s)$: $CB_{R,E}(s) = B_{R}(s) \times B_{E}(s)$.  
 
-\begin{definition}\label{def3}
-\textit{
+\begin{definition}[\textit{Coupled branches for a pair of coupled classes}]\textit{\label{def3}
 Let $S=(s_1, \dots, s_k)$ be the list of call sites from a caller $R$ to a callee $E$, the set of coupled branches for $R$ and $E$ is the union of the coupled branches for the different call sites $S$: $CB_{R,E} = \cup_{s \in S} CB_{R,E}(s)$.
 }
 \end{definition}
