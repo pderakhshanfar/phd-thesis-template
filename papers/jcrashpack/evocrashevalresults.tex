@@ -73,7 +73,7 @@ Both the number of crashes reproduced and the highest level at which crashes cou
 	\label{fig:rq1summary}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[h!]
 	\centering
 %	\includegraphics[width=0.90\textwidth]{rq1_compact.pdf}
 	\includegraphics[width=\textwidth]{papers/jcrashpack/rq1_all.pdf}
@@ -213,12 +213,12 @@ First, the test initializes the mocks used as mandatory parameters values (from 
   numbers=left,
   firstnumber=0]
 java.lang.NullPointerException
-	at org.jfree.chart.plot.XYPlot.getDataRange(XYPlot.java:4493)  (*@\label{line:NPEexample:frame1}@*)
+	at org.jfree.chart.plot.XYPlot.getDataRange(XYPlot.java:4493)  *\label{line:NPEexample:frame1}*
 	at org.jfree.chart.axis.NumberAxis.autoAdjustRange(NumberAxis.java:434)
 	at org.jfree.chart.axis.NumberAxis.configure(NumberAxis.java:417)
 	at org.jfree.chart.axis.Axis.setPlot(Axis.java:1044)
 	at org.jfree.chart.plot.XYPlot.<init>(XYPlot.java:660)
-	at org.jfree.chart.ChartFactory.createScatterPlot(ChartFactory.java:1490) (*@\label{line:NPEexample:frame6}@*)
+	at org.jfree.chart.ChartFactory.createScatterPlot(ChartFactory.java:1490) *\label{line:NPEexample:frame6}*
 \end{lstlisting}
 
 \begin{lstlisting}[frame=tb,
@@ -232,17 +232,17 @@ public static JFreeChart createScatterPlot(String title, String xAxisLabel,
     String yAxisLabel, XYDataset dataset, PlotOrientation orientation,
     boolean legend, boolean tooltips, boolean urls) {
 
- if (orientation == null) {
-  throw new IllegalArgumentException("Null 'orientation' argument.");
- }
- NumberAxis xAxis = new NumberAxis(xAxisLabel);
- xAxis.setAutoRangeIncludesZero(false);
- NumberAxis yAxis = new NumberAxis(yAxisLabel);
- yAxis.setAutoRangeIncludesZero(false);
+ 	if (orientation == null) {
+  		throw new IllegalArgumentException("Null 'orientation' argument.");
+ 	}
+ 	NumberAxis xAxis = new NumberAxis(xAxisLabel);
+ 	xAxis.setAutoRangeIncludesZero(false);
+ 	NumberAxis yAxis = new NumberAxis(yAxisLabel);
+ 	yAxis.setAutoRangeIncludesZero(false);
 
- XYPlot plot = new XYPlot(dataset, xAxis, yAxis, null);  (*@\label{line:NPEcode:crash}@*)
+ 	XYPlot plot = new XYPlot(dataset, xAxis, yAxis, null);  *\label{line:NPEcode:crash}*
 
- [...]
+ 	[...]
 }
 \end{lstlisting}
 
@@ -253,10 +253,10 @@ public static JFreeChart createScatterPlot(String title, String xAxisLabel,
   language=Java,
   numbers=left]
 public void test()  throws Throwable  {
- XYDataset ds = mock(XYDataset.class, new ViolatedAssumptionAnswer()); (*@\label{line:NPEtest:mock1}@*)
+ XYDataset ds = mock(XYDataset.class, new ViolatedAssumptionAnswer()); *\label{line:NPEtest:mock1}*
  doReturn(0).when(ds).getSeriesCount();
- PlotOrientation pl = mock(PlotOrientation.class, new ViolatedAssumptionAnswer()); (*@\label{line:NPEtest:mock2}@*)
- ChartFactory.createScatterPlot((String) null, (String) null, (String) null, ds, pl, true, true, true); (*@\label{line:NPEtest:crashcall}@*)
+ PlotOrientation pl = mock(PlotOrientation.class, new ViolatedAssumptionAnswer()); *\label{line:NPEtest:mock2}*
+ ChartFactory.createScatterPlot((String) null, (String) null, (String) null, ds, pl, true, true, true); *\label{line:NPEtest:crashcall}*
 }
 \end{lstlisting}
 
@@ -269,9 +269,9 @@ public void test()  throws Throwable  {
   firstnumber=4490,
   stepnumber=1]
 public Range getDataRange(ValueAxis axis) {
- XYItemRenderer r = getRendererForDataset(d); // d == ds and getRendererForDataset(d) returns null (*@\label{line:XYPlot:null}@*)
+ XYItemRenderer r = getRendererForDataset(d); // d == ds and getRendererForDataset(d) returns null *\label{line:XYPlot:null}*
  [...]
- Collection c = r.getAnnotations(); // r is null and throws a NPE (*@\label{line:XYPlot:NPE}@*)
+ Collection c = r.getAnnotations(); // r is null and throws a NPE *\label{line:XYPlot:NPE}*
  [...]
 }
 \end{lstlisting}

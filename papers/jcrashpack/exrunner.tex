@@ -44,8 +44,8 @@ To prevent this behaviour, we set \emph{-XX:ParallelGCThreads} JVM parameter to 
 We set the number of active threads to 5 for running on virtual machines, and 25 for running on two powerful machines. 
 Using the logging mechanism in \evocrash, we are able to see when individual executions ran out of memory.
 
-\exrunner is available together with \crashpack.\footnote{See \url{https://github.com/STAMP-project/ExRunner}.}
-It presently has only been used to perform \evocrash benchmarking, yet it has been designed to be extensible to other available stack trace reproduction tools using a plugin mechanism. 
+\exrunner is available together with \crashpack.\footnote{See \url{https://github.com/STAMP-project/ExRunner-bash}.}
+It has been used to perform benchmarking for search-based crash reproduction approaches, both \evocrash and \botsing (an open-source search-based crash reproduction framework for assessing the new techniques introduced in this thesis), yet it has been designed to be extensible to other available stack trace reproduction tools using a plugin mechanism. 
 Integrating another crash reproduction tool requires the definition of two handlers, called by \exrunner: one to run the tool with the inputs provided by \exrunner (i.e. the stack trace, the target frame, and the classpath of the software under test); and one to parse the output produced by the tool to pick up relevant data (e.g., the final status of the crash reproduction, progress of the tool during the execution, \textit{etc}.). 
 Relevant data are stored in a CSV file, readily available for analysis.\footnote{ The \exrunner documentation includes a detailed tutorial describing how to proceed, available at \url{https://github.com/STAMP-project/EvoCrash-JCrashPack-application\#run-other-crash-replication-tools-with-exrunner}.}
 
