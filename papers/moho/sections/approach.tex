@@ -1,5 +1,5 @@
 
-\section{Multi-Objectivization with Helper-Objectives\\ (MO-HO)}
+\section{Multi-Objectivization with Helper-Objectives (MO-HO)}
 \label{section:approach}
 % Using multi-objectivization, converting a single objective optimization to a multi-objective problem with a set of representative objectives, is an attempt to boost diversity in evolutionary algorithms. As suggested by  Knowles \etal \cite{}, multi-objectivization can be done in two ways: (i) decompose the single objective into multi objectives and (ii) add some helper objective the existing one. 
 
@@ -25,7 +25,7 @@ To calculate the diversity of $T$, we first need to encode each $t_k \in T$ into
 %For instance, $f_i \in F$ has the $i$th position in $V_j$. If $t_j$ has a method call to $f_i \in F$, the $i$th element in $V_j$ will be $1$. Otherwise, we set a value of $0$ for this element.
 
 Then, we calculate the diversity for each pair of test cases $t_k$ and $t_i$ as the Hamming distance between the corresponding binary vectors  $v_k$ and $v_i$  \cite{Hamming1950}. 
-The Hamming distance (\textit{Hamming}) between two vectors corresponds to the number of mismatches\footnote{The number of positions at which the corresponding bits are different.} over the total length of the binary vectors. For instance, the Hamming distance between $A=\langle1,1,0,1,0\rangle$ and $B=\langle0,1,0,1,1\rangle$ equals to $2/5= 0.4$. 
+The Hamming distance (\textit{Hamming}) between two vectors corresponds to the number of mismatches (The number of positions at which the corresponding bits are different) over the total length of the binary vectors. For instance, the Hamming distance between $A=\langle1,1,0,1,0\rangle$ and $B=\langle0,1,0,1,1\rangle$ equals to $2/5= 0.4$. 
 
 \begin{definition}[Method Sequence Diversity]
 \textit{Given an encoding function $V(.)$, the method sequence diversity ($MSD$) of a test $t \in T$ corresponds to the average Hamming distance of that test from the other test cases in $T$}:

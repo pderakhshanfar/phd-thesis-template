@@ -21,23 +21,23 @@ For this study, we implemented the techniques used in previous studies for crash
 
 \subsection{Setup}
 \label{sec:approach:setup}
-\textbf{Crash Selection. }
+\subsubsection{Crash Selection} 
 We selected our crashes from \crashpack (Chapter 2). 
 Based on the reported results in Chapter 2 and our prior studies on decomposition-based crash re[roduction \cite{Soltani2018b}, we know that \SGGA and \decomposition face various challenges to reproduce many of the crashes in this benchmark. For this study, we apply our approach and state-of-the-art algorithms to 124 crashes from \crashpack. These crashes stem from six open-source projects: \textrm{JFreeChart}, a framework for building interactive charts; \textrm{Commons-lang}, a library providing extra utilities to the \texttt{java.lang} API; \textrm{Commons-math}, a library for mathematical and statistical usages; \textrm{Mockito}, a testing framework for mocking objects;
 \textrm{Joda-time}, a library for date and time manipulation; XWiki, a large-scale enterprise wiki management system.
 
 
-\textbf{Algorithm Selection. }
+\subsubsection{Algorithm Selection}
 We attempted to reproduce the selected crashes using seven evolutionary algorithms: \SGGA, \decomposition,
 and \moho with  five MOEAs (NSGA-II, SPEA2, PESA-II, MOEA/D, and FEMO). 
 For each crash, we ran each algorithm on each frame of crash stack traces. We repeated each execution 30 times to take randomness into account, for a total number of 199,710 independent executions.
 We ran the evaluation on servers with 40 CPU-cores, 128 GB memory, and 6 TB hard drive.
 
-\textbf{Evaluation procedure. }
+\subsubsection{Evaluation procedure}
 In RQ$_1$, %since we do not know the final shape of the Pareto-front, 
 we perform an internal assessment of \moho by comparing all MOEAs to determine the best-performing one when optimizing the search objectives in \moho. Then, to answer RQ$_2$ and RQ$_3$, we use the best-performing \moho configuration (MOEA) to evaluate its effectiveness and efficiency against the state-of-the-art crash reproduction approaches. 
 
-\textbf{Parameter Settings. }
+\subsubsection{Parameter Settings}
 We set the search budget to five minutes, as suggested by previous studies on evolutionary-based crash reproduction \cite{Soltani2018a}. Also, we fixed the population size and archive size (if needed) to 50 individuals, as recommended in prior studies on test case generation~\cite{Panichella2018}. For \moho with PESA-II, the number of bisections for gridding is set to the default value of five grids.
 In \moho with MOEA/D, the weight vectors are obtained using a variant \textit{simplex-lattice design}~\cite{tan2012modification} and using the \textit{Tchebycheff approach} as the aggregation function. Finally, we set the \textit{neighborhood selection probability} to 0.2 (set to the default value~\cite{durillo2010jmetal}) and the maximum number of \textit{solutions that can be replaced} in each generation to 50. For all MOEAs, we use the 
 \textit{guided mutation} with mutation probability $p_m=1/n$ ($n$ is the length of the test case), and  

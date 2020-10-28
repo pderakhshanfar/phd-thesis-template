@@ -235,10 +235,10 @@ public BigDecimal[] operate(BigDecimal[] v) {
 \end{figure}
 
 
-\textbf{Extra calculation in fitness evaluation. }
+\subsubsection{Extra calculation in fitness evaluation}
 In some cases, crash reproduction is trivial, and the search process reproduces it in a few seconds. For instance, in \texttt{TIME-8b} \cite{just2014defects4j}, \SGGA and \decomposition reproduce the crash in about a second. The time required by \moho to reproduce this crash is three seconds (3 times more). This stems from the fact that fitness function evaluation in \moho is more time-consuming than the state-of-the-art: \SGGA and \decomposition need to calculate only the crash distance for each test case evaluation, while \moho needs to calculate the call diversity, as well. This extra calculation lengthens the search process by a couple of seconds. In these cases, the increased crash reproduction time is lower than 5 seconds, and it is negligible in practice.
 
-\textbf{Helper-objectives misguidance. }
+\subsubsection{Helper-objectives misguidance}
 In some other cases, the scenario, which leads to crash reproduction, needs a simple sequence of methods calls to the target class. Still, the complexity of this scenario stems from the input arguments used for the method calls. In these cases, since crash reproduction does not need the call diversity, \textit{method sequence diversity} objective misguides the search process. Alternatively, we need another objective for method input argument diversity (\ie improves the diversity of the input arguments for method calls). Adding new helper-objectives to consider other aspects of diversity is part of our future agenda. 
 
 As an example, let us analyze \texttt{MATH-98b} (Figure \ref{lst:factor1-stacktrace}), in which MO-HO doubled the time consumed by the crash reproduction search process against state-of-the-art. This crash concerns an \texttt{ArrayIndexOutOfBounds\-Exception} .
