@@ -12,7 +12,7 @@
 
 % One of the most promising approaches is to generate crash-reproducing test cases using search-based software testing \cite{soltani2017, Soltani2018b}. This approach benefits from a \textit{guided genetic algorithm} which searches for the crash reproducing test case. Soltani \etal performed an empirical evaluation of \evocrash and reported that it outperforms other crash reproduction approaches~\cite{soltani2017}.
 
-One of the challenges of search-based crash reproduction is to bring enough information into the test generation process.
+As confirmed by Chapter \ref{sec:jcrashpack:introduction}, one of the challenges of search-based crash reproduction is to bring enough information into the test generation process.
 For instance, complex elements (like strings with a particular format or objects with a complex structure) are hard to initialize without additional information. 
 This can lead to two different issues: first, complex elements take more time to be generated, which can prevent finding a solution within the time budget allocated to the search; and second, elements that require complex initialization procedures (\eg specific sequences of method calls to set up an object) may prevent starting the search if the search-based approach is unable to create an initial population. 
 

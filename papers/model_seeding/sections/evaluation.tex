@@ -26,42 +26,7 @@ We present the results of the evaluation and answer the two research questions b
 
 %Figure \ref{fig:ffevals} presents the distribution of the number of fitness evaluations for the frames that could be reproduced by each seeding configuration in the 10 rounds of execution. The number of fitness evaluations varies between 0 (\ie the crash is reproduced by one of the test cases of the initial population) and 62,328 (\ie the maximum budget allocated for the search). For each box, we also provide the mean (represented as a white diamond) and number of observations (\ie the number of executions with a reproduction) at the top.
 
-
-
-%--------------------------------------------------------------------------------
-\subsection{Test Seeding (RQ1)}
-%--------------------------------------------------------------------------------
-
-%\item[\textbf{RQ1.1}] Can test seeding help to initialize the search process?
-%\item[\textbf{RQ1.2}] Does test seeding help to replicate more crashes?
-%\item[\textbf{RQ1.3}] Does test seeding impact the efficiency of the search process?
-%\item[\textbf{RQ1.4}] Which factors in test seeding help the search process compared to no seeding?
-
-\begin{table}[t]
-    \center
-    \caption{Odds ratios of model/test seeding configurations vs. no seeding in crash reproduction ratio. This table only shows the crashes, which reveal statistically significant differences (p-value $< 0.05$). An Odds ratio value higher than 1.0 gives that the seeding strategy is better than no seeding, and a value lower than 1.0 shows the opposite.}
-	\label{tab:oddratios}
-	\footnotesize
-	\subfloat{\input{papers/model_seeding/tables/rq22-crash-repr-oddratios-test.tex}}
-    \subfloat{\input{papers/model_seeding/tables/rq22-crash-repr-oddratios.tex}}
-\end{table}
-
-\subsubsection{Crash reproduction effectiveness (\textbf{RQ1.1})}
-
-Figure~\ref{fig:eval:results} demonstrates the comparison of each seeding strategy (left-side of the figure is for test seeding and right-side is for model seeding) with the baseline (no seeding). Figures~\ref{fig:eval:results-rq12} and \ref{fig:eval:results-rq22} show the overall comparison, while Figures~\ref{fig:eval:results-rq12-apps} and~\ref{fig:eval:results-rq22-apps} illustrate the per project comparison. In each of these figures, the yellow bar shows the number of reproduced crashes in the majority of the 30 executions, and the orange bar shows the non-reproduced crashes.
-
-According to Figure \ref{fig:eval:results-rq12}, \textit{test s. 0.8} reproduced the same number of crashes. However, the other configurations of test-seeding reproduced fewer crashes in the majority of times. Moreover, according to Figure \ref{fig:eval:results-rq12-apps}, test seeding reproduces one more crash compared to no seeding. Also, some configurations of test seeding can reproduce one extra crash in  XWiki and commons-lang projects. On the contrary, all of the configurations of test seeding missed one and two crashes in JFreeChart and commons-math, respectively. Finally, we cannot see any difference between test seeding and no seeding in the Joda-Time project.
- 
- 
- %Each of the observed differences in this figure is manually analyzed.
- %The observed factors in the manual analysis will be discussed in Section \ref{sec:eval:rq14}.
-
-Table \ref{tab:crash-repr-table} demonstrates the impact of test-seeding on the crash reproduction ratio compared to no-seeding. It indicates that \textit{test s. 0.2 \& 0.5} have a better crash reproduction ratio for one of the crashes, while they perform significantly worse in 4 other crashes compared to no-seeding. The situation is almost the same for the other configurations of test seeding: \textit{test s. 0.8 \& 1.0} are significantly better in 2 crashes compared to no-seeding. However, they are significantly worse than no-seeding in 5 other crashes. The other interesting point in this table is the standard deviation crash reproduction ratio. This value is slightly higher for all of the test seeding configurations compared to no seeding. The values of odds ratios and and p-values for crashes with significant difference is available in Table \ref{tab:oddratios}.
-%The cases which make the difference in this table are included in the manual analysis for Section \ref{sec:eval:rq14}.
-%Table \ref{tab:reproduction-ranking} ranks the different configurations regarding their crash reproduction capability (\textbf{RQ1.2}). Only \textit{test s. 0.2} ranks better than no seeding, but not significantly. All other configurations are not significantly worse. Only test seeding with \textit{test s. 0.2} performs significantly better than \textit{test s. 0.5} and \textit{test s. 1.0}.
-
-The underlying reasons for the observed results in this section are analyzed in \textbf{RQ1.4}.
-\begin{figure*}[t]
+\begin{figure*}[btp]
 	\centering
 	\subfloat[test-seeding vs. no-seeding (for all projects together)]{
 		\includegraphics[height=40mm]{papers/model_seeding/figures/evaluation/rq12-crashes-all.pdf}
@@ -89,6 +54,46 @@ The underlying reasons for the observed results in this section are analyzed in 
 %	\label{fig:eval:resultsdetails}
 	\label{fig:eval:results}
 \end{figure*}
+
+
+%--------------------------------------------------------------------------------
+\subsection{Test Seeding (RQ1)}
+%--------------------------------------------------------------------------------
+
+%\item[\textbf{RQ1.1}] Can test seeding help to initialize the search process?
+%\item[\textbf{RQ1.2}] Does test seeding help to replicate more crashes?
+%\item[\textbf{RQ1.3}] Does test seeding impact the efficiency of the search process?
+%\item[\textbf{RQ1.4}] Which factors in test seeding help the search process compared to no seeding?
+
+
+
+\begin{table}[t]
+    \center
+    \caption{Odds ratios of model/test seeding configurations vs. no seeding in crash reproduction ratio. This table only shows the crashes, which reveal statistically significant differences (p-value $< 0.05$). An Odds ratio value higher than 1.0 gives that the seeding strategy is better than no seeding, and a value lower than 1.0 shows the opposite.}
+	\label{tab:oddratios}
+	\footnotesize
+	\subfloat{\input{papers/model_seeding/tables/rq22-crash-repr-oddratios-test.tex}}
+    \subfloat{\input{papers/model_seeding/tables/rq22-crash-repr-oddratios.tex}}
+\end{table}
+
+
+
+\subsubsection{Crash reproduction effectiveness (\textbf{RQ1.1})}
+
+Figure~\ref{fig:eval:results} demonstrates the comparison of each seeding strategy (left-side of the figure is for test seeding and right-side is for model seeding) with the baseline (no seeding). Figures~\ref{fig:eval:results-rq12} and \ref{fig:eval:results-rq22} show the overall comparison, while Figures~\ref{fig:eval:results-rq12-apps} and~\ref{fig:eval:results-rq22-apps} illustrate the per project comparison. In each of these figures, the yellow bar shows the number of reproduced crashes in the majority of the 30 executions, and the orange bar shows the non-reproduced crashes.
+
+According to Figure \ref{fig:eval:results-rq12}, \textit{test s. 0.8} reproduced the same number of crashes. However, the other configurations of test-seeding reproduced fewer crashes in the majority of times. Moreover, according to Figure \ref{fig:eval:results-rq12-apps}, test seeding reproduces one more crash compared to no seeding. Also, some configurations of test seeding can reproduce one extra crash in  XWiki and commons-lang projects. On the contrary, all of the configurations of test seeding missed one and two crashes in JFreeChart and commons-math, respectively. Finally, we cannot see any difference between test seeding and no seeding in the Joda-Time project.
+ 
+ 
+ %Each of the observed differences in this figure is manually analyzed.
+ %The observed factors in the manual analysis will be discussed in Section \ref{sec:eval:rq14}.
+
+Table \ref{tab:crash-repr-table} demonstrates the impact of test-seeding on the crash reproduction ratio compared to no-seeding. It indicates that \textit{test s. 0.2 \& 0.5} have a better crash reproduction ratio for one of the crashes, while they perform significantly worse in 4 other crashes compared to no-seeding. The situation is almost the same for the other configurations of test seeding: \textit{test s. 0.8 \& 1.0} are significantly better in 2 crashes compared to no-seeding. However, they are significantly worse than no-seeding in 5 other crashes. The other interesting point in this table is the standard deviation crash reproduction ratio. This value is slightly higher for all of the test seeding configurations compared to no seeding. The values of odds ratios and and p-values for crashes with significant difference is available in Table \ref{tab:oddratios}.
+%The cases which make the difference in this table are included in the manual analysis for Section \ref{sec:eval:rq14}.
+%Table \ref{tab:reproduction-ranking} ranks the different configurations regarding their crash reproduction capability (\textbf{RQ1.2}). Only \textit{test s. 0.2} ranks better than no seeding, but not significantly. All other configurations are not significantly worse. Only test seeding with \textit{test s. 0.2} performs significantly better than \textit{test s. 0.5} and \textit{test s. 1.0}.
+
+The underlying reasons for the observed results in this section are analyzed in \textbf{RQ1.4}.
+
 
 
 \begin{table} [t]
