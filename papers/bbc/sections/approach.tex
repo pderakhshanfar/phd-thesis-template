@@ -12,46 +12,40 @@ Even though T$_2$  covers more lines, the combination of approach level and bran
 
 \subsection{Secondary Objective}
 
-The goal of the Basic Block Coverage (\bbc) secondary objective is to prioritize the test cases with the same fitness value according to their coverage within the basic blocks between the closest covered control dependency and the target statement. At each iteration of the search algorithm, test cases with the same fitness value are compared with each other using \bbc. Listing \ref{list:bbc} presents the pseudo-code of the \bbc calculation. Inputs of this algorithm are two test cases T$_1$ and T$_2$, which both have the same fitness value (calculated either using \WS or \integ), as well as line number and method name of the target statement. This algorithm compares the coverage of basic blocks on the path between the entry point of the CFG of the given method and the basic block that contains the target statement (called \textit{effective blocks} hereafter) achieved by  T$_1$ and T$_2$. If \bbc determines there is no preference between these two test cases, it returns 0. Also, it returns a value $<0$ if T$_1$ has higher coverage compared to T$_2$, and vice versa. A higher absolute value of the returned integer indicates a bigger distance between the given test cases.
-
-\begin{lstlisting}[float=t,
-    caption={\bbc secondary objective computation algorithm},
-    label=list:bbc,
-    mathescape=true,
-    frame=tb,
-    numbers=left, 
-    numberstyle=\tiny,
-    belowskip=-2.5em,
-    keywordstyle=\bfseries\em,
-    keywords={,input, output, return, datatype, function, in, if, else, foreach, while, begin, end, } %add the keywords you want, or load a language as Rubens explains in his comment above.
-    numbers=left,
-    xleftmargin=.04\textwidth]
-input: test T$_1$, test T$_2$, String method, int line
-output: int
-begin
-    FCB$_1$ $\gets$  fullyCoveredBlocks(T$_1$,method,line);
-    FCB$_2$ $\gets$  fullyCoveredBlocks(T$_2$,method,line);
-    SCB$_1$ $\gets$  semiCoveredBlocks(T$_1$,method,line);
-    SCB$_2$ $\gets$  semiCoveredBlocks(T$_2$,method,line);
-
-    if (FCB$_1$ $\subset$ FCB$_2$ $\wedge$ SCB$_1$ $\subset$ SCB$_2$) $\vee$ (FCB$_2$ $\subset$ FCB$_1$ $\wedge$ SCB$_2$ $\subset$ SCB$_1$):
-        return size(FCB$_2$ $\cup$ SCB$_2$) - size(FCB$_1$ $\cup$ SCB$_1$)
-    else if FCB$_1$ = FCB$_2$ $\wedge$ SCB$_1$ = SCB$_2$:
-        closestBlock $\gets$ closestSemiCoveredBlocks(SCB$_1$, method, line);
-        coveredLines1 $\gets$ getCoveredLines(T$_1$,closestBlock);
-        coveredLines2 $\gets$ getCoveredLines(T$_2$,closestBlock);
-        return size(coveredLines2) - size(coveredLines1);      
-    else:
-        return 0;
-end  
-  \end{lstlisting}
+The goal of the Basic Block Coverage (\bbc) secondary objective is to prioritize the test cases with the same fitness value according to their coverage within the basic blocks between the closest covered control dependency and the target statement. At each iteration of the search algorithm, test cases with the same fitness value are compared with each other using \bbc. Algorithm \ref{list:bbc} presents the pseudo-code of the \bbc calculation. Inputs of this algorithm are two test cases T$_1$ and T$_2$, which both have the same fitness value (calculated either using \WS or \integ), as well as line number and method name of the target statement. This algorithm compares the coverage of basic blocks on the path between the entry point of the CFG of the given method and the basic block that contains the target statement (called \textit{effective blocks} hereafter) achieved by  T$_1$ and T$_2$. If \bbc determines there is no preference between these two test cases, it returns 0. Also, it returns a value $<0$ if T$_1$ has higher coverage compared to T$_2$, and vice versa. A higher absolute value of the returned integer indicates a bigger distance between the given test cases.
+\begin{algorithm}[H]
+    \label{list:bbc}
+    \SetAlgoLined
+    \KwIn{test T$_1$, test T$_2$, String method, int line}
+    \KwOut{int}
+    FCB$_1$ $\gets$  fullyCoveredBlocks(T$_1$,method,line)\;
+    FCB$_2$ $\gets$  fullyCoveredBlocks(T$_2$,method,line)\;
+    SCB$_1$ $\gets$  semiCoveredBlocks(T$_1$,method,line)\;
+    SCB$_2$ $\gets$  semiCoveredBlocks(T$_2$,method,line)\;
+    
+    \uIf{FCB$_1$ $\subset$ FCB$_2$ $\wedge$ SCB$_1$ $\subset$ SCB$_2$) $\vee$ (FCB$_2$ $\subset$ FCB$_1$ $\wedge$ SCB$_2$ $\subset$ SCB$_1$n}{
+        return size(FCB$_2$ $\cup$ SCB$_2$) - size(FCB$_1$ $\cup$ SCB$_1$)\;
+    }
+    \uElseIf{FCB$_1$ = FCB$_2$ $\wedge$ SCB$_1$ = SCB$_2$}{
+        closestBlock $\gets$ closestSemiCoveredBlocks(SCB$_1$, method, line)\;
+        coveredLines1 $\gets$ getCoveredLines(T$_1$,closestBlock)\;
+        coveredLines2 $\gets$ getCoveredLines(T$_2$,closestBlock)\;
+        return size(coveredLines2) - size(coveredLines1)\;    
+    }
+    \Else{
+        return 0\;
+    }
+        
+     \caption{\bbc secondary objective computation algorithm}
+\end{algorithm}
 
 
-In the first step, \bbc detects the effective blocks fully covered by each given test case (\ie the test covers all of the statements in the block) and saves them in two sets called \texttt{FCB$_1$} and \texttt{FCB$_2$} (lines 4 and 5 in Listing \ref{list:bbc}). Then, it detects the effective blocks semi-covered by each test case (\ie blocks where the test covers the first line but not the last line) and stores them in \texttt{SCB$_1$} and \texttt{SCB$_2$} (lines 6 and~7). 
-The semi-covered blocks indicate the presence of implicit branches. Next, \bbc checks if both fully and semi-covered blocks of one of the tests are subsets of the blocks covered by the other test (line 9). In this case, the test case that covers the most basic blocks is the winner. Hence, \bbc returns the number of blocks only covered by the winner test case (line 10). If \bbc determines T$_2$ wins over T$_1$, the returned value will be positive, and vice versa. 
 
-If none of the test cases subsumes the coverage of the other one, \bbc checks if the blocks covered by T$_1$ and T$_2$ are identical (line 11). If this is the case, \bbc checks if one of the tests has a higher line coverage for the semi-covered blocks closest to the target statement (lines 12 to 15). If this is the case, \bbc will return the number of lines in this block covered only by the winning test case. If the lines covered are the same for T$_1$ and T$_2$ (\ie \texttt{coveredLines1} and \texttt{coveredLines2} have the same size), there is no difference between these two test cases and \bbc returns value 0 (line 15).
-Finally, if each of the given tests has a unique covered block in the given method (\ie the tests cover different paths in the method), \bbc cannot determine the winner and returns 0 (lines 16 and 17) because we do not know which path leads to the crash reproduction.
+In the first step, \bbc detects the effective blocks fully covered by each given test case (\ie the test covers all of the statements in the block) and saves them in two sets called \texttt{FCB$_1$} and \texttt{FCB$_2$} (lines 1 and 2 in Algorithm \ref{list:bbc}). Then, it detects the effective blocks semi-covered by each test case (\ie blocks where the test covers the first line but not the last line) and stores them in \texttt{SCB$_1$} and \texttt{SCB$_2$} (lines 3 and~4). 
+The semi-covered blocks indicate the presence of implicit branches. Next, \bbc checks if both fully and semi-covered blocks of one of the tests are subsets of the blocks covered by the other test (line 5). In this case, the test case that covers the most basic blocks is the winner. Hence, \bbc returns the number of blocks only covered by the winner test case (line 6). If \bbc determines T$_2$ wins over T$_1$, the returned value will be positive, and vice versa. 
+
+If none of the test cases subsumes the coverage of the other one, \bbc checks if the blocks covered by T$_1$ and T$_2$ are identical (line 7). If this is the case, \bbc checks if one of the tests has a higher line coverage for the semi-covered blocks closest to the target statement (lines 8 to 11). If this is the case, \bbc will return the number of lines in this block covered only by the winning test case. If the lines covered are the same for T$_1$ and T$_2$ (\ie \texttt{coveredLines1} and \texttt{coveredLines2} have the same size), there is no difference between these two test cases and \bbc returns value 0 (line 11).
+Finally, if each of the given tests has a unique covered block in the given method (\ie the tests cover different paths in the method), \bbc cannot determine the winner and returns 0 (lines 12 and 13) because we do not know which path leads to the crash reproduction.
 
 \textbf{Example. } 
 %

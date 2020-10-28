@@ -35,7 +35,8 @@ This chapter introduces a novel secondary objective called \textbf{Basic Block C
 analyzes the coverage level, achieved by each of these test cases, of the basic blocks in between the closest covered control dependent basic block and the target statement.
 
 %To assess the impact of \bbc on both of the search-based crash reproduction techniques, we empirically compared the performance of these two approaches with and without using \bbc (4 configurations in total). 
-To assess the impact of \bbc on search-based crash reproduction, we re-implemented the existing \integ \cite{Rossler2013} and \WS \cite{Soltani2018a} fitness functions and empirically compared their  performance with and without using \bbc (4 configurations in total). 
+We assessed the impact of \bbc secondary objective on two fitness functions in search-based crash reproduction:  \WS and \integ. The former guides the search process in \evocrash \cite{Soltani2018a}. The latter was introduced as one of the heuristics in the fitness function, which guides the search process in \recore \cite{Rossler2013} to reproduce a crash using the stack trace and core dump produced during the crash occurring. \integ is the only heuristic in \recore that measures the distance of the generated solution from the given stack trace and relies on approach level and branch distance more compared to \WS.
+We empirically compared these two fitness functions' performance with and without using \bbc (4 configurations in total). 
 We applied these four crash reproduction configurations to 124 hard-to-reproduce crashes introduced as \crashpack (Chapter \ref{sec:jcrashpack:introduction}).
 We compare the performances in terms of \textit{effectiveness in crash reproduction ratio} (\ie percentage of times that an approach can reproduce a crash) and \textit{efficiency} (\ie time required by for reproducing a crash).
 
