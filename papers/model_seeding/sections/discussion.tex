@@ -50,22 +50,18 @@ Moreover, model seeding makes a distinction between using the object pool during
 	\center
 	\caption{Evaluation results for comparing different configurations of model seeding in crash reproduction. $\overline{\text{rate}}$ and $\sigma$  designate average crash reproduction rate and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
 	\label{tab:additional-expe-repr-table}
-%	\vspace{-2mm}
     \begin{footnotesize}
 	\input{papers/model_seeding/tables/additional-expe-repr-table.tex}
     \end{footnotesize}
-%	\vspace{-3mm}
 \end{table}
 
 \begin{table*} [t]
 	\center
 	\caption{Evaluation results for comparing different configurations of model seeding in the number of fitness evaluations $\overline{\text{rate}}$ and $\sigma$  designate average fitness function evaluations needed for crash reproduction and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
-%	\vspace{-2mm}
 	\label{tab:additional-expe-ff-evals-table}
 	\begin{footnotesize}
 	\input{papers/model_seeding/tables/additional-expe-ff-evals-table.tex}
 	\end{footnotesize}
-%	\vspace{-3mm}
 \end{table*}
 
 Model seeding can be configured with different $Pr[pick\ init]$ and $Pr[pick\ mut]$ probabilities. Like many other parameters in search-based test case generation~\cite{Arcuri2013}, the values of those parameters could influence our results.

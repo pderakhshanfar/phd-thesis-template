@@ -39,17 +39,14 @@ We present the results of the evaluation and answer the two research questions b
 
 \subfloat[test-seeding vs. no-seeding (per project)]{
 	\includegraphics[height=130mm]{papers/model_seeding/figures/evaluation/rq12-crashes-apps.pdf}
-%	    \vspace{-1mm}
 	% \caption{test-seeding vs. no-seeding (per project)}
 	\label{fig:eval:results-rq12-apps}
 }\hfill
 \subfloat[model-seeding vs. no-seeding (per project)]{
 	\includegraphics[height=130mm]{papers/model_seeding/figures/evaluation/rq22-crashes-apps.pdf}
-%	    \vspace{-1mm}
 	% \caption{test-seeding vs. no-seeding (per project)}
 	\label{fig:eval:results-rq22-apps}
 }
-   \vspace{-3mm}
 	\caption{Outcomes observed in the majority of the executions for each crash in total and for each application.}
 %	\label{fig:eval:resultsdetails}
 	\label{fig:eval:results}
@@ -100,13 +97,11 @@ The underlying reasons for the observed results in this section are analyzed in 
 	\center
 	\caption{Evaluation results for comparing seeding strategies (test and model seeding) and no-seeding in crash reproduction. $\overline{\text{ratio}}$ and $\sigma$  designate average crash reproduction ratio and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
 	\label{tab:crash-repr-table}
-%	\vspace{-2mm}
 	\begin{footnotesize}
 	\subfloat{\input{papers/model_seeding/tables/rq12-crash-repr-table.tex}}
 	\subfloat{\input{papers/model_seeding/tables/rq22-crash-repr-table.tex}}
 	
     \end{footnotesize}
-%	\vspace{-3mm}
 \end{table}
 
 \subsubsection{Crash reproduction efficiency (\textbf{RQ1.2})}
@@ -121,12 +116,10 @@ Also, the values of the effect sizes indicate that the number of crashes that re
 \begin{table*} [t]
 	\center
 	\caption{Evaluation results for comparing test-seeding and no-seeding in the number of fitness evaluations $\overline{\text{evaluations}}$ and $\sigma$  designate average fitness function evaluations needed for crash reproduction and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
-%	\vspace{-2mm}
 	\label{tab:fitness-evaluation-table}
 	\begin{footnotesize}
 	\input{papers/model_seeding/tables/rq13-ff-evals-table.tex}
 	\end{footnotesize}
-%	\vspace{-3mm}
 \end{table*}
 
 
@@ -140,12 +133,10 @@ Table \ref{tab:starting-effect-size} indicates the number of crashes where test-
 	\center
 	\caption{Evaluation results for comparing seeding strategies (test and model seeding) and no-seeding in search initialization. $\overline{\text{ratio}}$ and $\sigma$  designate average successful search initialization ratio and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
 	\label{tab:starting-effect-size}
-%	\vspace{-2mm}
 	\begin{footnotesize}
 		\subfloat{\input{papers/model_seeding/tables/rq11-started-search-table.tex}}
 		\subfloat{\input{papers/model_seeding/tables/rq21-started-search-table.tex}}
 	\end{footnotesize}
-%	\vspace{-3mm}
 \end{table}
 
 
@@ -230,16 +221,7 @@ We also check how many crashes can be reproduced at least once with model seedin
 Table \ref{tab:crash-repr-table} indicates the impact of model-seeding on the crash reproduction ratio. As we can see in this table, \textit{model s. 0.2} has a significantly better crash reproduction ratio in 3 crashes. Also, other configurations of model-seeding are significantly better than no seeding in 4 crashes. This improvement is achieved by model-seeding, while 2 out of 4 configurations of model-seeding have a significant unfavorable impact on only one crash. The values of odds ratios and and p-values for crashes with significant difference is available in Table \ref{tab:oddratios}.
 
 
-% \begin{table} [t]
-% 	\center
-% 	\caption{Evaluation results for comparing model-seeding and no-seeding in crash reproduction. $\overline{\text{ratio}}$ and $\sigma$  designate average crash reproduction ratio and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
-% 	\label{tab:crash-repr-table-rq22}
-% %	\vspace{-2mm}
-% 	\begin{footnotesize}
-% 	\input{tables/rq22-crash-repr-table.tex}
-% 	\end{footnotesize}
-% %	\vspace{-3mm}
-% \end{table}
+
 
 \subsubsection{Crash reproduction efficiency (\textbf{RQ2.2})}
 
@@ -254,12 +236,10 @@ Also, model-seeding has a large adverse effect size (as Vargha-Delaney measures 
 \begin{table*} [t]
 	\center
 	\caption{Evaluation results for comparing model-seeding and no-seeding in the number of fitness evaluations $\overline{\text{evaluations}}$ and $\sigma$  designate average fitness function evaluations needed for crash reproduction and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
-%	\vspace{-2mm}
 	\label{tab:fitness-evaluation-table-rq23}
 	\begin{footnotesize}
 	\input{papers/model_seeding/tables/rq23-ff-evals-table.tex}
 	\end{footnotesize}
-%	\vspace{-3mm}
 \end{table*}
 Table \ref{tab:fitness-evaluation-table-rq23} does not include the cost of model generation for seeding as mentioned in our experimental setup. In our case, model generation was not a burden and is performed only once per case study. We will cover this point in more detail in Section \ref{sec:model_seeding:discussion}.    
 
@@ -270,16 +250,6 @@ Table \ref{tab:fitness-evaluation-table-rq23} does not include the cost of model
 
 Table \ref{tab:starting-effect-size}  provides a comparison between model-seeding and no-seeding in the search initialization ratio. As shown in this Table, \textit{model s. 0.2 \& 0.5} significantly outperform no seeding in starting the search process for two crashes. This number increases to 3 for \textit{model s. 0.8 \& 1.0}. In contrast to test-seeding, most of the configurations of model-seeding do not have any significant negative impact on the search initialization (only \textit{model s. 0.2} is significantly worse than no-seeding in one crash). Notably, the average search initialization ratios for all of the model seeding configurations are slightly higher than no seeding. In the best case for model seeding, \textit{model s. 0.8 \& 1.0} is 30/30 runs, and the standard deviations for these two configurations are 0 or close to 0.
 
-% \begin{table}[t]
-% 	\center
-% 	\caption{Evaluation results for comparing model-seeding and no-seeding in search initialization. $\overline{\text{ratio}}$ and $\sigma$  designate average successful search initialization ratio and standard deviation, respectively. The numbers in the comparison only count the statistically significant cases.}
-% 	\label{tab:starting-effect-size-rq21}
-% %	\vspace{-2mm}
-% 	\begin{footnotesize}
-% 	\input{tables/rq21-started-search-table.tex}
-% 	\end{footnotesize}
-% %	\vspace{-3mm}
-% \end{table}
 
 \subsubsection{Influencing factors (\textbf{RQ2.4})}
 
