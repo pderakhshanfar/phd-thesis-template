@@ -1,5 +1,5 @@
 This thesis answers the aforementioned research questions by following an approach based on design science \cite{Hevner2004}.
-The design science contains two iterative phases: \textbf{Build} and \textbf{Evaluation}. The former phase concentrates on developing a purposeful artifact to solve an unsolved problem (here, search-based test generation techniques for specific behaviors such as crash reproduction and class integrations). The latter phase evaluates the designed artifact.
+The design science paradigm contains two iterative phases: \textbf{Build} and \textbf{Evaluation}. The former phase concentrates on developing a purposeful artifact to solve an unsolved problem (here, search-based test generation techniques for specific behaviors such as crash reproduction and class integrations). The latter phase evaluates the designed artifact.
 The \textit{Evaluation} phase reveals the limitations and challenges in the built artifact, and thereby, the weaknesses can be identified and resolved in the next phase of the \textit{Build} process. This iteration usually continues multiple times, and in each iteration, one (or more) novel techniques are introduced (to improve the existing artifact) and be assessed by the \textit{Evaluation} process. Also, both \textit{Build} and \textit{Evaluation} evolve in this process according to the new findings. 
 
 In this thesis, we define a framework for search-based test case generation for crash reproduction. This framework includes a benchmark for crash reproduction approaches containing real-world and non-trivial crashes, an extensible platform for search-based crash reproducing test case generation, and accompanying guidelines for efficient usage of the platform in an industrial setting. This framework applies the existing search-based crash reproduction approach to real-world crashes and identifies the challenges (to answer $RQ_1$). We then improve the crash reproduction approach by addressing the identified challenges (to answer $RQ_2$). Finally, we go beyond search-based crash reproduction and introduce a novel approach for generating tests to cover other specific behaviors (\eg class integration testing). Accordingly, we extend the evaluation process to assess the new artifacts, as well (to address $RQ_3$).
@@ -20,7 +20,7 @@ Chapter 6 addresses the $RQ_3$ by introducing a novel search-based technique to 
 \subsubsection{Common/uncommon execution patterns test generation in unit testing}
 In Chapter 7, we implement novel secondary objectives considering the common/uncommon execution patterns in \evosuite, which is a well-known unit test generation framework.
 
-\subsection{Evaluation infrutructure}
+\subsection{Evaluation}
 
 \subsubsection{Assessing crash reproduction}
 To evaluate the different search-based crash reproduction techniques, we created \jcrashpack, an open-source crash benchmark, which contains 200 non trivial Java crashes collected from seven open-source projects: \textit{Closure compiler}, \textit{Apache commons-lang}, \textit{Apache commons-math}, \textit{Mockito}, \textit{Joda-Time}, \textit{XWiki}, and \textit{ElasticSearch}.

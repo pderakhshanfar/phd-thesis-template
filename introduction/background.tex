@@ -54,13 +54,13 @@ class Person{
 Many structural-based approaches combine two common heuristics to reach a high branch and statement coverage in unit-level testing. These two heuristics  are \textit{approach level} and \textit{branch distance}.
 The \textit{branch distance} measures (based on a set of rules) the distance to \textit{satisfying} (true branch) and the distance to \textit{not satisfying} (false branch) a particular branching node in the program.
 The \textit{approach level} measures the distance between the execution path and a target node in a CFG. To describe how this heuristic measures this distance, we 
-rely on the concepts of \textbf{post-dominance} and \textbf{control dependency}~\cite{Allen:1970:CFA:800028.808479}. Node A is control dependent on node B in a control flow graph if node B contains a branch, which can change the execution path away from reaching node A.
+rely on the concepts of \textbf{post-dominance} and \textbf{control dependency}~\cite{Allen:1970:CFA:800028.808479}. A \textit{node A} is control dependent on \textit{node B} in a control flow graph if \textit{node B} contains a branch, which can change the execution path away from reaching \textit{node A}.
 
 %
 As an example, in Figure \ref{fig:CCFG}, \textit{node 8} is control dependent on \textit{node 5} and \textit{node 8} post-dominates edge $\langle 5,8\rangle$. %, but it does not post-dominate $node 5$ itself ($node 5$ can reach the exit point through $node 6$). 
 The \textit{approach level} is the minimum number of control dependencies between a target node and an executed path by a test case. 
 
-This thesis leverages the information carved from different resources to introduce search objectives complementing approach level and branch distance for different test generation scenarios. 
+This thesis leverages the information carved from different sources (\eg manually-written tests, source code, \etc) to introduce search objectives complementing approach level and branch distance for different test generation scenarios. 
 % Chapters \ref{sec:jcrashpack:introduction} to \ref{section:bbc:introduction} try to achieve this goal in test generation for on instance of specific behaviors (\ie crash reproduction). Chapter \ref{sec:cling:introduction} uses the call-site information to generate test cases for class integration. Finally, 
 
 \subsubsection{Search-based approaches for integration testing}
@@ -85,7 +85,7 @@ Although EvoMaster tests different classes in the SUT, it does not systematicall
 In contrast to EvoMaster, other approaches perform fuzzing \cite{Holler2012}, \textit{``an automated technique providing random data as input to a software system in the hope to expose a vulnerability.''} Fuzzing uses information like grammar specifications \cite{Holler2012, beyene2012, coppit2005, godefroid2008} or feedback from the program during the execution of tests \cite{Padhye2019} to steer the test generation process.
 These fuzzing approaches generate only input data but do not generate a full test case.
 
-The approaches introduced in this thesis performs white-box testing.
+The approaches introduced in this thesis perform white-box testing.
 
 \subsection{Automated Crash Reproduction}
 Software crashes commonly occur in operating environments and are reported to developers for inspection.
@@ -95,7 +95,7 @@ In particular, for Java programs, when a crash occurs, an exception is thrown. A
 Manual crash reproduction can be a challenging and labor-intensive task for developers: it is often an iterative process that requires setting the debugging environment in a similar enough state as the environment in which the crash occurred~\cite{Zeller2009}.
 
 To help developers in this process, various automated techniques have been suggested.
-These techniques can be divided into three categories, based on the kind of data used for crash reproduction: \emph{record-replay approaches} record data from the running program; \emph{post-failure approaches} collect data from the crash, like memory dump; and \emph{stack-trace based post-failure} use only the stack trace produced by the crash. We briefly describe each category hereafter.
+These techniques can be divided into three categories, based on the kind of data used for crash reproduction: \emph{record-replay approaches}~\cite{Artzi2008, Clause2007, Narayanasamy2005, Steven2000, Gomez2016, Bell2013, Cao2014} record data from the running program; \emph{post-failure approaches}~\cite{Rossler2013, YZW17descry,Weeratunge2010, Leitner2007, Leitner2009, Kifetew2013, Kifetew2014} collect data from the crash, like memory dump; and \emph{stack-trace based post-failure}~\cite{BPT17concrash,soltani2017,Nayrolles2017,Xuan2015,Chen2015} use only the stack trace produced by the crash. We briefly describe each category hereafter.
 
 \paragraph{Record-replay approaches.}
 
@@ -118,7 +118,7 @@ However, even this approach suffers from two limitations:
 \item the performance of this tool is strongly linked to the quality of the software log.
 \end{inparaenum}
 %
-Other \textit{post-failure approach} inlcude: Weeratunge \etal \cite{Weeratunge2010}, Leitner \etal \cite{Leitner2007, Leitner2009}, and Kifetew \etal \cite{Kifetew2013, Kifetew2014}.
+Other \textit{post-failure approaches} inlcude: Weeratunge \etal \cite{Weeratunge2010}, Leitner \etal \cite{Leitner2007, Leitner2009}, and Kifetew \etal \cite{Kifetew2013, Kifetew2014}.
 
 \paragraph{Stack-trace based post-failure.}
 
@@ -149,7 +149,7 @@ Similarly, \textrm{BugRedux} \cite{jin2012bugredux} uses forward symbolic execut
 
 Since these two tools rely on forward symbolic execution, they can be applied only on medium-size applications. Also, as illustrated by Braione \etal \cite{braione2017tardis}, symbolic execution test generation approaches face limitations when generating complex input data structures.
 To address these limitations, \textrm{STAR} \cite{Chen2015} applies optimized backward symbolic execution and uses a novel technique for method sequence composition to generate a unit test that satisfies the computed preconditions, and eventually reproduces the target crash. 
-However, as reported by Chen \etal \cite{Chen2015}, \textrm{STAR} still suffers from the path explosion stemming from utilizing symbolic execution. 
+However, as reported by Chen \etal \cite{Chen2015}, \textrm{STAR} still suffers from the path explosion problem stemming from utilizing symbolic execution. 
 It only supports 3 types of exceptions: explicitly thrown exceptions, \texttt{NullPointerException}, and \texttt{ArrayIndexOutOfBoundsException}.  
 
 \textrm{JCHARMING} \cite{Nayrolles2017} applies model checking to reproduce the reported bugs. To prevent state explosion in the model, it utilizes program slicing.
@@ -160,7 +160,7 @@ Test case mutation in \textrm{MuCrash} is directed by selecting tests for the cl
 
 Finally, \textrm{Concrash} \cite{BPT17concrash} focuses on reproducing \textit{concurrency} failures that violate thread-safety of a class.
 \textrm{Concrash} iteratively generates test code and looks for a thread interleaving that triggers a concurrency crash.
-In order to steer the test generation process and avoid expensive computations, \textrm{Concrash} applies the pruning strategies to avoid redundant and irrelevant test code. In contrast with other crash reproduction techniques, \textrm{Concrash} only reproduces the minority of the crashes in the issue tracking systems. As reported by Yuan \etal \cite{Yuan2014}, inter-leaving crashes cause only 10\% of failures in the distributed data-intensive systems. Besides, Coelho \etal \cite{Coelho2015} state that this number is even lower in the Android applications (2.9\%).
+In order to steer the test generation process and avoid expensive computations, \textrm{Concrash} applies the pruning strategies to avoid redundant and irrelevant test code. In contrast to other crash reproduction techniques, \textrm{Concrash} only reproduces the minority of the crashes in the issue tracking systems. As reported by Yuan \etal \cite{Yuan2014}, inter-leaving crashes cause only 10\% of failures in the distributed data-intensive systems. Besides, Coelho \etal \cite{Coelho2015} state that this number is even lower in Android applications (2.9\%).
 
 \subsection{Search-based Crash Reproduction With \evocrash}
 
@@ -269,7 +269,7 @@ Table \ref{tab:background:represults} also reports the comparison of \evocrash w
 
 \subsubsection{Usefulness for debugging}
 
-When reproducing a stack trace with \evocrash, there is no guarantee that the generated test reproduces completely the conditions in which the crash happened in the first place. Besides the random nature of search-based approaches, test cases are generated at the unit level, while crashes usually happen at the system level. However, rather than reproducing the exact same conditions of the crash, the goal of crash reproduction is to help developers fix the underlying bug.
+When reproducing a stack trace with \evocrash, there is no guarantee that the generated test completely reproduces the conditions in which the crash happened in the first place. Besides the random nature of search-based approaches, test cases are generated at the unit level, while crashes usually happen at the system level. However, rather than reproducing the exact same conditions of the crash, the goal of crash reproduction is to help developers fix the underlying bug.
 
 Chen \etal \cite{Chen2015} introduced a usefulness criterion for the crash reproduction approaches. 
 According to this criterion, a crash reproducing test is useful to the developers if it covers the buggy frame, \ie if the target frame for which the reproduction is successful is higher than the frame that points to the buggy method.
