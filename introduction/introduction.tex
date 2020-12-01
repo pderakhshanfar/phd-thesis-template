@@ -4,7 +4,7 @@
 \begin{abstract}
 Software testing is one of the essential and expensive tasks in software development. Hence, many approaches were introduced to automate different software testing tasks. Among these techniques, search-based test generation techniques have been vastly applied in real-world cases and showed promising results. These strategies apply metaheuristic search-based methods for generating tests according to various test criteria such as line coverage and branch coverage.
 
-In this thesis, we introduce new search objectives and techniques using various knowledge carved from resources like source code, manually-written test cases, and execution logs. These novel search objectives and approaches (i) improve the state-of-the-art in search-based crash reproduction, (ii) present a new search-based approach to generate class-integration tests covering interactions between two given classes., and (iii) introduce two new search objectives for covering common/uncommon execution patterns observed during the software production.
+In this thesis, we introduce new search objectives and techniques using various knowledge carved from resources like source code, hand-written test cases, and execution logs. These novel search objectives and approaches (i) improve the state-of-the-art in search-based crash reproduction, (ii) present a new search-based approach to generate class-integration tests covering interactions between two given classes., and (iii) introduce two new search objectives for covering common/uncommon execution patterns observed during the software production.
 \end{abstract}
 
 \blfootnote{This chapter is partly based on \faFileTextO~\emph{P. Derakhshanfar. Well-informed Test Case Generation and Crash Reproduction, ICST'20 (Doctoral Symposium)}~\cite{derakhshanfar2020well}.
@@ -14,7 +14,7 @@ In this thesis, we introduce new search objectives and techniques using various 
 \newpage
 \dropcap{S}oftware testing is an indispensable part of software engineering, widely studied from various aspects by researchers in this field. As mentioned by Bertolino~\cite{bertolino2007software}, one of the biggest dreams in software testing research is 100\% automatic testing, and one of the research paths towards reaching this dream is the automation of test generation.
 
-A survey by McMinn \cite{McMinn2004} shows that search-based software testing techniques are applicable to a vast range of automated software testing problems, including automated test generation. The application of metaheuristic search-based approaches for automating the process of software test generation has been an interesting research path in recent years. The approaches model the software testing goals, which should be achieved by manually-written test cases, into optimization problems and solve them using search algorithms. 
+A survey by McMinn \cite{McMinn2004} shows that search-based software testing techniques are applicable to a vast range of automated software testing problems, including automated test generation. The application of metaheuristic search-based approaches for automating the process of software test generation has been an interesting research path in recent years. The approaches model the software testing goals, which should be achieved by hand-written test cases, into optimization problems and solve them using search algorithms. 
 
 The approaches aim to produce tests for different levels of testing. For instance, many approaches are proposed for unit testing \cite{Fraser2011, braione2017tardis, braione2018sushi, prasetya2013t3} and system-level testing \cite{Arcuri2019, Holler2012, Padhye2019, beyene2012, coppit2005, godefroid2008}. Moreover, these approaches can be categorized into white-box \cite{Fraser2011, braione2017tardis, braione2018sushi, prasetya2013t3, Arcuri2019} and black-box \cite{Holler2012, Padhye2019, beyene2012, coppit2005, godefroid2008} testing techniques. 
 
@@ -28,7 +28,7 @@ In particular, Salahirad \etal \cite{Salahirad2019} indicated that the strongest
 As an outcome, they suggest using classical branch and line coverage as primary objectives and using other objectives that aid to trigger the faults as secondary objectives.
 
 \begin{framed}
-In this thesis, we go beyond classical search objectives based on structural coverage. In particular, we investigate how information collected from different sources (\ie source code, manually-written tests, \etc) can help to design and reinforce search objectives. In doing so, we hypothesize that we can exercise specific behaviors, and thus trigger specific kinds of faults.
+In this thesis, we go beyond classical search objectives based on structural coverage. In particular, we investigate how information collected from different sources (\ie source code, hand-written tests, \etc) can help to design and reinforce search objectives. In doing so, we hypothesize that we can exercise specific behaviors, and thus trigger specific kinds of faults.
 \end{framed}
 
 First, we focus on one of the instances of test generation for specific software behaviors: \textbf{search-based crash reproduction}. These crash reproduction approaches~\cite{Soltani2018a, BPT17concrash, Chen2015, Nayrolles2017, Rossler2013, Xuan2015} accept a crash as input and generate a test that reproduces this given crash. Our studies on crash reproduction focus on leveraging the collected contextual information to improve the effectiveness (\ie the number of reproduced crashes and how often they can be reproduced) and efficiency (\ie the time required to reproduce a crash) of the search process, trying to reproduce the given crash.
@@ -44,10 +44,10 @@ Finally, we investigate a novel search objective for search-based unit testing t
 Since the search-based crash reproduction approaches are evaluated by a limited number of crashes, the limits and challenges of these techniques remained largely unrecognized.
 In this thesis, we first identify search-based crash reproduction challenges. Hence, we empirically evaluate search-based crash reproduction by a new Java crash benchmark called \jcrashpack and identify the challenges by performing an extensive manual analysis. Some of the identified challenges are dedicated only to the crash reproduction problem, but some other challenges are general search-based test generation issues.
 
-After identifying the challenges, we intend to address them by introducing novel solutions to improve the effectiveness and efficiency of the crash reproduction search process. For this goal, we investigate the application of contextual information collected from different sources such as source code, manually-written test cases. While some identified challenges in search-based crash reproduction are due to the existing general search-based test generation limitations, we go beyond crash reproduction and introduce new search-based techniques to cover other specific software behaviors.
+After identifying the challenges, we intend to address them by introducing novel solutions to improve the effectiveness and efficiency of the crash reproduction search process. For this goal, we investigate the application of contextual information collected from different sources such as source code, hand-written test cases. While some identified challenges in search-based crash reproduction are due to the existing general search-based test generation limitations, we go beyond crash reproduction and introduce new search-based techniques to cover other specific software behaviors.
 
 \section{Research Goals \& Questions}
-This thesis seeks to understand the challenges in search-based crash reproduction and test case generation and utilizes the existing information in different sources such as source code and manually-written test cases to address the identified challenges.
+This thesis seeks to understand the challenges in search-based crash reproduction and test case generation and utilizes the existing information in different sources such as source code and hand-written test cases to address the identified challenges.
 Hence, to present indications towards this thesis, we seek to answer the following research questions:
 
 Since our initial goal is improving the effectiveness and efficiency of the search-based crash reproduction, first, we need to understand its challenges. Hence, the first research question tries to address this goal.
@@ -143,6 +143,7 @@ Our results are mixed. Our approach leads to test cases that indeed follow \emph
 Finally, we summarize our findings and conclusions in this thesis. This chapter also elaborates on the potential future work that can, first, improve the search-based crash reproduction, and second, investigate novel search-based algorithms for covering other software specific behaviors that can be interesting for developers.
 
 
+
 \section{Research Methodology}
 
 \input{introduction/methodology}
@@ -150,23 +151,26 @@ Finally, we summarize our findings and conclusions in this thesis. This chapter 
 
 \section{Origins Of The Chapters}
 All chapters of this thesis (except Chapter 7, which is currently under review) have been published in peer-reviewed journals and conferences. 
-Hence, some chapters contain a dedicated background, related work, and conclusion section. 
+Hence, all chapters contain a dedicated background, related work, and conclusion section. 
 This section lists the origin of each chapter.
 
+
+For all chapters, ecept Chapter 7, the author of this thesis was the lead author of the paper, responsible for the design of the algorithms and experiments, tool implementation, carrying out experiments, analysis of the results, and the writing of the paper. For chapter 2, this role was shared with Mozhan Soltani.
+
 \begin{itemize}
-    \item \textit{Chapter 2} was published in the paper "A benchmark-based evaluation of search-based crash reproduction" in Empirical Software Engineering Journal (EMSE) 2020.
-    \item \textit{Chapter 3} was published in the paper "Search‐based crash reproduction using behavioural model seeding" in Journal of Software: Testing, Validation, and Reliability (STVR) 2020.
-    \item \textit{Chapter 4} was published in the paper " Good Things Come In Threes: Improving Search-based Crash Reproduction With Helper Objectives" at International Conference on Automated Software Engineering (ASE) 2020.
-    \item \textit{Chapter 5} was published in the paper "It is not Only About Control Dependent Nodes: Basic Block Coverage for Search-Based Crash Reproduction" at Symposium on Search-Based Software Engineering (SSBSE) 2020.
-    \item \textit{Chapter 6} was published is a paper called "Generating Class-Level Integration Tests Using Call Site Information", which is currently under revision in Transactions on Software Engineering journal (TSE).
+    \item \textit{Chapter 2} was published in the paper "A benchmark-based evaluation of search-based crash reproduction" in Empirical Software Engineering (EMSE) 2020.
+    \item \textit{Chapter 3} was published in the paper "Search‐based crash reproduction using behavioural model seeding" in theJournal of Software: Testing, Validation, and Reliability (STVR) 2020.
+    \item \textit{Chapter 4} was published in the paper " Good Things Come In Threes: Improving Search-based Crash Reproduction With Helper Objectives" at the International Conference on Automated Software Engineering (ASE) 2020.
+    \item \textit{Chapter 5} was published in the paper "It is not Only About Control Dependent Nodes: Basic Block Coverage for Search-Based Crash Reproduction" at the Symposium on Search-Based Software Engineering (SSBSE) 2020.
+    \item \textit{Chapter 6} was published as a paper titled "Generating Class-Level Integration Tests Using Call Site Information", which is currently under revision in Transactions on Software Engineering journal (TSE).
     \item \textit{Chapter 7} was published in the paper "Commonality-Driven Unit Test Generation" at Symposium on Search-Based Software Engineering (SSBSE) 2020.
   \end{itemize}
 
 \section{Open Science}
 \label{sec:intro:open}
-Open science is the “movement to make scientific research, data and dissemination accessible to all levels of an inquiring society” \cite{Open_science}. All of the implementations used in our studies are available via GitHub. Also, replication packages of all of our studies, presented in this thesis, are openly available in Zenodo. These replication packages contain the list of subjects used in each study, a Docker-based infrastructure to rerun all of the experiments, and all test cases generated by each of the search-based approaches.
+Open science is the “movement to make scientific research, data and dissemination accessible to all levels of an inquiring society” \cite{Open_science}. All of the implementations used in our studies are available via GitHub. Also, replication packages of all of our studies, presented in this thesis, are openly available in Zenodo. These replication packages contain the list of subject systems used in each study, a Docker-based infrastructure to rerun all of the experiments, and all test cases generated by each of the search-based approaches.
 
-Table \ref{tab:replicationpackages} shows the replication package of each chapter in this thesis.
+Table \ref{tab:replicationpackages} shows the replication packages of each chapter in this thesis.
 
 \begin{table}[!t]
     \begin{center}
@@ -182,7 +186,7 @@ Table \ref{tab:replicationpackages} shows the replication package of each chapte
     3 & \cite{pouria_derakhshanfar_2019_3673916}& 10.5281/zenodo.3673916 \\
     4 & \cite{zenodoRP}& 10.5281/zenodo.3979097 \\
     5 & \cite{derakhshanfar_pouria_2020_3953519}& 10.5281/zenodo.3953519\\
-    6 & \url{https://github.com/STAMP-project/Cling-application}& - \\
+    6 & \cite{pouria_derakhshanfar_2020_4300634}& 10.5281/zenodo.4300634 \\
     7 & \cite{evers_bjorn_2020_3894711}& 10.5281/zenodo.3894711\\
     \hline
     \end{tabular}
@@ -193,19 +197,19 @@ Table \ref{tab:replicationpackages} shows the replication package of each chapte
 \subsubsection{Search-based crash reproduction (\botsing)}
 In this thesis, we present \botsing\footnote{\url{https://github.com/STAMP-project/botsing}}: an open-source, extendable search-based crash reproduction framework. \botsing implements search-based crash reproduction approaches introduced in previous studies~\cite{Rossler2013, Soltani2018a, Soltani2018b}. The tool takes as input a stack trace and software under test. Then, it starts a single-objective or multi-objective search process to generate a test reproducing the crash.
 
-\botsing has been designed as an extendable framework for implementing new features and search algorithms for crash reproduction. For example, in Chapter 3 we perform a study on the impact of various \emph{seeding} strategies on crash reproduction, we have implemented multiple seeding strategies in \botsing.
+\botsing has been designed as an extendable framework for implementing new features and search algorithms for crash reproduction. For example, in Chapter 3 we perform a study on the impact of various \emph{seeding} strategies on crash reproduction, for which we have implemented multiple seeding strategies in \botsing.
 
 From an industrial perspective, \botsing is used by our partners in the STAMP project.\footnote{Available at \url{http://stamp-project.eu/}}
 They confirmed the relevance of \botsing for debugging and fixing application crashes~\cite{D57}.
-The feedback ---as well as the crash reproducing test cases--- from our partners using \botsing are openly available in the STAMP GitHub repository.\footnote{Available at \url{https://github.com/STAMP-project/botsing-usecases-output}.}
+The feedback ---as well as the crash reproducing test cases--- from our partners using \botsing is openly available in the STAMP GitHub repository.\footnote{Available at \url{https://github.com/STAMP-project/botsing-usecases-output}.}
 
 \subsubsection{Search-based test generation for class integration (\cling)}
-Chapter 6 addresses the $RQ_3$ by introducing a novel search-based technique to test the integration between two classes their call-sites information. We have implemented this approach as an open-source tool called \cling\footnote{\url{https://github.com/STAMP-project/botsing/tree/master/cling}}. This tool gets \emph{application's bytecode} and two classes in the application (\emph{caller class} and \emph{callee class}) and produces a test suite that covers the various interactions between these two classes.
+Chapter 6 addresses $RQ_3$ by introducing a novel search-based technique to test the integration between two classes looking at their call-sites information. We have implemented this approach as an open-source tool called \cling\footnote{\url{https://github.com/STAMP-project/botsing/tree/master/cling}}. This tool gets \emph{application's bytecode} and two classes in the application (the \emph{caller class} and \emph{callee class}) and produces a test suite that covers the various interactions between these two classes.
 
 \subsubsection{Common/uncommon execution patterns test generation in unit testing}
-In Chapter 7, we implement novel secondary objectives considering the common/uncommon execution patterns in \evosuite, which is a well-known open-source unit test generation framework.
+In Chapter 7, we implement novel secondary objectives considering the common/uncommon execution patterns in \evosuite.
 
-\subsection{Open-source Evaluation Infrustructures}
+\subsection{Open-source Evaluation Infrastractures}
 
 \subsubsection{Assessing crash reproduction}
 To evaluate the different search-based crash reproduction techniques, we created \jcrashpack, an open-source crash benchmark, which contains 200 non trivial Java crashes collected from seven open-source projects: \textit{Closure compiler}, \textit{Apache commons-lang}, \textit{Apache commons-math}, \textit{Mockito}, \textit{Joda-Time}, \textit{XWiki}, and \textit{ElasticSearch}.
