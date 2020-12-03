@@ -129,30 +129,30 @@ If the target line is reached by the test case, $d_{l}(t)$ equals to $0.0$;
 %
 Since the stack trace similarity is relevant only if the expected exception is thrown by $t$, and the check whether the expected exception is thrown or not is relevant only if the target line where the exception propagates is reached, $d_{except}$ and $d_{trace}$) are computed only upon the satisfaction of two \emph{constraints}: the target exception has to be thrown in the target line $s$ and the stack trace similarity should be computed only if the target exception is actually thrown. 
 
-Unlike other stack trace similarity measures (e.g., \cite{Rossler2013}), Soltani \etal \cite{Soltani2018a} do not require two stack traces to share the same common prefix to avoid rejecting stack traces where the difference is only in one intermediate frame. Instead, for each frame, $d_{trace}(t)$ looks at the closest frame and computes a distance value. Formally, for an original stack trace $S*$ and a test case $t$ producing a stack trace $S$, $d_{trace}(t)$ is defined as follows:
+Unlike other stack trace similarity measures (e.g., \cite{Rossler2013}), Soltani \etal \cite{Soltani2018a} do not require two stack traces to share the same common prefix to avoid rejecting stack traces where the difference is only in one intermediate frame. Instead, for each frame, $d_{trace}(t)$ looks at the closest frame and computes a distance value. Formally, for an original stack trace $S^*$ and a test case $t$ producing a stack trace $S$, $d_{trace}(t)$ is defined as follows:
 %
 \rowcolors{1}{}{}
 \begin{equation}
-d_{trace}(t) = \varphi \left( \sum_{f* \in S*} min \left\lbrace \mathit{diff}(f*, f) : f \in S \right\rbrace \right)
+d_{trace}(t) = \varphi \left( \sum_{f^* \in S^*} min \left\lbrace \mathit{diff}(f^*, f) : f \in S \right\rbrace \right)
 \end{equation}
 \rowcolors{1}{}{gray!15}
 %
-Where $\varphi (x) = x / (x+1)$ is a normalization function \cite{McMinn2004} and $\mathit{diff}(f*, f)$ measures the difference between two frames as follows: 
+Where $\varphi (x) = x / (x+1)$ is a normalization function \cite{McMinn2004} and \textit{diff}$(f^*, f)$ measures the difference between two frames as follows: 
 %
 \rowcolors{1}{}{}
 \begin{equation}
-\mathit{diff}(f*, f) = 
+\mathit{diff}(f^{**}, f) = 
 \left\{
   \begin{array}{lcr}
     3 && \textit{if the classes are different}\\
     2  && \textit{if the classes are equal but the methods are different}\\
-     \varphi \left( \vert l* - l \vert \right)   && \textit{otherwise}
+     \varphi \left( \vert l^* - l \vert \right)   && \textit{otherwise}
   \end{array}
 \right.
 \end{equation}
 \rowcolors{1}{}{gray!15}
 %
-Where $l$ (resp. $l*$) is the line number of the frame $f$ (resp. $f*$).
+Where $l$ (resp. $l^*$) is the line number of the frame $f$ (resp. $f^*$).
 
 Each of the three components if the fitness function defined in Equation \ref{eq:fitnessfunction} ranges from $0.0$ to $1.0$, the overall fitness value for a given test case ranges from $0.0$ (crash is fully reproduced) to $6.0$ (no test was generated), depending on the conditions it satisfies. 
 
